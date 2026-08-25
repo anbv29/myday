@@ -189,7 +189,7 @@ select
   event.title,
   event.claim_id
 from (
-  select claim_events.*, claims.id as claim_id, claims.claimant_user_id, claims.title
+  select claim_events.*, claims.claimant_user_id, claims.title
   from public.claim_events
   join public.claims on claims.id = claim_events.claim_id
   where claim_events.visibility_snapshot = 'public'

@@ -544,7 +544,7 @@ begin
   ) values (
     intent.id, payment_provider, provider_payment_reference, paid_amount_minor,
     upper(paid_currency), case when conflict_code is null then 'captured' else 'refund_pending' end
-  ) on conflict (checkout_intent_id) do update set
+  ) on conflict on constraint payment_records_checkout_intent_id_key do update set
     provider_payment_id = excluded.provider_payment_id,
     amount_minor = excluded.amount_minor,
     currency = excluded.currency,
@@ -574,7 +574,9 @@ begin
     set status = 'refund_pending', failure_code = conflict_code
     where id = intent.id
     returning * into intent;
-    update public.payment_records set status = 'refund_pending' where checkout_intent_id = intent.id;
+    update public.payment_records payment
+    set status = 'refund_pending'
+    where payment.checkout_intent_id = intent.id;
     update public.payment_provider_events set status = 'processed', outcome = conflict_code, processed_at = now()
     where id = existing_event.id;
     insert into public.audit_events (actor_user_id, action, target_type, target_id, metadata)
@@ -614,7 +616,9 @@ begin
   );
 
   update public.claim_checkout_intents set status = 'completed', failure_code = null where id = intent.id;
-  update public.payment_records set status = 'captured' where checkout_intent_id = intent.id;
+  update public.payment_records payment
+  set status = 'captured'
+  where payment.checkout_intent_id = intent.id;
   update public.payment_provider_events set status = 'processed', outcome = 'claim_completed', processed_at = now()
   where id = existing_event.id;
   insert into public.audit_events (actor_user_id, action, target_type, target_id, metadata)
