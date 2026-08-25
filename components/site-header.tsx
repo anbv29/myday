@@ -1,12 +1,18 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { AuthControls } from '@/components/auth/auth-controls';
 
 type Theme = 'light' | 'dark';
 
+function isCurrentPath(pathname: string, href: string) {
+  return pathname === href || (href !== '/' && pathname.startsWith(`${href}/`));
+}
+
 export function SiteHeader() {
+  const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [theme, setTheme] = useState<Theme | null>(null);
   const menuButton = useRef<HTMLButtonElement>(null);
@@ -39,6 +45,15 @@ export function SiteHeader() {
     setTheme(next);
   }
 
+  function currentPageProps(href: string) {
+    const isCurrent = isCurrentPath(pathname, href);
+
+    return {
+      className: isCurrent ? 'is-active' : undefined,
+      'aria-current': isCurrent ? ('page' as const) : undefined,
+    };
+  }
+
   return (
     <header className="site-header">
       <div className="shell header-inner">
@@ -47,11 +62,17 @@ export function SiteHeader() {
         </Link>
 
         <nav className="desktop-nav" aria-label="Primary navigation">
-          <Link className="nav-claim" href="/claim">Claim a date</Link>
-          <Link href="/explore">Explore</Link>
-          <Link href="/leaderboard">Leaderboard</Link>
-          <Link href="/trending">Trending</Link>
-          <Link href="/search">Search</Link>
+          <Link
+            {...currentPageProps('/claim')}
+            className={`nav-claim${isCurrentPath(pathname, '/claim') ? ' is-active' : ''}`}
+            href="/claim"
+          >
+            Claim a date
+          </Link>
+          <Link {...currentPageProps('/explore')} href="/explore">Explore</Link>
+          <Link {...currentPageProps('/leaderboard')} href="/leaderboard">Leaderboard</Link>
+          <Link {...currentPageProps('/trending')} href="/trending">Trending</Link>
+          <Link {...currentPageProps('/search')} href="/search">Search</Link>
         </nav>
 
         <div className="header-actions">
@@ -81,13 +102,13 @@ export function SiteHeader() {
 
       {menuOpen ? (
         <nav className="mobile-nav" id="mobile-menu" aria-label="Mobile navigation">
-          <Link ref={firstMobileLink} href="/claim" onClick={() => setMenuOpen(false)}>Claim a date</Link>
-          <Link href="/explore" onClick={() => setMenuOpen(false)}>Explore</Link>
-          <Link href="/leaderboard" onClick={() => setMenuOpen(false)}>Leaderboard</Link>
-          <Link href="/trending" onClick={() => setMenuOpen(false)}>Trending</Link>
-          <Link href="/activity" onClick={() => setMenuOpen(false)}>Activity</Link>
-          <Link href="/search" onClick={() => setMenuOpen(false)}>Search</Link>
-          <Link href="/account" onClick={() => setMenuOpen(false)}>Account</Link>
+          <Link {...currentPageProps('/claim')} ref={firstMobileLink} href="/claim" onClick={() => setMenuOpen(false)}>Claim a date</Link>
+          <Link {...currentPageProps('/explore')} href="/explore" onClick={() => setMenuOpen(false)}>Explore</Link>
+          <Link {...currentPageProps('/leaderboard')} href="/leaderboard" onClick={() => setMenuOpen(false)}>Leaderboard</Link>
+          <Link {...currentPageProps('/trending')} href="/trending" onClick={() => setMenuOpen(false)}>Trending</Link>
+          <Link {...currentPageProps('/activity')} href="/activity" onClick={() => setMenuOpen(false)}>Activity</Link>
+          <Link {...currentPageProps('/search')} href="/search" onClick={() => setMenuOpen(false)}>Search</Link>
+          <Link {...currentPageProps('/account')} href="/account" onClick={() => setMenuOpen(false)}>Account</Link>
         </nav>
       ) : null}
     </header>
