@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { AccountFrame } from '@/components/account/account-frame';
 import { AccountUnavailable } from '@/components/account/account-unavailable';
+import { PublicAttribution } from '@/components/public/attribution';
 import { requireAccount } from '@/server/account/context';
 import { accountCheckoutHref, getAccountCheckouts, getAccountClaims, type AccountClaim } from '@/server/account/data';
 
@@ -10,7 +11,7 @@ export const metadata: Metadata = { title: 'My dates', robots: { index: false, f
 
 function ClaimCollection({ claims, empty }: { claims: AccountClaim[]; empty: string }) {
   if (!claims.length) return <p className="account-empty">{empty}</p>;
-  return <ul className="owned-date-grid">{claims.map((claim) => <li key={claim.claimId}><Link href={`/day/${claim.date}`}><time dateTime={claim.date}>{claim.shortDate}</time><h3>{claim.title}</h3><p>{claim.story}</p><dl><div><dt>Paid</dt><dd>{claim.amount}</dd></div><div><dt>Credit</dt><dd>{claim.attribution}</dd></div><div><dt>Visibility</dt><dd>{claim.visibility}</dd></div></dl><span>{claim.isCurrent ? 'View owned date' : `${claim.status} claim`} ↗</span></Link></li>)}</ul>;
+  return <ul className="owned-date-grid">{claims.map((claim) => <li key={claim.claimId}><div className="owned-date-card"><time dateTime={claim.date}>{claim.shortDate}</time><h3><Link href={`/day/${claim.date}`}>{claim.title}</Link></h3><p>{claim.story}</p><dl><div><dt>Paid</dt><dd>{claim.amount}</dd></div><div><dt>Credit</dt><dd><PublicAttribution className="public-attribution" value={claim.attribution} /></dd></div><div><dt>Visibility</dt><dd>{claim.visibility}</dd></div></dl><Link className="owned-date-link" href={`/day/${claim.date}`}>{claim.isCurrent ? 'View owned date' : `${claim.status} claim`} ↗</Link></div></li>)}</ul>;
 }
 
 export default async function MyDatesPage() {

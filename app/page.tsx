@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Leaderboard } from '@/components/leaderboard';
+import { PublicAttribution } from '@/components/public/attribution';
 import { DataEmptyState, DataSourceRibbon } from '@/components/public/data-state';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
@@ -33,26 +34,24 @@ export default async function Home() {
             </div>
           </div>
 
-          {topClaim ? <Link
+          {topClaim ? <article
             className="top-claim"
-            href={`/day/${topClaim.isoDate}`}
-            aria-label={`View ${topClaim.fullDate}, claimed for ${topClaim.amount}`}
           >
             <div className="top-claim-heading">
               <span>Currently #1</span>
-              <span aria-hidden="true">↗</span>
+              <Link href={`/day/${topClaim.isoDate}`} aria-label={`View ${topClaim.fullDate}, claimed for ${topClaim.amount}`}>↗</Link>
             </div>
-            <div className="monument-date" aria-hidden="true">
+            <Link className="monument-date" href={`/day/${topClaim.isoDate}`} aria-label={`View ${topClaim.fullDate}`}>
               <span>{topClaim.month}</span>
               <strong>{topClaim.day}</strong>
               <span>{topClaim.year}</span>
-            </div>
+            </Link>
             <div className="top-claim-story">
               <strong>{topClaim.amount}</strong>
               <p>“{topClaim.story}”</p>
-              <span>by {topClaim.attribution ?? topClaim.username}</span>
+              <span className="top-claim-owner">by {topClaim.attribution ? <PublicAttribution className="public-attribution" value={topClaim.attribution} /> : topClaim.username}</span>
             </div>
-          </Link> : (
+          </article> : (
             <DataEmptyState
               unavailable={result.source === 'unavailable'}
               title={result.source === 'unavailable' ? 'The board is offline.' : 'The first day is waiting.'}

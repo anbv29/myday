@@ -14,6 +14,10 @@ export function normalizePublicAttribution(value: string) {
 }
 
 export function publicAttributionHref(value: string | null) {
-  if (!value || value.startsWith('@')) return null;
+  if (!value) return null;
+  if (value.startsWith('@')) {
+    const normalized = normalizePublicAttribution(value);
+    return normalized ? `https://x.com/${encodeURIComponent(normalized.slice(1))}` : null;
+  }
   return normalizePublicAttribution(value);
 }

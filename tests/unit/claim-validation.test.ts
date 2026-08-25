@@ -23,7 +23,8 @@ describe('claim checkout validation', () => {
   });
 
   it('only creates outbound hrefs for validated HTTPS links', () => {
-    expect(publicAttributionHref('@founder')).toBeNull();
+    expect(publicAttributionHref('@founder')).toBe('https://x.com/founder');
+    expect(publicAttributionHref('@founder.name')).toBe('https://x.com/founder.name');
     expect(publicAttributionHref('javascript:alert(1)')).toBeNull();
     expect(publicAttributionHref('https://example.com/me')).toBe('https://example.com/me');
   });
