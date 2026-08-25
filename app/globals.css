@@ -1131,7 +1131,7 @@ a.public-attribution:hover {
 .claim-card {
   display: flex;
   flex-direction: column;
-  min-height: 500px;
+  min-height: 590px;
   border-right: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
   padding: 18px;
@@ -1168,6 +1168,44 @@ a.public-attribution:hover {
   color: var(--accent);
   font-size: clamp(132px, 14vw, 215px);
   letter-spacing: -0.08em;
+}
+
+.claim-card-owner {
+  min-width: 0;
+  border-top: 1px solid var(--line);
+  padding-block: 17px 20px;
+}
+
+.claim-card-owner-label {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.claim-card-owner-name {
+  display: block;
+  overflow: hidden;
+  font-family: Impact, 'Arial Narrow', sans-serif;
+  font-size: clamp(34px, 3.6vw, 56px);
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  line-height: 0.95;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.claim-card-owner .public-attribution {
+  max-width: 100%;
+  min-height: 0;
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 1.35;
 }
 
 .claim-card-copy {
@@ -2806,11 +2844,15 @@ body {
   }
 
   .claim-card {
-    min-height: 510px;
+    min-height: 620px;
   }
 
   .claim-card-date strong {
     font-size: clamp(180px, 55vw, 250px);
+  }
+
+  .claim-card-owner-name {
+    font-size: clamp(38px, 11vw, 52px);
   }
 
   .activity-list li {
