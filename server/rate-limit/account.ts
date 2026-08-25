@@ -1,5 +1,5 @@
 import { Ratelimit } from '@upstash/ratelimit';
-import { Redis } from '@upstash/redis/cloudflare';
+import { Redis } from '@upstash/redis';
 
 let accountLimiter: Ratelimit | null | undefined;
 

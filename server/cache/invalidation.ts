@@ -1,4 +1,4 @@
-import { Redis } from '@upstash/redis/cloudflare';
+import { Redis } from '@upstash/redis';
 
 export async function invalidatePublicClaimCache() {
   const url = process.env.UPSTASH_REDIS_REST_URL;

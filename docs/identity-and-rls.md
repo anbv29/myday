@@ -1,7 +1,7 @@
 # Identity and RLS setup
 
 MYDAY.LOL uses Clerk for authentication and Supabase PostgreSQL for application
-identity and authorization. The Cloudflare runtime uses Clerk's React SDK in
+identity and authorization. The Vercel runtime uses Clerk's React SDK in
 the browser and Backend SDK for server verification. Supabase Auth is not used
 as a second password system.
 

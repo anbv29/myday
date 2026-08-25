@@ -17,8 +17,8 @@ The product is a responsive, light-first editorial Next.js application with publ
 
 ```mermaid
 flowchart TD
-  U[Browser] --> C[Cloudflare edge / Sites]
-  C --> N[Next.js + Vinext worker]
+  U[Browser] --> C[Vercel edge network]
+  C --> N[Next.js application + functions]
   N --> K[Clerk identity]
   N --> R[Upstash rate limits + cache version]
   N --> S[(Supabase PostgreSQL\nauthoritative state + RLS)]
@@ -33,8 +33,8 @@ flowchart TD
 
 | Service | Responsibility | Failure behavior |
 | --- | --- | --- |
-| Cloudflare Sites | Worker hosting, CDN, TLS, edge controls | Health alerts; authoritative data remains in Supabase |
-| Next.js/Vinext | UI, validation, authorization orchestration, webhook endpoints | Clean errors; no ownership guess |
+| Vercel | Next.js hosting, CDN, TLS, functions, and edge controls | Health alerts; authoritative data remains in Supabase |
+| Next.js | UI, validation, authorization orchestration, webhook endpoints | Clean errors; no ownership guess |
 | Clerk | Sessions and verified identity | Private actions deny; public record remains readable |
 | Supabase PostgreSQL | Users, RLS, claims, history, payments, audit log, transactions | Claims and checkout fail closed |
 | Upstash | Distributed abuse limits and public cache generation | Production writes fail closed; public reads fall through to Supabase |
@@ -42,7 +42,7 @@ flowchart TD
 | Frankfurter/ECB | Latest daily USD/INR reference used for Indian checkout | INR checkout fails closed if a recent rate cannot be verified |
 | PostHog/Sentry/Pinecone | Optional analytics, errors, derived semantic index | Core flow continues; lexical PostgreSQL search remains available |
 
-The application is stateless. Scale worker instances behind Cloudflare; do not add microservices or multiple database regions until measurements justify them.
+The application is stateless. Let Vercel scale the Next.js functions and CDN; do not add microservices or multiple database regions until measurements justify them.
 
 ## Local setup
 
@@ -80,11 +80,11 @@ Server-only secrets: `CLERK_SECRET_KEY`, `CLERK_WEBHOOK_SIGNING_SECRET`, `SUPABA
 
 Clerk verifies the session; its token is forwarded to Supabase, whose RLS maps the verified `sub` to `app_users.clerk_user_id`. The browser never submits an authoritative user id. Tables force RLS, public views omit private fields, private mutations are RPCs with narrow grants, and the service-role key is confined to verified webhook/server paths. See `docs/identity-and-rls.md`.
 
-## Upstash and Cloudflare
+## Upstash and Vercel
 
 Create a REST-enabled Upstash Redis database and provide its URL/token. Rate-limit keys are scoped by operation and verified identity/origin context. Checkout and username mutations fail closed without Redis in production. Cache invalidation is best-effort after commit; cache never determines ownership.
 
-For Cloudflare, use the Sites deployment flow configured by `.openai/hosting.json`. Add all environment values through hosted secret settings, bind the custom domain, enforce HTTPS, enable managed WAF/DDoS controls, and verify `/health`, `/ready`, CSP/HSTS, logs, and webhooks after deployment. Never place production secrets in build arguments or public variables.
+For Vercel, import the GitHub repository as a Next.js project. Add all environment values through Vercel Project Settings, bind the custom domain, enforce HTTPS, enable firewall controls, and verify `/health`, `/ready`, CSP/HSTS, logs, and webhooks after deployment. Never place production secrets in build arguments or public variables.
 
 ## Payments
 
@@ -110,7 +110,7 @@ Anonymous public GET responses use short shared caching (`s-maxage=60`, stale-wh
 
 Critical dependencies fail closed: unverified auth denies; invalid payment signatures do nothing; database/permission uncertainty reveals no private data; checkout provider failure records a safe failure. Optional analytics/search failures do not affect claims. `/maintenance` explains a deliberate pause; `/health` is liveness and `/ready` is configuration readiness without infrastructure details.
 
-Graceful shutdown is delegated to the Cloudflare worker lifecycle: handlers hold no in-memory authoritative state, database clients are request-safe HTTP clients, and no local queue/connection requires SIGTERM cleanup. Background work must use a deployment-compatible durable mechanism with bounded retries, jitter, idempotency, and a dead-letter procedure before it is introduced.
+Graceful shutdown is delegated to the Vercel function lifecycle: handlers hold no in-memory authoritative state, database clients are request-safe HTTP clients, and no local queue/connection requires SIGTERM cleanup. Background work must use a deployment-compatible durable mechanism with bounded retries, jitter, idempotency, and a dead-letter procedure before it is introduced.
 
 ## Operations, load, backup, and recovery
 
@@ -127,7 +127,7 @@ Deployment order:
 1. Verify and back up the target Supabase project; apply migrations.
 2. Configure Clerk, Upstash, test-mode provider webhooks, and hosted secrets.
 3. Run the full verification suite and staging race/replay tests.
-4. Deploy privately, verify health/readiness/security headers and smoke tests, then explicitly approve public access.
+4. Deploy a protected Vercel preview, verify health/readiness/security headers and smoke tests, then promote the verified build to production.
 5. Switch payment providers to live keys only after webhook reconciliation and rollback exercises succeed.
 
 ## Security checklist

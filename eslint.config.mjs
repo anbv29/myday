@@ -6,8 +6,8 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   {
-    // Sites currently ships a Vinext client-router regression in next/link.
-    // Native anchors keep production navigation reliable via full document loads.
+    // MYDAY intentionally uses document-level navigation for internal links so
+    // authentication and payment state is always refreshed from the server.
     rules: { '@next/next/no-html-link-for-pages': 'off' },
   },
   globalIgnores(['.next/**', 'out/**', 'build/**', 'next-env.d.ts']),
