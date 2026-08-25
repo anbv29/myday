@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
+import { PublicAttribution } from '@/components/public/attribution';
 import type { PublicClaim } from '@/lib/public/types';
 
 type Filter = 'all' | 'future' | 'past';
@@ -34,20 +35,20 @@ export function Leaderboard({ claims }: { claims: PublicClaim[] }) {
 
       <div className="leaderboard-head" aria-hidden="true">
         <span>Rank</span><span>Date</span><span>Current claim</span>
-        <span>Why it matters</span><span>Bought by</span><span />
+        <span>Why it matters</span><span>Claimed by / link</span><span />
       </div>
 
       <ol className="leaderboard-list">
         {visibleClaims.map((claim) => (
           <li key={claim.isoDate}>
-            <Link className="leaderboard-row" href={`/day/${claim.isoDate}`}>
+            <div className="leaderboard-row">
               <span className="rank">{String(claim.rank).padStart(2, '0')}</span>
-              <span className="row-date"><strong>{claim.shortDate}</strong><small>{claim.period}</small></span>
+              <Link className="row-date" href={`/day/${claim.isoDate}`}><strong>{claim.shortDate}</strong><small>{claim.period}</small></Link>
               <strong className="row-amount">{claim.amount}</strong>
               <span className="row-story">{claim.story}</span>
-              <span className="row-user">{claim.username ?? 'Private claim'}</span>
-              <span className="row-arrow" aria-hidden="true">↗</span>
-            </Link>
+              <span className="row-user"><small>{claim.username ?? 'Private claim'}</small><PublicAttribution className="public-attribution" value={claim.attribution} /></span>
+              <Link className="row-arrow" href={`/day/${claim.isoDate}`} aria-label={`View ${claim.fullDate}`}>↗</Link>
+            </div>
           </li>
         ))}
       </ol>

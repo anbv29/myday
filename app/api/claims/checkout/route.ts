@@ -44,6 +44,7 @@ export async function POST(request: Request) {
     target_date: parsed.data.date,
     claim_title: parsed.data.title,
     claim_story: parsed.data.story,
+    claim_attribution: parsed.data.attribution,
     claim_visibility: parsed.data.visibility,
     proposed_amount_minor: parsed.data.amountMinor,
     billing_country_code: parsed.data.billingCountry,

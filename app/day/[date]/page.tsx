@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { PublicAttribution } from '@/components/public/attribution';
 import { DataSourceRibbon } from '@/components/public/data-state';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
@@ -54,7 +55,7 @@ export default async function DatePage({ params }: DatePageProps) {
             <div className="claim-owner-line">
               <span>Current claim</span>
               <strong>{claim.amount}</strong>
-              <span>{claim.username ? `by ${claim.username}` : 'Claimant private'}</span>
+              <span className="date-attribution">{claim.username ? `by ${claim.username}` : 'Claimant private'}<PublicAttribution className="public-attribution" value={claim.attribution} /></span>
             </div>
           </div>
         </section>

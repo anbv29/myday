@@ -56,6 +56,7 @@ function mapClaim(row: Row): PublicClaim {
     currency,
     title: isPrivate ? 'A private date' : stringValue(row.title, 'A day worth remembering'),
     story: isPrivate ? 'This claim is private.' : stringValue(row.story),
+    attribution: isPrivate ? null : stringValue(row.attribution) || null,
     username: isPrivate ? null : usernameLabel(row.username),
     displayName: isPrivate ? null : stringValue(row.display_name) || null,
     ...getDateContext(isoDate),

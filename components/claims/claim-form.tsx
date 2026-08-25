@@ -62,6 +62,7 @@ export function ClaimForm({
       date: quote.date,
       title: String(formData.get('title') ?? ''),
       story: String(formData.get('story') ?? ''),
+      attribution: String(formData.get('attribution') ?? ''),
       visibility: String(formData.get('visibility') ?? ''),
       amountMinor: Math.round(amountMajor * 100),
       billingCountry,
@@ -119,6 +120,7 @@ export function ClaimForm({
         <legend><span>01</span> Tell the story</legend>
         <label>Short title<input name="title" required minLength={3} maxLength={100} placeholder="Launching the company" /></label>
         <label>Why this day matters<textarea name="story" required minLength={3} maxLength={1000} rows={6} placeholder="I’ve been quietly building it for three years. This is the day it goes public." /></label>
+        <label>Your public @ or link<input name="attribution" required minLength={3} maxLength={200} placeholder="@foundername or https://your-site.com" autoCapitalize="none" autoCorrect="off" spellCheck={false} /><small className="field-help">Shown with your claim on the leaderboard. Links must use HTTPS; private claims keep it hidden.</small></label>
       </fieldset>
 
       <fieldset>

@@ -20,7 +20,7 @@ export function AuthControls() {
         <Link className="header-join" href="/sign-up">Join MYDAY</Link>
       </Show>
       <Show when="signed-in">
-        <Link className="header-login" href="/onboarding/username">My account</Link>
+        <Link className="header-login" href="/account">My account</Link>
         <UserButton />
       </Show>
     </div>

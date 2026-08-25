@@ -65,7 +65,7 @@ export function SiteHeader() {
           <Link href="/trending" onClick={() => setMenuOpen(false)}>Trending</Link>
           <Link href="/activity" onClick={() => setMenuOpen(false)}>Activity</Link>
           <Link href="/search" onClick={() => setMenuOpen(false)}>Search</Link>
-          <Link href="/onboarding/username" onClick={() => setMenuOpen(false)}>Account</Link>
+          <Link href="/account" onClick={() => setMenuOpen(false)}>Account</Link>
         </nav>
       ) : null}
     </header>

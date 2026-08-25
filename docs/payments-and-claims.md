@@ -11,6 +11,8 @@ Section 4 implements a server-authoritative claim state machine. Browser redirec
 
 The singleton `payment_configuration` row controls the base amount, percentage increment, minimum increment, maximum amount, INR conversion snapshot, and quote lifetime. Operational changes should be audited and performed with migration/admin credentials.
 
+Every checkout also requires a public attribution: either an `@handle` or a complete HTTPS URL. It is stored in the signed-payment claim intent, copied into the claim only during authoritative finalization, and displayed on public leaderboard/date surfaces. Outbound URLs are normalized server-side and rendered with `noopener`, `noreferrer`, `nofollow`, and `ugc`; private claims suppress the attribution with the rest of the claimant identity.
+
 ## State machine
 
 ```text

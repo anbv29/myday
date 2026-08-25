@@ -50,7 +50,7 @@ export default async function Home() {
             <div className="top-claim-story">
               <strong>{topClaim.amount}</strong>
               <p>“{topClaim.story}”</p>
-              <span>by {topClaim.username}</span>
+              <span>by {topClaim.attribution ?? topClaim.username}</span>
             </div>
           </Link> : (
             <DataEmptyState

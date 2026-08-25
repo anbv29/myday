@@ -26,6 +26,7 @@ export type PublicClaim = {
   currency: string;
   title: string;
   story: string;
+  attribution: string | null;
   username: string | null;
   displayName: string | null;
   period: ClaimPeriod;

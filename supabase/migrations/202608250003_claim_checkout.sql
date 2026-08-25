@@ -29,6 +29,7 @@ create table public.claim_checkout_intents (
   expected_date_version bigint not null,
   title text not null,
   story text not null,
+  attribution text not null,
   visibility text not null,
   canonical_amount_minor bigint not null,
   display_amount_minor bigint not null,
@@ -46,6 +47,10 @@ create table public.claim_checkout_intents (
   updated_at timestamptz not null default now(),
   constraint claim_checkout_title_length check (char_length(title) between 3 and 100),
   constraint claim_checkout_story_length check (char_length(story) between 3 and 1000),
+  constraint claim_checkout_attribution check (
+    char_length(attribution) between 3 and 200
+    and (attribution ~ '^@[A-Za-z0-9._]{2,40}$' or attribution ~ '^https://')
+  ),
   constraint claim_checkout_visibility check (visibility in ('public', 'unlisted', 'private')),
   constraint claim_checkout_amounts_positive check (canonical_amount_minor > 0 and display_amount_minor > 0),
   constraint claim_checkout_currency_shape check (display_currency ~ '^[A-Z]{3}$'),
@@ -197,6 +202,7 @@ create or replace function public.create_claim_checkout_intent(
   target_date date,
   claim_title text,
   claim_story text,
+  claim_attribution text,
   claim_visibility text,
   proposed_amount_minor bigint,
   billing_country_code text,
@@ -241,12 +247,17 @@ begin
     raise exception using errcode = '42501', message = 'onboarding_required';
   end if;
 
-  if target_date is null or claim_title is null or claim_story is null
+  if target_date is null or claim_title is null or claim_story is null or claim_attribution is null
     or claim_visibility is null or proposed_amount_minor is null
     or billing_country_code is null or request_idempotency_key is null
     or target_date not between date '1900-01-01' and date '2100-12-31'
     or char_length(btrim(claim_title)) not between 3 and 100
     or char_length(btrim(claim_story)) not between 3 and 1000
+    or char_length(btrim(claim_attribution)) not between 3 and 200
+    or not (
+      btrim(claim_attribution) ~ '^@[A-Za-z0-9._]{2,40}$'
+      or btrim(claim_attribution) ~ '^https://'
+    )
     or claim_visibility not in ('public', 'unlisted', 'private')
     or normalized_country !~ '^[A-Z]{2}$'
     or request_idempotency_key !~ '^[A-Za-z0-9_-]{16,100}$'
@@ -268,6 +279,7 @@ begin
     if (select day.date_value from public.calendar_dates day where day.id = existing.date_id) <> target_date
       or existing.title <> btrim(claim_title)
       or existing.story <> btrim(claim_story)
+      or existing.attribution <> btrim(claim_attribution)
       or existing.visibility <> claim_visibility
       or existing.canonical_amount_minor <> proposed_amount_minor
       or existing.billing_country <> normalized_country
@@ -320,12 +332,12 @@ begin
 
   insert into public.claim_checkout_intents (
     user_id, date_id, expected_current_claim_id, expected_date_version,
-    title, story, visibility, canonical_amount_minor, display_amount_minor,
+    title, story, attribution, visibility, canonical_amount_minor, display_amount_minor,
     display_currency, fx_rate_snapshot, billing_country, provider,
     idempotency_key, expires_at
   ) values (
     app_user_id, day_record.id, day_record.current_claim_id, day_record.version,
-    btrim(claim_title), btrim(claim_story), claim_visibility, proposed_amount_minor,
+    btrim(claim_title), btrim(claim_story), btrim(claim_attribution), claim_visibility, proposed_amount_minor,
     selected_display_amount, selected_currency, selected_fx, normalized_country,
     selected_provider, request_idempotency_key,
     now() + make_interval(secs => config.quote_ttl_seconds)
@@ -567,11 +579,11 @@ begin
   end if;
 
   insert into public.claims (
-    date_id, claimant_user_id, title, story, visibility, status,
+    date_id, claimant_user_id, title, story, attribution, visibility, status,
     canonical_amount_minor, display_amount_minor, display_currency,
     fx_rate_snapshot, claimed_at
   ) values (
-    intent.date_id, intent.user_id, intent.title, intent.story, intent.visibility, 'current',
+    intent.date_id, intent.user_id, intent.title, intent.story, intent.attribution, intent.visibility, 'current',
     intent.canonical_amount_minor, intent.display_amount_minor, intent.display_currency,
     intent.fx_rate_snapshot, now()
   ) returning id into new_claim_id;
@@ -632,7 +644,7 @@ $$;
 
 revoke all on function public.minimum_claim_amount(bigint) from public;
 revoke all on function public.get_claim_quote(date) from public;
-revoke all on function public.create_claim_checkout_intent(date, text, text, text, bigint, text, text) from public;
+revoke all on function public.create_claim_checkout_intent(date, text, text, text, text, bigint, text, text) from public;
 revoke all on function public.attach_claim_checkout(uuid, text) from public;
 revoke all on function public.fail_claim_checkout(uuid, text) from public;
 revoke all on function public.get_my_claim_intent(uuid) from public;
@@ -640,7 +652,7 @@ revoke all on function public.finalize_verified_claim(text, text, text, text, bi
 revoke all on function public.mark_claim_payment_refunded(uuid, text) from public;
 
 grant execute on function public.get_claim_quote(date) to anon, authenticated;
-grant execute on function public.create_claim_checkout_intent(date, text, text, text, bigint, text, text) to authenticated;
+grant execute on function public.create_claim_checkout_intent(date, text, text, text, text, bigint, text, text) to authenticated;
 grant execute on function public.attach_claim_checkout(uuid, text) to authenticated;
 grant execute on function public.fail_claim_checkout(uuid, text) to authenticated;
 grant execute on function public.get_my_claim_intent(uuid) to authenticated;

@@ -13,7 +13,7 @@ export function ClaimGrid({ claims }: { claims: PublicClaim[] }) {
           <div className="claim-card-copy">
             <strong>{claim.amount}</strong>
             <p>{claim.title}</p>
-            <span>{claim.username ?? 'Private claim'}</span>
+            <span>{claim.attribution ?? claim.username ?? 'Private claim'}</span>
           </div>
         </Link>
       ))}

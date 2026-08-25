@@ -16,6 +16,7 @@ create table public.claims (
   claimant_user_id uuid not null references public.app_users(id) on delete restrict,
   title text not null,
   story text not null,
+  attribution text not null,
   visibility text not null default 'public',
   status text not null default 'pending',
   canonical_amount_minor bigint not null,
@@ -28,6 +29,10 @@ create table public.claims (
   updated_at timestamptz not null default now(),
   constraint claims_title_length check (char_length(title) between 3 and 100),
   constraint claims_story_length check (char_length(story) between 3 and 1000),
+  constraint claims_attribution check (
+    char_length(attribution) between 3 and 200
+    and (attribution ~ '^@[A-Za-z0-9._]{2,40}$' or attribution ~ '^https://')
+  ),
   constraint claims_visibility check (visibility in ('public', 'unlisted', 'private')),
   constraint claims_status check (status in ('pending', 'current', 'superseded', 'voided', 'refunded')),
   constraint claims_amount_positive check (canonical_amount_minor > 0 and display_amount_minor > 0),
@@ -58,7 +63,7 @@ create index claims_claimant_public_idx
 
 alter table public.claims
   add column search_document tsvector generated always as (
-    to_tsvector('simple', coalesce(title, '') || ' ' || coalesce(story, ''))
+    to_tsvector('simple', coalesce(title, '') || ' ' || coalesce(story, '') || ' ' || coalesce(attribution, ''))
   ) stored;
 create index claims_search_document_idx on public.claims using gin (search_document);
 
@@ -150,6 +155,7 @@ select
   profile.display_name,
   claim.title,
   claim.story,
+  claim.attribution,
   claim.canonical_amount_minor,
   claim.display_amount_minor,
   claim.display_currency,
@@ -245,6 +251,7 @@ returns table (
   display_name text,
   title text,
   story text,
+  attribution text,
   canonical_amount_minor bigint,
   display_amount_minor bigint,
   display_currency text,
@@ -268,6 +275,8 @@ as $$
       then claim.title else null end,
     case when claim.visibility <> 'private' and public.is_active_app_user(claim.claimant_user_id)
       then claim.story else null end,
+    case when claim.visibility <> 'private' and public.is_active_app_user(claim.claimant_user_id)
+      then claim.attribution else null end,
     claim.canonical_amount_minor,
     claim.display_amount_minor,
     claim.display_currency,
