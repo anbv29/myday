@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { CopyLinkButton } from '@/components/copy-link-button';
 import { PublicAttribution } from '@/components/public/attribution';
@@ -52,7 +51,7 @@ export default async function DatePage({ params }: DatePageProps) {
       <SiteHeader />
       <main id="date-content" className="date-page shell">
         <div className="date-topline">
-          <Link href="/#leaderboard">← Back to the board</Link>
+          <a href="/#leaderboard">← Back to the board</a>
           <span>{claim.rank ? `Current rank #${claim.rank}` : 'Current claim'}</span>
         </div>
 
@@ -83,7 +82,7 @@ export default async function DatePage({ params }: DatePageProps) {
           <div><p className="eyebrow">Think this date means more to you?</p><strong>The latest valid price is always calculated by the server.</strong></div>
           <div className="date-action-buttons">
             <CopyLinkButton />
-            <Link className="button button-primary" href={`/claim?date=${claim.isoDate}`}>{claim.isPrivate ? 'Claim this date' : 'Outbid this date'} <span aria-hidden="true">↗</span></Link>
+            <a className="button button-primary" href={`/claim?date=${claim.isoDate}`}>{claim.isPrivate ? 'Claim this date' : 'Outbid this date'} <span aria-hidden="true">↗</span></a>
           </div>
         </div>
 

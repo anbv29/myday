@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { InfoPage } from '@/components/info/info-page';
 
 export const metadata: Metadata = { title: 'FAQ', description: 'How date claims, payments, privacy, and outbids work on MYDAY.LOL.' };
@@ -17,5 +16,5 @@ const questions = [
 ];
 
 export default function FaqPage() {
-  return <InfoPage eyebrow="Frequently asked questions" title={<>THE SHORT<br />VERSION.</>} intro="Clear answers about the public record, verified payments, and what a date claim represents."><section className="faq-list">{questions.map(([question, answer], index) => <details key={question}><summary><span>{String(index + 1).padStart(2, '0')}</span>{question}</summary><p>{answer}</p></details>)}</section><p className="info-cta">Still unsure? <Link href="/contact">Contact support ↗</Link></p></InfoPage>;
+  return <InfoPage eyebrow="Frequently asked questions" title={<>THE SHORT<br />VERSION.</>} intro="Clear answers about the public record, verified payments, and what a date claim represents."><section className="faq-list">{questions.map(([question, answer], index) => <details key={question}><summary><span>{String(index + 1).padStart(2, '0')}</span>{question}</summary><p>{answer}</p></details>)}</section><p className="info-cta">Still unsure? <a href="/contact">Contact support ↗</a></p></InfoPage>;
 }

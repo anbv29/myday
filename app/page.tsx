@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { Leaderboard } from '@/components/leaderboard';
 import { PublicAttribution } from '@/components/public/attribution';
 import { DataEmptyState, DataSourceRibbon } from '@/components/public/data-state';
@@ -24,9 +23,9 @@ export default async function Home() {
               EVERY DATE<br />HAS A STORY.<br /><em>SOME HAVE A PRICE.</em>
             </h1>
             <div className="hero-actions">
-              <Link className="button button-primary" href="/claim">
+              <a className="button button-primary" href="/claim">
                 Claim a date <span aria-hidden="true">↗</span>
-              </Link>
+              </a>
               <a className="button button-primary" href="#leaderboard">
                 See the leaderboard <span aria-hidden="true">↘</span>
               </a>
@@ -39,13 +38,13 @@ export default async function Home() {
           >
             <div className="top-claim-heading">
               <span>Currently #1</span>
-              <Link href={`/day/${topClaim.isoDate}`} aria-label={`View ${topClaim.fullDate}, claimed for ${topClaim.amount}`}>↗</Link>
+              <a href={`/day/${topClaim.isoDate}`} aria-label={`View ${topClaim.fullDate}, claimed for ${topClaim.amount}`}>↗</a>
             </div>
-            <Link className="monument-date" href={`/day/${topClaim.isoDate}`} aria-label={`View ${topClaim.fullDate}`}>
+            <a className="monument-date" href={`/day/${topClaim.isoDate}`} aria-label={`View ${topClaim.fullDate}`}>
               <span>{topClaim.month}</span>
               <strong>{topClaim.day}</strong>
               <span>{topClaim.year}</span>
-            </Link>
+            </a>
             <div className="top-claim-story">
               <strong>{topClaim.amount}</strong>
               <p>“{topClaim.story}”</p>

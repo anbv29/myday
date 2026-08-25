@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { PublicAttribution } from '@/components/public/attribution';
 import { excerptWords } from '@/lib/public/format';
@@ -45,11 +44,11 @@ export function Leaderboard({ claims }: { claims: PublicClaim[] }) {
           <li key={claim.isoDate}>
             <div className="leaderboard-row">
               <span className="rank">{String(claim.rank).padStart(2, '0')}</span>
-              <Link className="row-date" href={`/day/${claim.isoDate}`}><strong>{claim.shortDate}</strong><small>{claim.period}</small></Link>
+              <a className="row-date" href={`/day/${claim.isoDate}`}><strong>{claim.shortDate}</strong><small>{claim.period}</small></a>
               <strong className="row-amount">{claim.amount}</strong>
               <span className="row-story">{claim.story}</span>
               <span className="row-user"><small>{claim.username ?? 'Private claim'}</small><PublicAttribution className="public-attribution" value={claim.attribution} />{claim.collectorBio ? <span className="row-user-bio">{excerptWords(claim.collectorBio, collectorBioWordLimit)}</span> : null}</span>
-              <Link className="row-arrow" href={`/day/${claim.isoDate}`} aria-label={`View ${claim.fullDate}`}>↗</Link>
+              <a className="row-arrow" href={`/day/${claim.isoDate}`} aria-label={`View ${claim.fullDate}`}>↗</a>
             </div>
           </li>
         ))}

@@ -1,7 +1,6 @@
 'use client';
 
 import { Show, UserButton } from '@clerk/react';
-import Link from 'next/link';
 
 export function AuthControls() {
   const configured = Boolean(
@@ -10,17 +9,17 @@ export function AuthControls() {
   );
 
   if (!configured) {
-    return <Link className="header-login" href="/sign-in">Log in</Link>;
+    return <a className="header-login" href="/sign-in">Log in</a>;
   }
 
   return (
     <div className="auth-controls">
       <Show when="signed-out">
-        <Link className="header-login" href="/sign-in">Log in</Link>
-        <Link className="header-join" href="/sign-up">Join MYDAY</Link>
+        <a className="header-login" href="/sign-in">Log in</a>
+        <a className="header-join" href="/sign-up">Join MYDAY</a>
       </Show>
       <Show when="signed-in">
-        <Link className="header-login" href="/account">My account</Link>
+        <a className="header-login" href="/account">My account</a>
         <UserButton />
       </Show>
     </div>

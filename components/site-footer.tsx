@@ -1,19 +1,17 @@
-import Link from 'next/link';
-
 export function SiteFooter() {
   return (
     <footer className="site-footer shell">
       <div>
-        <Link href="/" className="wordmark">MYDAY.LOL</Link>
+        <a href="/" className="wordmark">MYDAY.LOL</a>
         <p>Every date means something to someone.</p>
       </div>
       <nav aria-label="Footer navigation">
-        <Link href="/faq">FAQ</Link>
-        <Link href="/contact">Support</Link>
-        <Link href="/privacy">Privacy</Link>
-        <Link href="/terms">Terms</Link>
-        <Link href="/refunds">Refunds</Link>
-        <Link href="/shipping">Delivery</Link>
+        <a href="/faq">FAQ</a>
+        <a href="/contact">Support</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="/refunds">Refunds</a>
+        <a href="/shipping">Delivery</a>
       </nav>
       <p>© {new Date().getUTCFullYear()} MYDAY.LOL</p>
     </footer>

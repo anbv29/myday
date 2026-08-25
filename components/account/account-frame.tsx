@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
@@ -20,9 +19,9 @@ export function AccountFrame({ section, username, children }: { section: Section
         <aside className="account-sidebar">
           <div><p className="eyebrow">Signed-in account</p><strong>@{username.replace(/^@/, '')}</strong></div>
           <nav aria-label="Account navigation">
-            {links.map((link) => <Link className={link.key === section ? 'active' : ''} aria-current={link.key === section ? 'page' : undefined} href={link.href} key={link.key}>{link.label}<span aria-hidden="true">↗</span></Link>)}
+            {links.map((link) => <a className={link.key === section ? 'active' : ''} aria-current={link.key === section ? 'page' : undefined} href={link.href} key={link.key}>{link.label}<span aria-hidden="true">↗</span></a>)}
           </nav>
-          <Link className="button" href={`/@${username.replace(/^@/, '')}`}>View public profile</Link>
+          <a className="button" href={`/@${username.replace(/^@/, '')}`}>View public profile</a>
         </aside>
         <main id="account-content" className="account-content">{children}</main>
       </div>

@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { AccountFrame } from '@/components/account/account-frame';
 import { AccountUnavailable } from '@/components/account/account-unavailable';
 import { PublicAttribution } from '@/components/public/attribution';
@@ -11,7 +10,7 @@ export const metadata: Metadata = { title: 'My dates', robots: { index: false, f
 
 function ClaimCollection({ claims, empty }: { claims: AccountClaim[]; empty: string }) {
   if (!claims.length) return <p className="account-empty">{empty}</p>;
-  return <ul className="owned-date-grid">{claims.map((claim) => <li key={claim.claimId}><div className="owned-date-card"><time dateTime={claim.date}>{claim.shortDate}</time><h3><Link href={`/day/${claim.date}`}>{claim.title}</Link></h3><p>{claim.story}</p><dl><div><dt>Paid</dt><dd>{claim.amount}</dd></div><div><dt>Credit</dt><dd><PublicAttribution className="public-attribution" value={claim.attribution} /></dd></div><div><dt>Visibility</dt><dd>{claim.visibility}</dd></div></dl><Link className="owned-date-link" href={`/day/${claim.date}`}>{claim.isCurrent ? 'View owned date' : `${claim.status} claim`} ↗</Link></div></li>)}</ul>;
+  return <ul className="owned-date-grid">{claims.map((claim) => <li key={claim.claimId}><div className="owned-date-card"><time dateTime={claim.date}>{claim.shortDate}</time><h3><a href={`/day/${claim.date}`}>{claim.title}</a></h3><p>{claim.story}</p><dl><div><dt>Paid</dt><dd>{claim.amount}</dd></div><div><dt>Credit</dt><dd><PublicAttribution className="public-attribution" value={claim.attribution} /></dd></div><div><dt>Visibility</dt><dd>{claim.visibility}</dd></div></dl><a className="owned-date-link" href={`/day/${claim.date}`}>{claim.isCurrent ? 'View owned date' : `${claim.status} claim`} ↗</a></div></li>)}</ul>;
 }
 
 export default async function MyDatesPage() {
@@ -30,7 +29,7 @@ export default async function MyDatesPage() {
       </>}
       <section className="account-panel" id="checkout-activity">
         <div className="account-panel-heading"><div><p className="eyebrow">Provider-verified states</p><h2>CHECKOUT ACTIVITY</h2></div><span>{checkouts.data.length} shown</span></div>
-        {checkouts.error ? <p className="account-empty" role="alert">Checkout activity could not be loaded right now.</p> : checkouts.data.length ? <ul className="checkout-activity-list">{checkouts.data.map((checkout) => { const href = accountCheckoutHref(checkout); return <li key={checkout.intentId}><div><strong>{checkout.fullDate}</strong><small>{checkout.title}</small></div><span>{checkout.amount}</span><span className={`account-status status-${checkout.status}`}>{checkout.status.replaceAll('_', ' ')}</span>{href ? <Link href={href}>{checkout.status === 'completed' ? 'View' : 'Open'} ↗</Link> : <span aria-hidden="true">—</span>}</li>; })}</ul> : <p className="account-empty">No checkout activity yet.</p>}
+        {checkouts.error ? <p className="account-empty" role="alert">Checkout activity could not be loaded right now.</p> : checkouts.data.length ? <ul className="checkout-activity-list">{checkouts.data.map((checkout) => { const href = accountCheckoutHref(checkout); return <li key={checkout.intentId}><div><strong>{checkout.fullDate}</strong><small>{checkout.title}</small></div><span>{checkout.amount}</span><span className={`account-status status-${checkout.status}`}>{checkout.status.replaceAll('_', ' ')}</span>{href ? <a href={href}>{checkout.status === 'completed' ? 'View' : 'Open'} ↗</a> : <span aria-hidden="true">—</span>}</li>; })}</ul> : <p className="account-empty">No checkout activity yet.</p>}
       </section>
     </AccountFrame>
   );

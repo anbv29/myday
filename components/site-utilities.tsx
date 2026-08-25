@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
 const consentKey = 'myday-cookie-notice';
@@ -36,8 +35,8 @@ export function SiteUtilities() {
 
   return <>
     <div className="scroll-progress" aria-hidden="true"><div ref={progress} /></div>
-    <Link className="floating-support" href="/contact" aria-label="Contact MYDAY support">Support</Link>
+    <a className="floating-support" href="/contact" aria-label="Contact MYDAY support">Support</a>
     <button className={`back-to-top${showBackToTop ? ' visible' : ''}`} type="button" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} aria-label="Back to top">↑</button>
-    {showCookieNotice ? <aside className="cookie-notice" aria-label="Cookie notice"><p>MYDAY uses essential browser storage for your theme and this notice. <Link href="/privacy">Privacy details ↗</Link></p><button className="button button-primary" type="button" onClick={acknowledgeCookies}>Got it</button></aside> : null}
+    {showCookieNotice ? <aside className="cookie-notice" aria-label="Cookie notice"><p>MYDAY uses essential browser storage for your theme and this notice. <a href="/privacy">Privacy details ↗</a></p><button className="button button-primary" type="button" onClick={acknowledgeCookies}>Got it</button></aside> : null}
   </>;
 }

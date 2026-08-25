@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { AuthControls } from '@/components/auth/auth-controls';
@@ -57,22 +56,22 @@ export function SiteHeader() {
   return (
     <header className="site-header">
       <div className="shell header-inner">
-        <Link className="wordmark" href="/" aria-label="MYDAY.LOL home">
+        <a className="wordmark" href="/" aria-label="MYDAY.LOL home">
           MYDAY<span>.</span>LOL
-        </Link>
+        </a>
 
         <nav className="desktop-nav" aria-label="Primary navigation">
-          <Link
+          <a
             {...currentPageProps('/claim')}
             className={`nav-claim${isCurrentPath(pathname, '/claim') ? ' is-active' : ''}`}
             href="/claim"
           >
             Claim a date
-          </Link>
-          <Link {...currentPageProps('/explore')} href="/explore">Explore</Link>
-          <Link {...currentPageProps('/leaderboard')} href="/leaderboard">Leaderboard</Link>
-          <Link {...currentPageProps('/trending')} href="/trending">Trending</Link>
-          <Link {...currentPageProps('/search')} href="/search">Search</Link>
+          </a>
+          <a {...currentPageProps('/explore')} href="/explore">Explore</a>
+          <a {...currentPageProps('/leaderboard')} href="/leaderboard">Leaderboard</a>
+          <a {...currentPageProps('/trending')} href="/trending">Trending</a>
+          <a {...currentPageProps('/search')} href="/search">Search</a>
         </nav>
 
         <div className="header-actions">
@@ -102,13 +101,13 @@ export function SiteHeader() {
 
       {menuOpen ? (
         <nav className="mobile-nav" id="mobile-menu" aria-label="Mobile navigation">
-          <Link {...currentPageProps('/claim')} ref={firstMobileLink} href="/claim" onClick={() => setMenuOpen(false)}>Claim a date</Link>
-          <Link {...currentPageProps('/explore')} href="/explore" onClick={() => setMenuOpen(false)}>Explore</Link>
-          <Link {...currentPageProps('/leaderboard')} href="/leaderboard" onClick={() => setMenuOpen(false)}>Leaderboard</Link>
-          <Link {...currentPageProps('/trending')} href="/trending" onClick={() => setMenuOpen(false)}>Trending</Link>
-          <Link {...currentPageProps('/activity')} href="/activity" onClick={() => setMenuOpen(false)}>Activity</Link>
-          <Link {...currentPageProps('/search')} href="/search" onClick={() => setMenuOpen(false)}>Search</Link>
-          <Link {...currentPageProps('/account')} href="/account" onClick={() => setMenuOpen(false)}>Account</Link>
+          <a {...currentPageProps('/claim')} ref={firstMobileLink} href="/claim" onClick={() => setMenuOpen(false)}>Claim a date</a>
+          <a {...currentPageProps('/explore')} href="/explore" onClick={() => setMenuOpen(false)}>Explore</a>
+          <a {...currentPageProps('/leaderboard')} href="/leaderboard" onClick={() => setMenuOpen(false)}>Leaderboard</a>
+          <a {...currentPageProps('/trending')} href="/trending" onClick={() => setMenuOpen(false)}>Trending</a>
+          <a {...currentPageProps('/activity')} href="/activity" onClick={() => setMenuOpen(false)}>Activity</a>
+          <a {...currentPageProps('/search')} href="/search" onClick={() => setMenuOpen(false)}>Search</a>
+          <a {...currentPageProps('/account')} href="/account" onClick={() => setMenuOpen(false)}>Account</a>
         </nav>
       ) : null}
     </header>

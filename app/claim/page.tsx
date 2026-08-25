@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { ClaimForm } from '@/components/claims/claim-form';
 import { DataEmptyState } from '@/components/public/data-state';
 import { PublicPage } from '@/components/public/public-page';
@@ -57,7 +56,7 @@ export default async function ClaimPage({ searchParams }: Props) {
         <DataEmptyState unavailable title="Pricing is unavailable." message="We cannot verify the authoritative date state right now, so checkout is safely disabled." />
       )}
 
-      <p className="claim-legal-note">By continuing, you agree that a claim is a non-refundable platform fee except where a verified payment cannot complete the requested claim. It creates no investment, resale, withdrawal, or payout right. <Link href="/">Return home</Link>.</p>
+      <p className="claim-legal-note">By continuing, you agree that a claim is a non-refundable platform fee except where a verified payment cannot complete the requested claim. It creates no investment, resale, withdrawal, or payout right. <a href="/">Return home</a>.</p>
     </PublicPage>
   );
 }

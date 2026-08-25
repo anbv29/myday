@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useRef, useState } from 'react';
 import type { ClaimQuote } from '@/server/claims/quotes';
 
@@ -153,7 +152,7 @@ export function ClaimForm({
         </div>
         {billingCountry === 'IN' ? <p className="checkout-fineprint">The INR amount uses the latest daily ECB USD/INR reference available at checkout{quote.fxRateDate ? ` (reference date ${quote.fxRateDate})` : ''}. Razorpay receives the final server-calculated amount.</p> : null}
         <label className="claim-consent"><input type="checkbox" required /><span>I understand this is a platform fee for a featured claim—not an investment, resale right, wallet balance, or promise of financial return.</span></label>
-        {error ? <div className="form-error" role="alert"><p>{error}</p>{action ? <Link href={action}>Continue ↗</Link> : null}</div> : null}
+        {error ? <div className="form-error" role="alert"><p>{error}</p>{action ? <a href={action}>Continue ↗</a> : null}</div> : null}
         {!razorpayConfigured ? <p className="provider-notice" role="status">Razorpay credentials are not connected in this environment, so real checkout is disabled.</p> : null}
         <button className="button button-primary checkout-button" type="submit" disabled={submitting || !razorpayConfigured}>
           <span>{submitting ? 'Opening secure checkout…' : 'Continue to secure checkout'}</span><span aria-hidden="true">↗</span>

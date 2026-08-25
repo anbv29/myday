@@ -1,4 +1,3 @@
-import Link from 'next/link';
 
 export function AuthConfigurationNotice() {
   return (
@@ -9,7 +8,7 @@ export function AuthConfigurationNotice() {
         Authentication is implemented but intentionally unavailable until valid
         Clerk and Supabase environment values are configured. No mock session is used.
       </p>
-      <Link className="button button-primary" href="/">Return to the public board</Link>
+      <a className="button button-primary" href="/">Return to the public board</a>
     </div>
   );
 }
