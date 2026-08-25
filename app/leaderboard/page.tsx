@@ -24,7 +24,7 @@ export default async function LeaderboardPage({ searchParams }: Props) {
     <PublicPage source={result.source}>
       <header className="discovery-hero">
         <p className="eyebrow">The public record</p>
-        <h1>THE<br />LEADERBOARD.</h1>
+        <h1>THE<br />LEADER<wbr />BOARD.</h1>
         <p>Current public claims, ranked by canonical claim value.</p>
       </header>
       <nav className="query-filters" aria-label="Leaderboard filters">
