@@ -153,6 +153,7 @@ select
   profile.username,
   profile.normalized_username,
   profile.display_name,
+  profile.bio as claimant_bio,
   claim.title,
   claim.story,
   claim.attribution,

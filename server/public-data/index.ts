@@ -59,6 +59,7 @@ function mapClaim(row: Row): PublicClaim {
     attribution: isPrivate ? null : stringValue(row.attribution) || null,
     username: isPrivate ? null : usernameLabel(row.username),
     displayName: isPrivate ? null : stringValue(row.display_name) || null,
+    collectorBio: isPrivate ? null : stringValue(row.claimant_bio) || null,
     ...getDateContext(isoDate),
     claimedAt: stringValue(row.claimed_at),
     trendScore: numberValue(row.trend_score),

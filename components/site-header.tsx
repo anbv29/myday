@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AuthControls } from '@/components/auth/auth-controls';
 
 type Theme = 'light' | 'dark';
@@ -9,6 +9,27 @@ type Theme = 'light' | 'dark';
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [theme, setTheme] = useState<Theme | null>(null);
+  const menuButton = useRef<HTMLButtonElement>(null);
+  const firstMobileLink = useRef<HTMLAnchorElement>(null);
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      setTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
+    });
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    firstMobileLink.current?.focus();
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      setMenuOpen(false);
+      requestAnimationFrame(() => menuButton.current?.focus());
+    };
+    document.addEventListener('keydown', closeOnEscape);
+    return () => document.removeEventListener('keydown', closeOnEscape);
+  }, [menuOpen]);
 
   function toggleTheme() {
     const current = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
@@ -45,6 +66,7 @@ export function SiteHeader() {
             <span>{theme === 'dark' ? 'Light' : theme === 'light' ? 'Dark' : 'Theme'}</span>
           </button>
           <button
+            ref={menuButton}
             className="menu-toggle"
             type="button"
             aria-expanded={menuOpen}
@@ -59,7 +81,7 @@ export function SiteHeader() {
 
       {menuOpen ? (
         <nav className="mobile-nav" id="mobile-menu" aria-label="Mobile navigation">
-          <Link href="/claim" onClick={() => setMenuOpen(false)}>Claim a date</Link>
+          <Link ref={firstMobileLink} href="/claim" onClick={() => setMenuOpen(false)}>Claim a date</Link>
           <Link href="/explore" onClick={() => setMenuOpen(false)}>Explore</Link>
           <Link href="/leaderboard" onClick={() => setMenuOpen(false)}>Leaderboard</Link>
           <Link href="/trending" onClick={() => setMenuOpen(false)}>Trending</Link>

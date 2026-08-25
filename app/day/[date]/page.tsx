@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { CopyLinkButton } from '@/components/copy-link-button';
 import { PublicAttribution } from '@/components/public/attribution';
 import { DataSourceRibbon } from '@/components/public/data-state';
 import { SiteFooter } from '@/components/site-footer';
@@ -68,7 +69,10 @@ export default async function DatePage({ params }: DatePageProps) {
 
         <div className="date-claim-action">
           <div><p className="eyebrow">Think this date means more to you?</p><strong>The latest valid price is always calculated by the server.</strong></div>
-          <Link className="button button-primary" href={`/claim?date=${claim.isoDate}`}>{claim.isPrivate ? 'Claim this date' : 'Outbid this date'} <span aria-hidden="true">↗</span></Link>
+          <div className="date-action-buttons">
+            <CopyLinkButton />
+            <Link className="button button-primary" href={`/claim?date=${claim.isoDate}`}>{claim.isPrivate ? 'Claim this date' : 'Outbid this date'} <span aria-hidden="true">↗</span></Link>
+          </div>
         </div>
 
         <section className="claim-history">

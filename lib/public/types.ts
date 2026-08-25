@@ -29,6 +29,7 @@ export type PublicClaim = {
   attribution: string | null;
   username: string | null;
   displayName: string | null;
+  collectorBio: string | null;
   period: ClaimPeriod;
   distance: string;
   claimedAt: string;

@@ -10,6 +10,7 @@
     "build": "vinext build",
     "start": "vinext start",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
+    "load:public": "node load/public-smoke.mjs",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },

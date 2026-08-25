@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatMoney, formatPublicDate, formatPublicUsername, getDateContext, isIsoCalendarDate } from '@/lib/public/format';
+import { excerptWords, formatMoney, formatPublicDate, formatPublicUsername, getDateContext, isIsoCalendarDate } from '@/lib/public/format';
 
 describe('public claim formatting', () => {
   it('formats minor currency units without losing cents', () => {
@@ -32,5 +32,11 @@ describe('public claim formatting', () => {
     expect(formatPublicUsername('founder')).toBe('@founder');
     expect(formatPublicUsername('@founder')).toBe('@founder');
     expect(formatPublicUsername(null)).toBeNull();
+  });
+
+  it('limits public bio excerpts by complete words', () => {
+    expect(excerptWords('One two three four five', 3)).toBe('One two three…');
+    expect(excerptWords('  One   two  ', 3)).toBe('One two');
+    expect(excerptWords(null, 3)).toBe('');
   });
 });

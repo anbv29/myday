@@ -39,3 +39,10 @@ export function getDateContext(isoDate: string, referenceDate = new Date()): { p
 export function formatPublicUsername(value: string | null | undefined) {
   return value ? `@${value.replace(/^@/, '')}` : null;
 }
+
+export function excerptWords(value: string | null | undefined, maxWords: number) {
+  if (!value || maxWords < 1) return '';
+  const words = value.trim().split(/\s+/).filter(Boolean);
+  if (words.length <= maxWords) return words.join(' ');
+  return `${words.slice(0, maxWords).join(' ')}…`;
+}

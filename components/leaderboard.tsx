@@ -3,9 +3,11 @@
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { PublicAttribution } from '@/components/public/attribution';
+import { excerptWords } from '@/lib/public/format';
 import type { PublicClaim } from '@/lib/public/types';
 
 type Filter = 'all' | 'future' | 'past';
+const collectorBioWordLimit = 14;
 
 export function Leaderboard({ claims }: { claims: PublicClaim[] }) {
   const [filter, setFilter] = useState<Filter>('all');
@@ -46,7 +48,7 @@ export function Leaderboard({ claims }: { claims: PublicClaim[] }) {
               <Link className="row-date" href={`/day/${claim.isoDate}`}><strong>{claim.shortDate}</strong><small>{claim.period}</small></Link>
               <strong className="row-amount">{claim.amount}</strong>
               <span className="row-story">{claim.story}</span>
-              <span className="row-user"><small>{claim.username ?? 'Private claim'}</small><PublicAttribution className="public-attribution" value={claim.attribution} /></span>
+              <span className="row-user"><small>{claim.username ?? 'Private claim'}</small><PublicAttribution className="public-attribution" value={claim.attribution} />{claim.collectorBio ? <span className="row-user-bio">{excerptWords(claim.collectorBio, collectorBioWordLimit)}</span> : null}</span>
               <Link className="row-arrow" href={`/day/${claim.isoDate}`} aria-label={`View ${claim.fullDate}`}>↗</Link>
             </div>
           </li>

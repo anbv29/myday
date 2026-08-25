@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { AppAuthProvider } from '@/components/auth/app-auth-provider';
+import { SiteUtilities } from '@/components/site-utilities';
 import './globals.css';
 
 const themeScript = `
@@ -37,7 +38,10 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body><AppAuthProvider>{children}</AppAuthProvider></body>
+      <body>
+        <AppAuthProvider>{children}</AppAuthProvider>
+        <SiteUtilities />
+      </body>
     </html>
   );
 }
