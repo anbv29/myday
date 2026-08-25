@@ -45,13 +45,12 @@ export default async function ClaimPage({ searchParams }: Props) {
         <div className="claim-workspace">
           <aside>
             <p className="eyebrow">Before you continue</p>
-            <ol><li><span>01</span>The server checks the latest authoritative price.</li><li><span>02</span>Checkout happens securely with Razorpay or Stripe.</li><li><span>03</span>A signed webhook—not the browser—decides the claim.</li></ol>
+            <ol><li><span>01</span>The server checks the latest authoritative price.</li><li><span>02</span>Razorpay charges INR in India or USD internationally.</li><li><span>03</span>A signed webhook—not the browser—decides the claim.</li></ol>
             <p>If someone completes a valid claim first, your payment cannot replace the date and is automatically routed for refund.</p>
           </aside>
           <ClaimForm
             quote={result.quote}
-            stripeConfigured={getPaymentProvider('stripe').isConfigured()}
-            razorpayConfigured={getPaymentProvider('razorpay').isConfigured()}
+            razorpayConfigured={getPaymentProvider().isConfigured()}
           />
         </div>
       ) : (

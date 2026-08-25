@@ -1,16 +1,12 @@
 import { RazorpayPaymentProvider } from '@/server/payments/razorpay';
-import { StripePaymentProvider } from '@/server/payments/stripe';
-import type { PaymentProviderName } from '@/server/payments/types';
 
-const providers = {
-  stripe: new StripePaymentProvider(),
-  razorpay: new RazorpayPaymentProvider(),
-};
+const razorpay = new RazorpayPaymentProvider();
 
 export function selectPaymentProvider(billingCountry: string) {
-  return billingCountry.toUpperCase() === 'IN' ? providers.razorpay : providers.stripe;
+  if (!/^[A-Z]{2}$/.test(billingCountry.toUpperCase())) throw new Error('invalid_billing_country');
+  return razorpay;
 }
 
-export function getPaymentProvider(name: PaymentProviderName) {
-  return providers[name];
+export function getPaymentProvider() {
+  return razorpay;
 }

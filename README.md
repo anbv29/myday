@@ -2,14 +2,14 @@
 
 MYDAY.LOL is a public record where people pay a platform fee to attach meaning to a calendar date. One verified claim is current per day; a higher valid claim can replace it while history remains. It is not an investment, resale market, wallet, security, or promise of financial return.
 
-The product is a responsive, light-first editorial Next.js application with public leaderboards, exploration, search, profiles, date monuments, Clerk identity, account controls, and server-verified Stripe/Razorpay checkout.
+The product is a responsive, light-first editorial Next.js application with public leaderboards, exploration, search, profiles, date monuments, Clerk identity, account controls, and server-verified Razorpay checkout for domestic and enabled international cards.
 
 ## Product rules
 
 - Any valid past, present, or future calendar date can be claimed.
 - PostgreSQL—not the browser, a redirect, a cache, or a provider dashboard—is authoritative.
 - One partial unique index permits only one `current` claim per date.
-- The default opening claim is USD 20. The next claim is the current amount plus the greater of 10% or USD 10; configuration lives in PostgreSQL.
+- The default opening claim is USD 1. The next claim is the current amount plus the greater of 10% or USD 1; configuration lives in PostgreSQL.
 - A public attribution must be an `@handle` or complete HTTPS URL. Public, unlisted, and private visibility are enforced in database views and RLS.
 - Payment grants a platform record only. There are no payouts, withdrawals, wallets, resale, or guaranteed returns.
 
@@ -22,11 +22,11 @@ flowchart TD
   N --> K[Clerk identity]
   N --> R[Upstash rate limits + cache version]
   N --> S[(Supabase PostgreSQL\nauthoritative state + RLS)]
-  N --> P{Server payment policy}
-  P -->|IN| Z[Razorpay]
-  P -->|Other supported country| T[Stripe]
+  N --> F[ECB USD/INR reference via Frankfurter]
+  N --> P{Server currency policy}
+  P -->|India / INR| Z[Razorpay]
+  P -->|International / USD| Z
   Z --> W[Signed webhook]
-  T --> W
   W --> N
   N -. optional, non-authoritative .-> O[PostHog / Sentry / Pinecone]
 ```
@@ -38,7 +38,8 @@ flowchart TD
 | Clerk | Sessions and verified identity | Private actions deny; public record remains readable |
 | Supabase PostgreSQL | Users, RLS, claims, history, payments, audit log, transactions | Claims and checkout fail closed |
 | Upstash | Distributed abuse limits and public cache generation | Production writes fail closed; public reads fall through to Supabase |
-| Stripe/Razorpay | Hosted payment collection and signed events | No ownership until a valid webhook transaction commits |
+| Razorpay | INR and enabled international payment collection, signed events, refunds | No ownership until a valid webhook transaction commits |
+| Frankfurter/ECB | Latest daily USD/INR reference used for Indian checkout | INR checkout fails closed if a recent rate cannot be verified |
 | PostHog/Sentry/Pinecone | Optional analytics, errors, derived semantic index | Core flow continues; lexical PostgreSQL search remains available |
 
 The application is stateless. Scale worker instances behind Cloudflare; do not add microservices or multiple database regions until measurements justify them.
@@ -68,7 +69,7 @@ npm run build
 
 Public browser values: `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`. Only the optional PostHog project key/host may also be public.
 
-Server-only secrets: `CLERK_SECRET_KEY`, `CLERK_WEBHOOK_SIGNING_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, Upstash credentials, payment keys/webhook secrets, `SENTRY_DSN`, and Pinecone credentials. `SUPABASE_DB_URL` is migration-only and must not be available to the runtime. Store secrets in encrypted platform storage, never Git. `/ready` returns 503 until the identity/data stack, Upstash, Stripe, and Razorpay are completely configured.
+Server-only secrets: `CLERK_SECRET_KEY`, `CLERK_WEBHOOK_SIGNING_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, Upstash credentials, Razorpay keys/webhook secret, `SENTRY_DSN`, and Pinecone credentials. `SUPABASE_DB_URL` is migration-only and must not be available to the runtime. Store secrets in encrypted platform storage, never Git. `/ready` returns 503 until the identity/data stack, Upstash, and Razorpay are completely configured.
 
 ## Supabase and Clerk
 
@@ -87,10 +88,11 @@ For Cloudflare, use the Sites deployment flow configured by `.openai/hosting.jso
 
 ## Payments
 
-The client supplies a validated billing country, never a provider name. `IN` routes server-side to Razorpay/INR; other supported countries route to Stripe/USD. Configure:
+The client supplies a validated billing country, never a provider name. Every checkout uses Razorpay. `IN` creates an INR order using a recent server-fetched ECB USD/INR reference; other supported countries create a USD order. The canonical claim value remains in USD minor units. Configure:
 
-- Stripe webhook: `POST /api/webhooks/stripe`, event `checkout.session.completed`.
 - Razorpay webhook: `POST /api/webhooks/razorpay`, event `payment.captured`; enable automatic capture.
+
+International payments require Razorpay dashboard approval, completed KYC, the site policy pages, and international cards enabled for the account. The app cannot bypass that account-level approval. If the daily FX feed or secure database refresh fails, INR checkout stops instead of using a client or stale unverified rate.
 
 Handlers read the bounded raw body, verify signatures/replay windows, and call `finalize_verified_claim`. That transaction locks the intent and date, validates price/currency/provider/version, records a unique event/payment, supersedes the old claim, and commits one new current claim. A stale verified payment enters an idempotent refund path. Redirect pages only poll server state. See `docs/payments-and-claims.md`.
 

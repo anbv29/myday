@@ -1,7 +1,7 @@
 import type { ClaimPeriod } from '@/lib/public/types';
 
 export function formatMoney(amountMinor: number, currency = 'USD') {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat(currency === 'INR' ? 'en-IN' : 'en-US', {
     style: 'currency',
     currency,
     maximumFractionDigits: amountMinor % 100 === 0 ? 0 : 2,

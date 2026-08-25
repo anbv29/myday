@@ -1,11 +1,7 @@
-import { requireServerEnv } from '@/lib/env';
+import { isEnvValuePresent, requireServerEnv } from '@/lib/env';
 import { verifyHmacSha256 } from '@/server/payments/crypto';
 import { paymentFetch } from '@/server/payments/http';
 import type { CheckoutCreation, ClientCheckout, PaymentProvider, VerifiedPaymentEvent } from '@/server/payments/types';
-
-function configured(value: string | undefined) {
-  return Boolean(value && !value.includes('replace_me'));
-}
 
 function basicAuthorization() {
   return `Basic ${btoa(`${requireServerEnv('RAZORPAY_KEY_ID')}:${requireServerEnv('RAZORPAY_KEY_SECRET')}`)}`;
@@ -31,9 +27,9 @@ export class RazorpayPaymentProvider implements PaymentProvider {
   readonly name = 'razorpay' as const;
 
   isConfigured() {
-    return configured(process.env.RAZORPAY_KEY_ID)
-      && configured(process.env.RAZORPAY_KEY_SECRET)
-      && configured(process.env.RAZORPAY_WEBHOOK_SECRET);
+    return isEnvValuePresent(process.env.RAZORPAY_KEY_ID)
+      && isEnvValuePresent(process.env.RAZORPAY_KEY_SECRET)
+      && isEnvValuePresent(process.env.RAZORPAY_WEBHOOK_SECRET);
   }
 
   async createCheckout(input: CheckoutCreation) {

@@ -1,4 +1,4 @@
-export type PaymentProviderName = 'stripe' | 'razorpay';
+export type PaymentProviderName = 'razorpay';
 
 export type CheckoutCreation = {
   intentId: string;
@@ -9,9 +9,7 @@ export type CheckoutCreation = {
   appUrl: string;
 };
 
-export type ClientCheckout =
-  | { provider: 'stripe'; checkoutReference: string; redirectUrl: string }
-  | { provider: 'razorpay'; checkoutReference: string; keyId: string; amountMinor: number; currency: string; name: string; description: string };
+export type ClientCheckout = { provider: 'razorpay'; checkoutReference: string; keyId: string; amountMinor: number; currency: string; name: string; description: string };
 
 export type VerifiedPaymentEvent = {
   provider: PaymentProviderName;

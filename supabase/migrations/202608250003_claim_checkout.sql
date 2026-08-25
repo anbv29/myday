@@ -2,11 +2,14 @@ begin;
 
 create table public.payment_configuration (
   singleton boolean primary key default true check (singleton),
-  base_claim_amount_minor bigint not null default 2000,
+  base_claim_amount_minor bigint not null default 100,
   increment_basis_points integer not null default 1000,
-  minimum_increment_minor bigint not null default 1000,
+  minimum_increment_minor bigint not null default 100,
   maximum_claim_amount_minor bigint not null default 100000000,
-  usd_to_inr_rate numeric(20, 10) not null default 85,
+  usd_to_inr_rate numeric(20, 10) not null default 95.7540294925,
+  usd_to_inr_rate_date date,
+  usd_to_inr_rate_observed_at timestamptz,
+  usd_to_inr_rate_source text,
   quote_ttl_seconds integer not null default 900,
   updated_at timestamptz not null default now(),
   constraint payment_configuration_amounts_positive check (
@@ -15,7 +18,7 @@ create table public.payment_configuration (
     and maximum_claim_amount_minor >= base_claim_amount_minor
   ),
   constraint payment_configuration_increment_range check (increment_basis_points between 1 and 10000),
-  constraint payment_configuration_rate_positive check (usd_to_inr_rate > 0),
+  constraint payment_configuration_rate_sane check (usd_to_inr_rate between 40 and 200),
   constraint payment_configuration_ttl_range check (quote_ttl_seconds between 60 and 3600)
 );
 
@@ -55,7 +58,7 @@ create table public.claim_checkout_intents (
   constraint claim_checkout_amounts_positive check (canonical_amount_minor > 0 and display_amount_minor > 0),
   constraint claim_checkout_currency_shape check (display_currency ~ '^[A-Z]{3}$'),
   constraint claim_checkout_country_shape check (billing_country ~ '^[A-Z]{2}$'),
-  constraint claim_checkout_provider check (provider in ('stripe', 'razorpay')),
+  constraint claim_checkout_provider check (provider = 'razorpay'),
   constraint claim_checkout_status check (status in (
     'creating_checkout', 'checkout_created', 'payment_verified', 'completed',
     'conflict', 'refund_pending', 'refunded', 'failed', 'expired'
@@ -83,7 +86,7 @@ create table public.payment_records (
   refunded_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  constraint payment_records_provider check (provider in ('stripe', 'razorpay')),
+  constraint payment_records_provider check (provider = 'razorpay'),
   constraint payment_records_amount_positive check (amount_minor > 0),
   constraint payment_records_currency_shape check (currency ~ '^[A-Z]{3}$'),
   constraint payment_records_status check (status in ('captured', 'refund_pending', 'refunded', 'failed')),
@@ -100,7 +103,7 @@ create table public.payment_provider_events (
   outcome text,
   received_at timestamptz not null default now(),
   processed_at timestamptz,
-  constraint payment_provider_events_provider check (provider in ('stripe', 'razorpay')),
+  constraint payment_provider_events_provider check (provider = 'razorpay'),
   constraint payment_provider_events_digest_shape check (payload_digest ~ '^[a-f0-9]{64}$'),
   constraint payment_provider_events_status check (status in ('processing', 'processed', 'failed')),
   unique (provider, provider_event_id)
@@ -266,9 +269,19 @@ begin
   end if;
 
   select * into config from public.payment_configuration where singleton;
-  selected_provider := case when normalized_country = 'IN' then 'razorpay' else 'stripe' end;
-  selected_currency := case when selected_provider = 'razorpay' then 'INR' else 'USD' end;
-  selected_fx := case when selected_provider = 'razorpay' then config.usd_to_inr_rate else 1 end;
+  selected_provider := 'razorpay';
+  selected_currency := case when normalized_country = 'IN' then 'INR' else 'USD' end;
+  selected_fx := case when normalized_country = 'IN' then config.usd_to_inr_rate else 1 end;
+
+  if normalized_country = 'IN' and (
+    config.usd_to_inr_rate_date is null
+    or config.usd_to_inr_rate_date < current_date - 7
+    or config.usd_to_inr_rate_observed_at is null
+    or config.usd_to_inr_rate_observed_at < now() - interval '1 hour'
+    or config.usd_to_inr_rate_source <> 'ECB via Frankfurter'
+  ) then
+    raise exception using errcode = '55000', message = 'fx_rate_unavailable';
+  end if;
 
   select * into existing
   from public.claim_checkout_intents intent
@@ -470,7 +483,7 @@ begin
   if payment_provider is null or provider_event_reference is null
     or provider_checkout_reference is null or provider_payment_reference is null
     or paid_amount_minor is null or paid_currency is null or event_payload_digest is null
-    or payment_provider not in ('stripe', 'razorpay')
+    or payment_provider <> 'razorpay'
     or char_length(provider_event_reference) not between 3 and 255
     or char_length(provider_checkout_reference) not between 3 and 255
     or char_length(provider_payment_reference) not between 3 and 255

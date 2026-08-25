@@ -2,7 +2,9 @@ import { claimCheckoutSchema } from '@/lib/validation/claim';
 import { getRequestIdentity } from '@/server/auth/identity';
 import { hasTrustedMutationOrigin, readBoundedBody } from '@/server/http/security';
 import { selectPaymentProvider } from '@/server/payments';
+import { getUsdInrReferenceRate } from '@/server/payments/fx';
 import { checkCheckoutRateLimit } from '@/server/rate-limit/checkout';
+import { createAdminSupabaseClient } from '@/server/supabase/admin';
 import { createUserSupabaseClient } from '@/server/supabase/user';
 
 const MAX_BODY_BYTES = 8 * 1024;
@@ -34,11 +36,32 @@ export async function POST(request: Request) {
 
   const provider = selectPaymentProvider(parsed.data.billingCountry);
   if (!provider.isConfigured()) {
-    return Response.json({ error: `${provider.name === 'razorpay' ? 'Indian' : 'International'} checkout is not configured yet.` }, { status: 503 });
+    return Response.json({ error: 'Razorpay checkout is not configured yet.' }, { status: 503 });
   }
 
   const token = await identity.getSupabaseToken();
   if (!token) return Response.json({ error: 'Authentication could not be verified.' }, { status: 401 });
+
+  if (parsed.data.billingCountry === 'IN') {
+    try {
+      const reference = await getUsdInrReferenceRate();
+      const admin = createAdminSupabaseClient();
+      const { error: rateError } = await admin
+        .from('payment_configuration')
+        .update({
+          usd_to_inr_rate: reference.rate,
+          usd_to_inr_rate_date: reference.date,
+          usd_to_inr_rate_observed_at: new Date().toISOString(),
+          usd_to_inr_rate_source: reference.source,
+        })
+        .eq('singleton', true);
+      if (rateError) throw rateError;
+    } catch (rateError) {
+      console.error('Unable to refresh the USD/INR checkout rate', rateError);
+      return Response.json({ error: 'The current INR exchange rate could not be verified. Try again shortly.' }, { status: 503 });
+    }
+  }
+
   const supabase = createUserSupabaseClient(token);
   const { data, error } = await supabase.rpc('create_claim_checkout_intent', {
     target_date: parsed.data.date,
@@ -52,6 +75,7 @@ export async function POST(request: Request) {
   });
   if (error) {
     if (error.message.includes('onboarding_required')) return Response.json({ error: 'Choose your username before claiming a date.', action: '/onboarding/username' }, { status: 403 });
+    if (error.message.includes('fx_rate_unavailable')) return Response.json({ error: 'The current INR exchange rate could not be verified. Try again shortly.' }, { status: 503 });
     if (error.message.includes('invalid_claim_amount')) return Response.json({ error: 'The price changed. Refresh the claim quote and try again.' }, { status: 409 });
     if (error.code === '22023') return Response.json({ error: 'The claim request is no longer valid.' }, { status: 400 });
     return Response.json({ error: 'Checkout could not be started.' }, { status: 503 });

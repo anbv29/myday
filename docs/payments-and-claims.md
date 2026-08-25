@@ -4,8 +4,9 @@ Section 4 implements a server-authoritative claim state machine. Browser redirec
 
 ## Routing policy
 
-- A validated billing country of `IN` routes to Razorpay and charges INR.
-- Other supported billing countries route to Stripe Checkout and charge USD.
+- Every payment routes to Razorpay.
+- A validated billing country of `IN` charges INR using the latest verified daily ECB USD/INR reference fetched server-side through Frankfurter.
+- Other supported billing countries create a Razorpay order in USD for enabled international cards.
 - The client submits billing context, not a provider name. The server and database independently derive the provider.
 - The canonical leaderboard amount is stored in USD minor units. Razorpay display amounts use the database FX snapshot stored on the checkout intent.
 
@@ -28,11 +29,11 @@ Provider creation failure:
 creating_checkout -> failed
 ```
 
-The initial base claim is USD 20. An occupied date requires the current canonical amount plus the greater of 10% or USD 10. The server re-reads this configuration and the locked date state; displayed browser prices are informational.
+The initial base claim is USD 1. An occupied date requires the current canonical amount plus the greater of 10% or USD 1. The server re-reads this configuration and the locked date state; displayed browser prices are informational. INR rate responses must identify USD/INR, stay within a conservative sanity range, and be no more than seven days old. The server writes the fetched rate and observation time through its service role; the checkout transaction refuses INR conversion if that observation is more than one hour old.
 
 ## Concurrency boundary
 
-Checkout creation never holds a database lock while calling Stripe or Razorpay. After a signed webhook is verified, `finalize_verified_claim` runs one short transaction:
+Checkout creation never holds a database lock while calling the FX reference service or Razorpay. After a signed webhook is verified, `finalize_verified_claim` runs one short transaction:
 
 1. Serializes duplicate provider events with an advisory transaction lock.
 2. Locks the checkout intent and the single calendar-date row.
@@ -46,26 +47,18 @@ The partial unique index from migration 2 remains the final invariant preventing
 
 - Checkout requests require a 16–100 character idempotency key unique per user.
 - An idempotency key cannot be reused with different claim content.
-- Stripe session creation and refunds use deterministic provider idempotency keys.
 - Razorpay orders are protected by the leased database checkout-creation state; refunds use the claim-intent UUID as Razorpay's idempotent `receipt` value.
 - Provider event IDs are unique per provider and raw webhook bodies are represented only by a SHA-256 digest.
 
 ## Webhooks
 
-Configure these exact endpoints:
-
-- Stripe: `POST /api/webhooks/stripe`, event `checkout.session.completed`
-- Razorpay: `POST /api/webhooks/razorpay`, event `payment.captured`
-
-Both handlers read the raw body with a 1 MB limit and verify HMAC signatures before JSON processing. Stripe timestamps must be within five minutes. Razorpay requires `X-Razorpay-Event-Id` for replay protection.
-
-Stripe API requests are pinned to `2026-02-25.clover`; configure the Stripe webhook endpoint with the same event API version so payloads remain stable across account-default upgrades.
+Configure `POST /api/webhooks/razorpay` for the `payment.captured` event. The handler reads the raw body with a 1 MB limit and verifies the HMAC before JSON processing. Razorpay's `X-Razorpay-Event-Id` is mandatory for replay protection.
 
 ## Provider setup
 
 Set the server-only placeholders documented in `.env.example`. Never prefix secrets with `NEXT_PUBLIC_`.
 
-For local Stripe testing, forward signed events to `/api/webhooks/stripe` and use a test-mode Checkout Session. For Razorpay, use test-mode keys and a test webhook secret. A real claim can only be exercised after Clerk, Supabase migrations 1–3, Upstash, and the chosen payment provider are connected.
+Use Razorpay test-mode keys and a test webhook secret locally. A real claim can only be exercised after Clerk, Supabase migrations 1–3, Upstash, and Razorpay are connected. Complete Razorpay KYC and request international-card activation before foreign payments; keep the Terms, Privacy, Refund/Cancellation, and Delivery policy pages publicly reachable for the review.
 
 Razorpay must have automatic capture enabled so the configured `payment.captured` webhook is authoritative. Webhook-time refund calls use a three-second provider timeout to remain within Razorpay's delivery window; a timeout leaves the intent `refund_pending` and deliberately returns a retryable HTTP 503.
 

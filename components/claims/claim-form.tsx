@@ -31,27 +31,30 @@ type CheckoutResponse = {
   statusUrl?: string;
   action?: string;
   error?: string;
-  checkout?:
-    | { provider: 'stripe'; checkoutReference: string; redirectUrl: string }
-    | { provider: 'razorpay'; checkoutReference: string; keyId: string; amountMinor: number; currency: string; name: string; description: string };
+  checkout?: { provider: 'razorpay'; checkoutReference: string; keyId: string; amountMinor: number; currency: string; name: string; description: string };
 };
 
 export function ClaimForm({
   quote,
-  stripeConfigured,
   razorpayConfigured,
 }: {
   quote: ClaimQuote;
-  stripeConfigured: boolean;
   razorpayConfigured: boolean;
 }) {
-  const [billingCountry, setBillingCountry] = useState('US');
+  const [billingCountry, setBillingCountry] = useState('IN');
+  const [amountMajor, setAmountMajor] = useState(String(quote.minimumAmountMinor / 100));
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [action, setAction] = useState<string | null>(null);
   const requestKey = useRef(crypto.randomUUID());
-  const selectedProvider = billingCountry === 'IN' ? 'Razorpay' : 'Stripe';
-  const providerConfigured = billingCountry === 'IN' ? razorpayConfigured : stripeConfigured;
+  const fxRate = quote.minimumAmountInrMinor && quote.minimumAmountMinor
+    ? quote.minimumAmountInrMinor / quote.minimumAmountMinor
+    : null;
+  const numericAmountMajor = Number(amountMajor) || 0;
+  const estimatedInr = fxRate
+    ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 2 }).format(numericAmountMajor * fxRate)
+    : null;
+  const checkoutCurrency = billingCountry === 'IN' ? 'INR' : 'USD';
 
   async function submitClaim(formData: FormData) {
     setSubmitting(true);
@@ -79,11 +82,6 @@ export function ClaimForm({
         setError(result.error ?? 'Checkout could not be started.');
         setAction(result.action ?? (response.status === 401 ? `/sign-in?redirect_url=${encodeURIComponent(`/claim?date=${quote.date}`)}` : null));
         if (response.status !== 409) requestKey.current = crypto.randomUUID();
-        return;
-      }
-
-      if (result.checkout.provider === 'stripe') {
-        window.location.assign(result.checkout.redirectUrl);
         return;
       }
 
@@ -135,11 +133,11 @@ export function ClaimForm({
       <fieldset>
         <legend><span>03</span> Review the claim</legend>
         <div className="claim-payment-grid">
-          <label>Claim amount (USD)<input name="amount" type="number" required min={quote.minimumAmountMinor / 100} max={1_000_000} step="0.01" defaultValue={quote.minimumAmountMinor / 100} /></label>
+          <label>Claim value (USD benchmark)<input name="amount" type="number" required min={quote.minimumAmountMinor / 100} max={1_000_000} step="0.01" value={amountMajor} onChange={(event) => setAmountMajor(event.target.value)} /></label>
           <label>Billing country
             <select value={billingCountry} onChange={(event) => setBillingCountry(event.target.value)}>
-              <option value="US">United States / International</option>
-              <option value="IN">India</option>
+              <option value="IN">India — pay in INR</option>
+              <option value="US">United States / International — pay in USD</option>
               <option value="GB">United Kingdom</option>
               <option value="CA">Canada</option>
               <option value="AU">Australia</option>
@@ -149,13 +147,15 @@ export function ClaimForm({
         </div>
         <div className="checkout-summary">
           <p><span>Minimum valid claim</span><strong>{quote.minimumAmount}</strong></p>
-          <p><span>Secure checkout</span><strong>{selectedProvider}</strong></p>
+          <p><span>{billingCountry === 'IN' ? 'Estimated INR checkout' : 'Checkout amount'}</span><strong>{billingCountry === 'IN' ? (estimatedInr ?? 'Live rate at checkout') : `$${numericAmountMajor.toFixed(2)}`}</strong></p>
+          <p><span>Secure checkout</span><strong>Razorpay · {checkoutCurrency}</strong></p>
           <p><span>Ownership rule</span><strong>Verified webhook only</strong></p>
         </div>
+        {billingCountry === 'IN' ? <p className="checkout-fineprint">The INR amount uses the latest daily ECB USD/INR reference available at checkout{quote.fxRateDate ? ` (reference date ${quote.fxRateDate})` : ''}. Razorpay receives the final server-calculated amount.</p> : null}
         <label className="claim-consent"><input type="checkbox" required /><span>I understand this is a platform fee for a featured claim—not an investment, resale right, wallet balance, or promise of financial return.</span></label>
         {error ? <div className="form-error" role="alert"><p>{error}</p>{action ? <Link href={action}>Continue ↗</Link> : null}</div> : null}
-        {!providerConfigured ? <p className="provider-notice" role="status">{selectedProvider} credentials are not connected in this environment, so real checkout is disabled.</p> : null}
-        <button className="button button-primary checkout-button" type="submit" disabled={submitting || !providerConfigured}>
+        {!razorpayConfigured ? <p className="provider-notice" role="status">Razorpay credentials are not connected in this environment, so real checkout is disabled.</p> : null}
+        <button className="button button-primary checkout-button" type="submit" disabled={submitting || !razorpayConfigured}>
           <span>{submitting ? 'Opening secure checkout…' : 'Continue to secure checkout'}</span><span aria-hidden="true">↗</span>
         </button>
         <p className="checkout-fineprint">The server will re-check the latest date price before creating checkout. A return page never grants ownership; only a verified provider webhook can do that.</p>

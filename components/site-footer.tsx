@@ -12,6 +12,8 @@ export function SiteFooter() {
         <Link href="/contact">Support</Link>
         <Link href="/privacy">Privacy</Link>
         <Link href="/terms">Terms</Link>
+        <Link href="/refunds">Refunds</Link>
+        <Link href="/shipping">Delivery</Link>
       </nav>
       <p>© {new Date().getUTCFullYear()} MYDAY.LOL</p>
     </footer>
