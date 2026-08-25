@@ -1,4 +1,5 @@
 import { claimCheckoutSchema } from '@/lib/validation/claim';
+import { getAppOrigin } from '@/lib/env';
 import { getRequestIdentity } from '@/server/auth/identity';
 import { hasTrustedMutationOrigin, readBoundedBody } from '@/server/http/security';
 import { selectPaymentProvider } from '@/server/payments';
@@ -103,7 +104,7 @@ export async function POST(request: Request) {
     title: parsed.data.title,
     amountMinor: Number(row.amount_minor),
     currency: String(row.currency),
-    appUrl: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000').origin,
+    appUrl: getAppOrigin(),
   };
 
   try {

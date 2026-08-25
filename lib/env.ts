@@ -5,6 +5,24 @@ export const isEnvValuePresent = (value: string | undefined) => Boolean(
   && !/^your[-_]/i.test(value),
 );
 
+function urlOrigin(value: string, defaultProtocol = false) {
+  const normalized = defaultProtocol && !/^https?:\/\//i.test(value)
+    ? `https://${value}`
+    : value;
+  return new URL(normalized).origin;
+}
+
+export function getAppOrigin() {
+  const configuredUrl = process.env.NEXT_PUBLIC_APP_URL?.trim();
+  if (configuredUrl) return urlOrigin(configuredUrl);
+
+  const vercelUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim()
+    || process.env.VERCEL_URL?.trim();
+  if (vercelUrl) return urlOrigin(vercelUrl, true);
+
+  return 'http://localhost:3000';
+}
+
 export function isClerkConfigured() {
   return isEnvValuePresent(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)
     && isEnvValuePresent(process.env.CLERK_SECRET_KEY);

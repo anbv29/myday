@@ -1,8 +1,10 @@
+import { getAppOrigin } from '@/lib/env';
+
 export function hasTrustedMutationOrigin(request: Request) {
   const origin = request.headers.get('origin');
   if (!origin) return process.env.NODE_ENV !== 'production';
   try {
-    return new URL(origin).origin === new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000').origin;
+    return new URL(origin).origin === getAppOrigin();
   } catch {
     return false;
   }

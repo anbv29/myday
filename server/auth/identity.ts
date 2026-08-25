@@ -1,6 +1,6 @@
 import { createClerkClient } from '@clerk/backend';
 import { headers } from 'next/headers';
-import { isClerkConfigured } from '@/lib/env';
+import { getAppOrigin, isClerkConfigured } from '@/lib/env';
 
 export type RequestIdentity = {
   clerkUserId: string;
@@ -15,8 +15,7 @@ function getClerkClient() {
 }
 
 function getAuthorizedOrigin() {
-  const configured = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
-  return new URL(configured).origin;
+  return getAppOrigin();
 }
 
 async function requestFromServerHeaders() {

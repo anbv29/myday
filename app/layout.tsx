@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { AppAuthProvider } from '@/components/auth/app-auth-provider';
 import { SiteUtilities } from '@/components/site-utilities';
+import { getAppOrigin } from '@/lib/env';
 import './globals.css';
 
 const themeScript = `
@@ -12,7 +13,7 @@ const themeScript = `
 `;
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'),
+  metadataBase: new URL(getAppOrigin()),
   title: {
     default: 'MYDAY — Make a date matter',
     template: '%s — MYDAY',
