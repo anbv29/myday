@@ -29,4 +29,8 @@ describe('environment safety', () => {
       RAZORPAY_WEBHOOK_SECRET: 'razor-webhook-real',
     };
     Object.entries(required).forEach(([name, value]) => vi.stubEnv(name, value));
-    expect(isProductionConfigurationComplete()).toBe
+    expect(isProductionConfigurationComplete()).toBe(true);
+    vi.stubEnv('STRIPE_WEBHOOK_SECRET', 'replace_me');
+    expect(isProductionConfigurationComplete()).toBe(false);
+  });
+});
