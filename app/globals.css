@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&display=swap');
 @import 'tailwindcss';
 
 :root {
@@ -11,7 +11,7 @@
   --accent: #ff5833;
   --accent-ink: #171714;
   --selection: #ffd2c7;
-  --font-secondary: 'Courier Prime', 'Courier New', monospace;
+  --font-secondary: 'DM Mono', 'Courier New', monospace;
   --text-micro: clamp(11px, 0.78vw, 12px);
   --text-small: clamp(12px, 0.88vw, 14px);
   --text-label: clamp(13px, 0.96vw, 15px);
@@ -522,8 +522,9 @@ a:focus-visible {
 
 .principles-grid p {
   display: grid;
-  grid-template-columns: 30px 1fr;
-  gap: 16px;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 18px;
+  align-items: baseline;
   min-height: 108px;
   margin: 0;
   padding: 24px 28px;
@@ -540,6 +541,15 @@ a:focus-visible {
   color: var(--accent);
   font-size: 10px;
   letter-spacing: 0.1em;
+  line-height: 1;
+}
+
+.principles-grid strong {
+  display: block;
+  max-width: 24ch;
+  font-size: inherit;
+  font-weight: 700;
+  line-height: inherit;
 }
 
 .leaderboard-section {

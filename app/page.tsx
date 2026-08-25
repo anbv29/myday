@@ -62,9 +62,9 @@ export default async function Home() {
 
         <section className="principles-strip" aria-label="Platform principles">
           <div className="shell principles-grid">
-            <p><span>01</span>One current claim per calendar day.</p>
-            <p><span>02</span>Higher valid claims replace the current one.</p>
-            <p><span>03</span>No resale. No returns. Just a date made public.</p>
+            <p><span>01</span><strong>One current claim per calendar day.</strong></p>
+            <p><span>02</span><strong>Higher valid claims replace the current one.</strong></p>
+            <p><span>03</span><strong>No resale. No returns. Just a date made public.</strong></p>
           </div>
         </section>
 
