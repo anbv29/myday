@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { AuthControls } from '@/components/auth/auth-controls';
 
 type Theme = 'light' | 'dark';
 
@@ -30,6 +31,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="header-actions">
+          <AuthControls />
           <button
             className="theme-toggle"
             type="button"
@@ -56,6 +58,7 @@ export function SiteHeader() {
         <nav className="mobile-nav" id="mobile-menu" aria-label="Mobile navigation">
           <Link href="/#leaderboard" onClick={() => setMenuOpen(false)}>Leaderboard</Link>
           <Link href="/#how-it-works" onClick={() => setMenuOpen(false)}>How it works</Link>
+          <Link href="/onboarding/username" onClick={() => setMenuOpen(false)}>Account</Link>
         </nav>
       ) : null}
     </header>

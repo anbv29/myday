@@ -1,0 +1,3 @@
+-- Deliberately contains no public leaderboard activity.
+-- Development claims remain in the isolated TypeScript preview adapter until
+-- the data-backed public experience is built in Section 3.
