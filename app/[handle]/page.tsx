@@ -27,18 +27,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const result = await getPublicProfile(username);
   if (!result.data) return { title: 'Profile not found' };
   const profile = result.data;
-  const description = profile.bio ?? `${profile.username}'s public dates on MYDAY.LOL.`;
+  const description = profile.bio ?? `${profile.username}'s public dates on MYDAY.`;
   return {
     title: profile.username,
     description,
     openGraph: {
-      title: `${profile.username} — MYDAY.LOL`,
+      title: `${profile.username} — MYDAY`,
       description,
       images: [],
     },
     twitter: {
       card: 'summary',
-      title: `${profile.username} — MYDAY.LOL`,
+      title: `${profile.username} — MYDAY`,
       description,
       images: [],
     },

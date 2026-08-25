@@ -56,8 +56,8 @@ export function SiteHeader() {
   return (
     <header className="site-header">
       <div className="shell header-inner">
-        <a className="wordmark" href="/" aria-label="MYDAY.LOL home">
-          MYDAY<span>.</span>LOL
+        <a className="wordmark" href="/" aria-label="MYDAY home">
+          MYDAY
         </a>
 
         <nav className="desktop-nav" aria-label="Primary navigation">

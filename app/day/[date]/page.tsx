@@ -17,20 +17,20 @@ export async function generateMetadata({ params }: DatePageProps): Promise<Metad
   const claim = result.data?.claim;
   if (!claim) return { title: 'Date not found' };
   const description = claim.isPrivate
-    ? `${claim.fullDate} is privately claimed on MYDAY.LOL.`
+    ? `${claim.fullDate} is privately claimed on MYDAY.`
     : `${claim.story} — currently claimed for ${claim.amount} by ${claim.username}.`;
   return {
     title: claim.fullDate,
     description,
     openGraph: {
-      title: `${claim.fullDate} — MYDAY.LOL`,
+      title: `${claim.fullDate} — MYDAY`,
       description,
       type: 'article',
       images: [],
     },
     twitter: {
       card: 'summary',
-      title: `${claim.fullDate} — MYDAY.LOL`,
+      title: `${claim.fullDate} — MYDAY`,
       description,
       images: [],
     },

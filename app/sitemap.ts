@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 import { getLeaderboard } from '@/server/public-data';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://myday.lol';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
   const result = await getLeaderboard({ limit: 100 });
   const staticRoutes = ['', '/claim', '/explore', '/leaderboard', '/trending', '/activity', '/search', '/faq', '/contact', '/privacy', '/terms', '/refunds', '/shipping'];
   return [

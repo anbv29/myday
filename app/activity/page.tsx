@@ -3,7 +3,7 @@ import { DataEmptyState } from '@/components/public/data-state';
 import { PublicPage } from '@/components/public/public-page';
 import { getRecentActivity } from '@/server/public-data';
 
-export const metadata: Metadata = { title: 'Activity', description: 'Recent public claim activity on MYDAY.LOL.' };
+export const metadata: Metadata = { title: 'Activity', description: 'Recent public claim activity on MYDAY.' };
 
 export default async function ActivityPage() {
   const result = await getRecentActivity();

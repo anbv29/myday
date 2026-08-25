@@ -1,6 +1,6 @@
-# MYDAY.LOL
+# MYDAY
 
-MYDAY.LOL is a public record where people pay a platform fee to attach meaning to a calendar date. One verified claim is current per day; a higher valid claim can replace it while history remains. It is not an investment, resale market, wallet, security, or promise of financial return.
+MYDAY is a public record where people pay a platform fee to attach meaning to a calendar date. One verified claim is current per day; a higher valid claim can replace it while history remains. It is not an investment, resale market, wallet, security, or promise of financial return.
 
 The product is a responsive, light-first editorial Next.js application with public leaderboards, exploration, search, profiles, date monuments, Clerk identity, account controls, and server-verified Razorpay checkout for domestic and enabled international cards.
 

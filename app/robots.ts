@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://myday.lol';
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
   return {
     rules: [{ userAgent: '*', allow: '/', disallow: ['/account/', '/api/', '/maintenance', '/onboarding/', '/payment/'] }],
     sitemap: `${baseUrl}/sitemap.xml`,

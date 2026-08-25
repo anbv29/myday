@@ -18,7 +18,7 @@ function clientCheckout(reference: string, input: CheckoutCreation): ClientCheck
     keyId: requireServerEnv('RAZORPAY_KEY_ID'),
     amountMinor: input.amountMinor,
     currency: input.currency,
-    name: 'MYDAY.LOL',
+    name: 'MYDAY',
     description: `Claim ${input.date} · ${input.title}`,
   };
 }

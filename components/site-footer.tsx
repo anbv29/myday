@@ -2,7 +2,7 @@ export function SiteFooter() {
   return (
     <footer className="site-footer shell">
       <div>
-        <a href="/" className="wordmark">MYDAY.LOL</a>
+        <a href="/" className="wordmark">MYDAY</a>
         <p>Every date means something to someone.</p>
       </div>
       <nav aria-label="Footer navigation">
@@ -13,7 +13,7 @@ export function SiteFooter() {
         <a href="/refunds">Refunds</a>
         <a href="/shipping">Delivery</a>
       </nav>
-      <p>© {new Date().getUTCFullYear()} MYDAY.LOL</p>
+      <p>© {new Date().getUTCFullYear()} MYDAY</p>
     </footer>
   );
 }

@@ -81,7 +81,7 @@ values
   ('login', 'route'),
   ('logout', 'route'),
   ('myday', 'brand'),
-  ('mydaylol', 'brand'),
+  ('myday', 'brand'),
   ('notifications', 'route'),
   ('official', 'platform'),
   ('privacy', 'route'),

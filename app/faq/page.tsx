@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { InfoPage } from '@/components/info/info-page';
 
-export const metadata: Metadata = { title: 'FAQ', description: 'How date claims, payments, privacy, and outbids work on MYDAY.LOL.' };
+export const metadata: Metadata = { title: 'FAQ', description: 'How date claims, payments, privacy, and outbids work on MYDAY.' };
 const questions = [
   ['What does claiming a date mean?', 'A claim places your title and story in MYDAY’s public record for that calendar date. It is a platform record, not legal ownership of a date, trademark, domain, or event.'],
   ['Can more than one person own the same date?', 'Only one claim is current at a time. Earlier valid claims remain in history when a higher verified claim replaces them.'],

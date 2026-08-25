@@ -6,7 +6,7 @@ import { getLeaderboard, type DateScope, type LeaderboardRange } from '@/server/
 
 export const metadata: Metadata = {
   title: 'Leaderboard',
-  description: 'The highest current public claims across the MYDAY.LOL calendar.',
+  description: 'The highest current public claims across the MYDAY calendar.',
 };
 
 type Props = { searchParams: Promise<{ range?: string; scope?: string }> };
