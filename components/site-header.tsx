@@ -26,8 +26,11 @@ export function SiteHeader() {
         </Link>
 
         <nav className="desktop-nav" aria-label="Primary navigation">
-          <Link href="/#leaderboard">Leaderboard</Link>
-          <Link href="/#how-it-works">How it works</Link>
+          <Link className="nav-claim" href="/claim">Claim a date</Link>
+          <Link href="/explore">Explore</Link>
+          <Link href="/leaderboard">Leaderboard</Link>
+          <Link href="/trending">Trending</Link>
+          <Link href="/search">Search</Link>
         </nav>
 
         <div className="header-actions">
@@ -56,8 +59,12 @@ export function SiteHeader() {
 
       {menuOpen ? (
         <nav className="mobile-nav" id="mobile-menu" aria-label="Mobile navigation">
-          <Link href="/#leaderboard" onClick={() => setMenuOpen(false)}>Leaderboard</Link>
-          <Link href="/#how-it-works" onClick={() => setMenuOpen(false)}>How it works</Link>
+          <Link href="/claim" onClick={() => setMenuOpen(false)}>Claim a date</Link>
+          <Link href="/explore" onClick={() => setMenuOpen(false)}>Explore</Link>
+          <Link href="/leaderboard" onClick={() => setMenuOpen(false)}>Leaderboard</Link>
+          <Link href="/trending" onClick={() => setMenuOpen(false)}>Trending</Link>
+          <Link href="/activity" onClick={() => setMenuOpen(false)}>Activity</Link>
+          <Link href="/search" onClick={() => setMenuOpen(false)}>Search</Link>
           <Link href="/onboarding/username" onClick={() => setMenuOpen(false)}>Account</Link>
         </nav>
       ) : null}

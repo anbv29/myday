@@ -1,38 +1,45 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { DataSourceRibbon } from '@/components/public/data-state';
+import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
-import { findClaim } from '@/lib/preview-data';
+import { isIsoCalendarDate } from '@/lib/public/format';
+import { getPublicDate } from '@/server/public-data';
 
 type DatePageProps = { params: Promise<{ date: string }> };
 
 export async function generateMetadata({ params }: DatePageProps): Promise<Metadata> {
   const { date } = await params;
-  const claim = findClaim(date);
+  if (!isIsoCalendarDate(date)) return { title: 'Date not found' };
+  const result = await getPublicDate(date);
+  const claim = result.data?.claim;
   if (!claim) return { title: 'Date not found' };
   return {
     title: claim.fullDate,
-    description: `${claim.story} — currently claimed for ${claim.amount} by ${claim.username}.`,
+    description: claim.isPrivate
+      ? `${claim.fullDate} is privately claimed on MYDAY.LOL.`
+      : `${claim.story} — currently claimed for ${claim.amount} by ${claim.username}.`,
+    openGraph: { title: `${claim.fullDate} — MYDAY.LOL`, description: claim.story, type: 'article' },
   };
 }
 
 export default async function DatePage({ params }: DatePageProps) {
   const { date } = await params;
-  const claim = findClaim(date);
-  if (!claim) notFound();
+  if (!isIsoCalendarDate(date)) notFound();
+  const result = await getPublicDate(date);
+  if (!result.data) notFound();
+  const { claim, history } = result.data;
 
   return (
     <>
       <a className="skip-link" href="#date-content">Skip to content</a>
-      <div className="preview-ribbon">
-        <span>Section 01</span>
-        <span>Visual direction · sample data</span>
-      </div>
+      <DataSourceRibbon source={result.source} />
       <SiteHeader />
       <main id="date-content" className="date-page shell">
         <div className="date-topline">
           <Link href="/#leaderboard">← Back to the board</Link>
-          <span>Current rank #{claim.rank}</span>
+          <span>{claim.rank ? `Current rank #${claim.rank}` : 'Current claim'}</span>
         </div>
 
         <section className="date-monument" aria-labelledby="claim-story">
@@ -47,7 +54,7 @@ export default async function DatePage({ params }: DatePageProps) {
             <div className="claim-owner-line">
               <span>Current claim</span>
               <strong>{claim.amount}</strong>
-              <span>by {claim.username}</span>
+              <span>{claim.username ? `by ${claim.username}` : 'Claimant private'}</span>
             </div>
           </div>
         </section>
@@ -55,7 +62,12 @@ export default async function DatePage({ params }: DatePageProps) {
         <div className="date-facts">
           <p><span>From today</span><strong>{claim.distance}</strong></p>
           <p><span>Minimum next claim</span><strong>Calculated at checkout</strong></p>
-          <p><span>Visibility</span><strong>Public</strong></p>
+          <p><span>Visibility</span><strong>{claim.visibility}</strong></p>
+        </div>
+
+        <div className="date-claim-action">
+          <div><p className="eyebrow">Think this date means more to you?</p><strong>The latest valid price is always calculated by the server.</strong></div>
+          <Link className="button button-primary" href={`/claim?date=${claim.isoDate}`}>{claim.isPrivate ? 'Claim this date' : 'Outbid this date'} <span aria-hidden="true">↗</span></Link>
         </div>
 
         <section className="claim-history">
@@ -65,24 +77,21 @@ export default async function DatePage({ params }: DatePageProps) {
           </div>
           <ol>
             <li className="current-history">
-              <span>Current</span><strong>{claim.amount}</strong><span>{claim.username}</span>
+              <span>Current</span><strong>{claim.amount}</strong><span>{claim.username ?? 'Private'}</span>
             </li>
-            {claim.previousClaims.map((previous) => (
-              <li key={`${previous.username}-${previous.amount}`}>
-                <span>{previous.date}</span><strong>{previous.amount}</strong><span>{previous.username}</span>
+            {history.filter((item) => item.status === 'superseded').map((previous) => (
+              <li key={previous.claimId}>
+                <span>{new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeZone: 'UTC' }).format(new Date(previous.claimedAt)).toUpperCase()}</span>
+                <strong>{previous.amount}</strong><span>{previous.username ?? 'Private'}</span>
               </li>
             ))}
-            {claim.previousClaims.length === 0 ? (
+            {history.filter((item) => item.status === 'superseded').length === 0 ? (
               <li className="empty-history">This is the first recorded claim for this date.</li>
             ) : null}
           </ol>
         </section>
       </main>
-      <footer className="site-footer shell">
-        <Link href="/" className="wordmark">MYDAY.LOL</Link>
-        <p>Every date means something to someone.</p>
-        <p>© 2026 MYDAY.LOL</p>
-      </footer>
+      <SiteFooter />
     </>
   );
 }

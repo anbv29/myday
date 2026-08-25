@@ -2,11 +2,11 @@
 
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
-import type { PreviewClaim } from '@/lib/preview-data';
+import type { PublicClaim } from '@/lib/public/types';
 
 type Filter = 'all' | 'future' | 'past';
 
-export function Leaderboard({ claims }: { claims: PreviewClaim[] }) {
+export function Leaderboard({ claims }: { claims: PublicClaim[] }) {
   const [filter, setFilter] = useState<Filter>('all');
   const visibleClaims = useMemo(
     () => claims.filter((claim) => filter === 'all' || claim.period === filter),
@@ -45,7 +45,7 @@ export function Leaderboard({ claims }: { claims: PreviewClaim[] }) {
               <span className="row-date"><strong>{claim.shortDate}</strong><small>{claim.period}</small></span>
               <strong className="row-amount">{claim.amount}</strong>
               <span className="row-story">{claim.story}</span>
-              <span className="row-user">{claim.username}</span>
+              <span className="row-user">{claim.username ?? 'Private claim'}</span>
               <span className="row-arrow" aria-hidden="true">↗</span>
             </Link>
           </li>

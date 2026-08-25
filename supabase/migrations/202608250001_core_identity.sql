@@ -217,6 +217,21 @@ as $$
     and is_disabled = false;
 $$;
 
+create or replace function public.is_active_app_user(candidate_user_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public, pg_temp
+as $$
+  select exists (
+    select 1 from public.app_users
+    where id = candidate_user_id
+      and deleted_at is null
+      and is_disabled = false
+  );
+$$;
+
 create or replace function public.ensure_app_user()
 returns uuid
 language plpgsql
@@ -370,20 +385,16 @@ create policy app_users_select_own
 on public.app_users for select to authenticated
 using (clerk_user_id = public.current_clerk_user_id());
 
-create policy user_profiles_select_public_or_own
+create policy user_profiles_select_public
 on public.user_profiles for select to anon, authenticated
 using (
-  (
-    username is not null
-    and exists (
-      select 1 from public.app_users owner
-      where owner.id = user_profiles.user_id
-        and owner.deleted_at is null
-        and owner.is_disabled = false
-    )
-  )
-  or user_id = public.current_app_user_id()
+  username is not null
+  and public.is_active_app_user(user_id)
 );
+
+create policy user_profiles_select_own
+on public.user_profiles for select to authenticated
+using (user_id = public.current_app_user_id());
 
 create policy user_settings_select_own
 on public.user_settings for select to authenticated
@@ -411,12 +422,14 @@ grant select, update (
 
 revoke all on function public.ensure_app_user() from public;
 revoke all on function public.current_app_user_id() from public;
+revoke all on function public.is_active_app_user(uuid) from public;
 revoke all on function public.is_username_available(text) from public;
 revoke all on function public.claim_username(text) from public;
 revoke all on function public.get_my_profile() from public;
 
 grant execute on function public.ensure_app_user() to authenticated;
 grant execute on function public.current_app_user_id() to authenticated;
+grant execute on function public.is_active_app_user(uuid) to anon, authenticated;
 grant execute on function public.is_username_available(text) to authenticated;
 grant execute on function public.claim_username(text) to authenticated;
 grant execute on function public.get_my_profile() to authenticated;

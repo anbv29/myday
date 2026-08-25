@@ -1,21 +1,8 @@
-export type PreviewClaim = {
-  rank: number;
-  isoDate: string;
-  fullDate: string;
-  shortDate: string;
-  month: string;
-  day: string;
-  year: string;
-  amount: string;
-  story: string;
-  username: string;
-  period: 'future' | 'past';
-  distance: string;
-  previousClaims: Array<{ amount: string; username: string; date: string }>;
-};
+import type { ClaimHistoryItem, PublicActivity, PublicClaim, PublicProfile } from '@/lib/public/types';
 
-export const claims: PreviewClaim[] = [
+export const claims: PublicClaim[] = [
   {
+    claimId: 'preview-august-18-2027',
     rank: 1,
     isoDate: '2027-08-18',
     fullDate: 'August 18, 2027',
@@ -24,16 +11,21 @@ export const claims: PreviewClaim[] = [
     day: '18',
     year: '2027',
     amount: '$1,250',
+    amountMinor: 125000,
+    currency: 'USD',
+    title: 'The quiet launch',
     story: "Launching the company I've been quietly building for three years.",
     username: '@foundername',
     period: 'future',
     distance: '358 DAYS TO GO',
-    previousClaims: [
-      { amount: '$640', username: '@firstmover', date: 'JUL 02, 2026' },
-      { amount: '$320', username: '@augustkid', date: 'APR 18, 2026' },
-    ],
+    displayName: 'Founder Name',
+    claimedAt: '2026-07-02T12:00:00.000Z',
+    trendScore: 146250,
+    visibility: 'public',
+    isPrivate: false,
   },
   {
+    claimId: 'preview-february-14-2028',
     rank: 2,
     isoDate: '2028-02-14',
     fullDate: 'February 14, 2028',
@@ -42,13 +34,21 @@ export const claims: PreviewClaim[] = [
     day: '14',
     year: '2028',
     amount: '$880',
+    amountMinor: 88000,
+    currency: 'USD',
+    title: 'Make it official',
     story: 'The day we finally make it official.',
     username: '@twoplusone',
     period: 'future',
     distance: '538 DAYS TO GO',
-    previousClaims: [{ amount: '$450', username: '@redroses', date: 'JUN 04, 2026' }],
+    displayName: 'Two Plus One',
+    claimedAt: '2026-06-04T10:30:00.000Z',
+    trendScore: 98500,
+    visibility: 'public',
+    isPrivate: false,
   },
   {
+    claimId: 'preview-january-01-2030',
     rank: 3,
     isoDate: '2030-01-01',
     fullDate: 'January 1, 2030',
@@ -57,13 +57,21 @@ export const claims: PreviewClaim[] = [
     day: '01',
     year: '2030',
     amount: '$720',
+    amountMinor: 72000,
+    currency: 'USD',
+    title: 'One million people',
     story: 'One million people using something we made.',
     username: '@shipit',
     period: 'future',
     distance: '1,225 DAYS TO GO',
-    previousClaims: [],
+    displayName: 'Ship It',
+    claimedAt: '2026-05-20T09:00:00.000Z',
+    trendScore: 81000,
+    visibility: 'public',
+    isPrivate: false,
   },
   {
+    claimId: 'preview-june-22-2019',
     rank: 4,
     isoDate: '2019-06-22',
     fullDate: 'June 22, 2019',
@@ -72,13 +80,21 @@ export const claims: PreviewClaim[] = [
     day: '22',
     year: '2019',
     amount: '$510',
+    amountMinor: 51000,
+    currency: 'USD',
+    title: 'The accidental meeting',
     story: 'We met by accident. Everything after was on purpose.',
     username: '@sundays',
     period: 'past',
     distance: '2,621 DAYS AGO',
-    previousClaims: [{ amount: '$250', username: '@chance', date: 'MAR 11, 2026' }],
+    displayName: 'Sundays',
+    claimedAt: '2026-03-11T15:00:00.000Z',
+    trendScore: 56800,
+    visibility: 'public',
+    isPrivate: false,
   },
   {
+    claimId: 'preview-november-09-2024',
     rank: 5,
     isoDate: '2024-11-09',
     fullDate: 'November 9, 2024',
@@ -87,14 +103,60 @@ export const claims: PreviewClaim[] = [
     day: '09',
     year: '2024',
     amount: '$390',
+    amountMinor: 39000,
+    currency: 'USD',
+    title: 'First marathon',
     story: 'First marathon. Last excuse.',
     username: '@mileforty',
     period: 'past',
     distance: '654 DAYS AGO',
-    previousClaims: [],
+    displayName: 'Mile Forty',
+    claimedAt: '2026-02-12T08:00:00.000Z',
+    trendScore: 43200,
+    visibility: 'public',
+    isPrivate: false,
   },
 ];
 
-export function findClaim(isoDate: string) {
-  return claims.find((claim) => claim.isoDate === isoDate);
-}
+export const previewHistory: Record<string, ClaimHistoryItem[]> = {
+  '2027-08-18': [
+    { claimId: 'preview-history-1', amount: '$640', amountMinor: 64000, currency: 'USD', username: '@firstmover', claimedAt: '2026-07-02T12:00:00.000Z', status: 'superseded' },
+    { claimId: 'preview-history-2', amount: '$320', amountMinor: 32000, currency: 'USD', username: '@augustkid', claimedAt: '2026-04-18T12:00:00.000Z', status: 'superseded' },
+  ],
+  '2028-02-14': [
+    { claimId: 'preview-history-3', amount: '$450', amountMinor: 45000, currency: 'USD', username: '@redroses', claimedAt: '2026-06-04T12:00:00.000Z', status: 'superseded' },
+  ],
+  '2019-06-22': [
+    { claimId: 'preview-history-4', amount: '$250', amountMinor: 25000, currency: 'USD', username: '@chance', claimedAt: '2026-03-11T12:00:00.000Z', status: 'superseded' },
+  ],
+};
+
+export const previewProfiles: PublicProfile[] = Array.from(new Set(claims.map((claim) => claim.username)))
+  .filter((username): username is string => Boolean(username))
+  .map((username) => {
+    const profileClaims = claims.filter((claim) => claim.username === username);
+    const highest = Math.max(...profileClaims.map((claim) => claim.amountMinor));
+    return {
+      userId: `preview-${username.slice(1)}`,
+      username,
+      displayName: profileClaims[0]?.displayName ?? null,
+      bio: 'Collecting the days that made everything feel possible.',
+      avatarUrl: null,
+      publicClaimCount: profileClaims.length,
+      highestClaim: profileClaims.find((claim) => claim.amountMinor === highest)?.amount ?? '$0',
+      highestClaimMinor: highest,
+      claims: profileClaims,
+    };
+  });
+
+export const previewActivity: PublicActivity[] = claims.slice(0, 4).map((claim, index) => ({
+  eventId: index + 1,
+  eventType: index === 3 ? 'outbid' : 'claimed',
+  createdAt: claim.claimedAt,
+  isoDate: claim.isoDate,
+  fullDate: claim.fullDate,
+  amount: claim.amount,
+  username: claim.username ?? '@private',
+  title: claim.title,
+  claimId: claim.claimId,
+}));

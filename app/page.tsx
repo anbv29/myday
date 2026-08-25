@@ -1,18 +1,18 @@
 import Link from 'next/link';
 import { Leaderboard } from '@/components/leaderboard';
+import { DataEmptyState, DataSourceRibbon } from '@/components/public/data-state';
+import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
-import { claims } from '@/lib/preview-data';
+import { getLeaderboard } from '@/server/public-data';
 
-export default function Home() {
-  const topClaim = claims[0];
+export default async function Home() {
+  const result = await getLeaderboard({ limit: 8 });
+  const topClaim = result.data[0];
 
   return (
     <>
       <a className="skip-link" href="#main-content">Skip to content</a>
-      <div className="preview-ribbon">
-        <span>Section 01</span>
-        <span>Visual direction · sample data</span>
-      </div>
+      <DataSourceRibbon source={result.source} />
       <SiteHeader />
 
       <main id="main-content">
@@ -23,6 +23,9 @@ export default function Home() {
               EVERY DATE<br />HAS A STORY.<br /><em>SOME HAVE A PRICE.</em>
             </h1>
             <div className="hero-actions">
+              <Link className="button button-primary" href="/claim">
+                Claim a date <span aria-hidden="true">↗</span>
+              </Link>
               <a className="button button-primary" href="#leaderboard">
                 See the leaderboard <span aria-hidden="true">↘</span>
               </a>
@@ -30,7 +33,7 @@ export default function Home() {
             </div>
           </div>
 
-          <Link
+          {topClaim ? <Link
             className="top-claim"
             href={`/day/${topClaim.isoDate}`}
             aria-label={`View ${topClaim.fullDate}, claimed for ${topClaim.amount}`}
@@ -49,7 +52,13 @@ export default function Home() {
               <p>“{topClaim.story}”</p>
               <span>by {topClaim.username}</span>
             </div>
-          </Link>
+          </Link> : (
+            <DataEmptyState
+              unavailable={result.source === 'unavailable'}
+              title={result.source === 'unavailable' ? 'The board is offline.' : 'The first day is waiting.'}
+              message={result.error ?? 'No public date has been claimed yet.'}
+            />
+          )}
         </section>
 
         <section className="principles-strip" aria-label="Platform principles">
@@ -71,7 +80,13 @@ export default function Home() {
               a date changes hands.
             </p>
           </div>
-          <Leaderboard claims={claims} />
+          {result.data.length ? <Leaderboard claims={result.data} /> : (
+            <DataEmptyState
+              unavailable={result.source === 'unavailable'}
+              title="No claims to rank."
+              message={result.error ?? 'Public claims will appear here as soon as they are confirmed.'}
+            />
+          )}
         </section>
 
         <section className="how-it-works" id="how-it-works">
@@ -89,11 +104,7 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="site-footer shell">
-        <Link href="/" className="wordmark">MYDAY.LOL</Link>
-        <p>Every date means something to someone.</p>
-        <p>© 2026 MYDAY.LOL</p>
-      </footer>
+      <SiteFooter />
     </>
   );
 }
