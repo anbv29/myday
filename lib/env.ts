@@ -23,30 +23,20 @@ export function getAppOrigin() {
   return 'http://localhost:3000';
 }
 
-export function isClerkConfigured() {
-  return isEnvValuePresent(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)
-    && isEnvValuePresent(process.env.CLERK_SECRET_KEY);
-}
-
 export function isSupabaseConfigured() {
   return isEnvValuePresent(process.env.NEXT_PUBLIC_SUPABASE_URL)
     && isEnvValuePresent(process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY);
 }
 
-export function isIdentityStackConfigured() {
-  return isClerkConfigured() && isSupabaseConfigured();
-}
-
 export function isProductionConfigurationComplete() {
-  const identityAndData = isIdentityStackConfigured()
-    && isEnvValuePresent(process.env.CLERK_WEBHOOK_SIGNING_SECRET)
+  const data = isSupabaseConfigured()
     && isEnvValuePresent(process.env.SUPABASE_SERVICE_ROLE_KEY);
   const distributedSafety = isEnvValuePresent(process.env.UPSTASH_REDIS_REST_URL)
     && isEnvValuePresent(process.env.UPSTASH_REDIS_REST_TOKEN);
   const razorpay = isEnvValuePresent(process.env.RAZORPAY_KEY_ID)
     && isEnvValuePresent(process.env.RAZORPAY_KEY_SECRET)
     && isEnvValuePresent(process.env.RAZORPAY_WEBHOOK_SECRET);
-  return identityAndData && distributedSafety && razorpay;
+  return data && distributedSafety && razorpay;
 }
 
 export function requireServerEnv(name: string) {

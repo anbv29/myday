@@ -2,7 +2,7 @@
 
 ## Signals and alerts
 
-Monitor request count, 4xx/5xx rate, p50/p95/p99, worker CPU/time, Supabase latency/connections/locks/slow queries, Redis failures, Clerk verification failures, checkout creation failures, verified-webhook failures, refund backlog, provider error rate, cache hit/fallthrough, and abnormal auth/username traffic. Alert on sustained 5xx, `/ready` failure, database saturation, webhook retry growth, refund-pending age, crash loops, privilege/secret changes, spend anomalies, and backup failure.
+Monitor request count, 4xx/5xx rate, p50/p95/p99, worker CPU/time, Supabase latency/connections/locks/slow queries, Redis failures, anonymous checkout creation failures, verified-webhook failures, refund backlog, provider error rate, cache hit/fallthrough, and abnormal attribution/request-fingerprint traffic. Alert on sustained 5xx, `/ready` failure, database saturation, webhook retry growth, refund-pending age, crash loops, privilege/secret changes, spend anomalies, and backup failure.
 
 `GET /health` proves the worker can answer. `GET /ready` checks required configuration without naming missing secrets. It is not a deep dependency probe; pair it with provider-native monitors.
 
@@ -19,7 +19,7 @@ Disable new checkout for the affected route, retain already-created intent state
 
 ## Database and Redis
 
-On Supabase outage, stop mutations and do not promote cached ownership. On Redis outage, production account/checkout rate-limited operations fail closed; public reads may fall through to bounded Supabase queries. After recovery, verify locks/connections, recent claim invariants, event uniqueness, and cache-version invalidation.
+On Supabase outage, stop mutations and do not promote cached ownership. On Redis outage, production checkout operations fail closed; public reads may fall through to bounded Supabase queries. After recovery, verify locks/connections, recent claim invariants, event uniqueness, and cache-version invalidation.
 
 ## Backup/restore
 
@@ -27,7 +27,7 @@ Enable automated Supabase backups/PITR with documented retention. Quarterly: res
 
 ## Secret rotation
 
-Create a replacement in the provider, update encrypted hosted secrets, deploy privately, verify health/webhooks, revoke the old key, and monitor failures. For webhook secrets, overlap endpoints only if the provider supports a safe rotation window. Treat any Git/log exposure as compromise. Rotate Clerk, Supabase service role, Upstash, payment, Sentry, and Pinecone independently.
+Create a replacement in the provider, update encrypted hosted secrets, deploy privately, verify health/webhooks, revoke the old key, and monitor failures. For webhook secrets, overlap endpoints only if the provider supports a safe rotation window. Treat any Git/log exposure as compromise. Rotate Supabase service role, Upstash, payment, Sentry, and Pinecone independently.
 
 ## Rollback
 

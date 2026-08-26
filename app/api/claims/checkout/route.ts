@@ -1,21 +1,28 @@
 import { claimCheckoutSchema } from '@/lib/validation/claim';
 import { getAppOrigin } from '@/lib/env';
-import { getRequestIdentity } from '@/server/auth/identity';
 import { hasTrustedMutationOrigin, readBoundedBody } from '@/server/http/security';
 import { selectPaymentProvider } from '@/server/payments';
+import { sha256Hex } from '@/server/payments/crypto';
 import { getUsdInrReferenceRate } from '@/server/payments/fx';
 import { checkCheckoutRateLimit } from '@/server/rate-limit/checkout';
 import { createAdminSupabaseClient } from '@/server/supabase/admin';
-import { createUserSupabaseClient } from '@/server/supabase/user';
 
 const MAX_BODY_BYTES = 8 * 1024;
 
+async function anonymousRateLimitKey(request: Request) {
+  const forwarded = request.headers.get('x-vercel-forwarded-for')
+    ?? request.headers.get('x-forwarded-for')
+    ?? request.headers.get('x-real-ip')
+    ?? 'unknown';
+  const ip = forwarded.split(',')[0]?.trim().slice(0, 64) || 'unknown';
+  const userAgent = (request.headers.get('user-agent') ?? 'unknown').slice(0, 200);
+  return `anonymous:${await sha256Hex(`${ip}|${userAgent}`)}`;
+}
+
 export async function POST(request: Request) {
   if (!hasTrustedMutationOrigin(request)) return Response.json({ error: 'Request origin is not allowed.' }, { status: 403 });
-  const identity = await getRequestIdentity(request);
-  if (!identity) return Response.json({ error: 'Sign in before starting checkout.' }, { status: 401 });
 
-  const rateLimit = await checkCheckoutRateLimit(identity.clerkUserId);
+  const rateLimit = await checkCheckoutRateLimit(await anonymousRateLimitKey(request));
   if (!rateLimit.success) {
     return Response.json(
       { error: rateLimit.unavailable ? 'Checkout is temporarily unavailable.' : 'Too many checkout attempts. Try again later.' },
@@ -40,14 +47,11 @@ export async function POST(request: Request) {
     return Response.json({ error: 'Razorpay checkout is not configured yet.' }, { status: 503 });
   }
 
-  const token = await identity.getSupabaseToken();
-  if (!token) return Response.json({ error: 'Authentication could not be verified.' }, { status: 401 });
-
+  const supabase = createAdminSupabaseClient();
   if (parsed.data.billingCountry === 'IN') {
     try {
       const reference = await getUsdInrReferenceRate();
-      const admin = createAdminSupabaseClient();
-      const { error: rateError } = await admin
+      const { error: rateError } = await supabase
         .from('payment_configuration')
         .update({
           usd_to_inr_rate: reference.rate,
@@ -63,8 +67,7 @@ export async function POST(request: Request) {
     }
   }
 
-  const supabase = createUserSupabaseClient(token);
-  const { data, error } = await supabase.rpc('create_claim_checkout_intent', {
+  const { data, error } = await supabase.rpc('create_anonymous_claim_checkout_intent', {
     target_date: parsed.data.date,
     claim_title: parsed.data.title,
     claim_story: parsed.data.story,
@@ -75,10 +78,10 @@ export async function POST(request: Request) {
     request_idempotency_key: parsed.data.idempotencyKey,
   });
   if (error) {
-    if (error.message.includes('onboarding_required')) return Response.json({ error: 'Choose your username before claiming a date.', action: '/onboarding/username' }, { status: 403 });
     if (error.message.includes('fx_rate_unavailable')) return Response.json({ error: 'The current INR exchange rate could not be verified. Try again shortly.' }, { status: 503 });
     if (error.message.includes('invalid_claim_amount')) return Response.json({ error: 'The price changed. Refresh the claim quote and try again.' }, { status: 409 });
     if (error.code === '22023') return Response.json({ error: 'The claim request is no longer valid.' }, { status: 400 });
+    console.error('Anonymous checkout intent creation failed', { error });
     return Response.json({ error: 'Checkout could not be started.' }, { status: 503 });
   }
 
@@ -112,19 +115,27 @@ export async function POST(request: Request) {
       ? await provider.createCheckout(checkoutInput)
       : await provider.resumeCheckout(checkoutReference as string, checkoutInput);
     if (shouldCreate) {
-      const attached = await supabase.rpc('attach_claim_checkout', {
+      const attached = await supabase.rpc('attach_anonymous_claim_checkout', {
         target_intent_id: intentId,
+        request_access_key: parsed.data.idempotencyKey,
         provider_checkout_reference: checkout.checkoutReference,
       });
       if (attached.error) throw new Error('checkout_attach_failed');
     }
+    const statusUrl = `/payment/status?intent=${encodeURIComponent(intentId)}&access=${encodeURIComponent(parsed.data.idempotencyKey)}`;
     return Response.json(
-      { intentId, checkout, statusUrl: `/payment/status?intent=${encodeURIComponent(intentId)}` },
-      { status: 201, headers: { 'Cache-Control': 'private, no-store', Vary: 'Cookie, Authorization' } },
+      { intentId, checkout, statusUrl },
+      { status: 201, headers: { 'Cache-Control': 'private, no-store' } },
     );
   } catch (providerError) {
     console.error('Payment checkout creation failed', { provider: provider.name, intentId, error: providerError });
-    if (shouldCreate) await supabase.rpc('fail_claim_checkout', { target_intent_id: intentId, safe_failure_code: 'provider_checkout_failed' });
+    if (shouldCreate) {
+      await supabase.rpc('fail_anonymous_claim_checkout', {
+        target_intent_id: intentId,
+        request_access_key: parsed.data.idempotencyKey,
+        safe_failure_code: 'provider_checkout_failed',
+      });
+    }
     return Response.json({ error: 'The payment provider could not start checkout. You have not been charged.' }, { status: 503 });
   }
 }

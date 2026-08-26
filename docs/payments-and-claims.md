@@ -45,7 +45,7 @@ The partial unique index from migration 2 remains the final invariant preventing
 
 ## Idempotency
 
-- Checkout requests require a 16–100 character idempotency key unique per user.
+- Checkout requests require a 16–100 character idempotency/access key unique per anonymous attribution record.
 - An idempotency key cannot be reused with different claim content.
 - Razorpay orders are protected by the leased database checkout-creation state; refunds use the claim-intent UUID as Razorpay's idempotent `receipt` value.
 - Provider event IDs are unique per provider and raw webhook bodies are represented only by a SHA-256 digest.
@@ -58,7 +58,7 @@ Configure `POST /api/webhooks/razorpay` for the `payment.captured` event. The ha
 
 Set the server-only placeholders documented in `.env.example`. Never prefix secrets with `NEXT_PUBLIC_`.
 
-Use Razorpay test-mode keys and a test webhook secret locally. A real claim can only be exercised after Clerk, Supabase migrations 1–3, Upstash, and Razorpay are connected. Complete Razorpay KYC and request international-card activation before foreign payments; keep the Terms, Privacy, Refund/Cancellation, and Delivery policy pages publicly reachable for the review.
+Use Razorpay test-mode keys and a test webhook secret locally. A real claim can only be exercised after all Supabase migrations, Upstash, and Razorpay are connected. Complete Razorpay KYC and request international-card activation before foreign payments; keep the Terms, Privacy, Refund/Cancellation, and Delivery policy pages publicly reachable for the review.
 
 Razorpay must have automatic capture enabled so the configured `payment.captured` webhook is authoritative. Webhook-time refund calls use a three-second provider timeout to remain within Razorpay's delivery window; a timeout leaves the intent `refund_pending` and deliberately returns a retryable HTTP 503.
 

@@ -47,7 +47,7 @@ export function Leaderboard({ claims }: { claims: PublicClaim[] }) {
               <a className="row-date" href={`/day/${claim.isoDate}`}><strong>{claim.shortDate}</strong><small>{claim.period}</small></a>
               <strong className="row-amount">{claim.amount}</strong>
               <span className="row-story">{claim.story}</span>
-              <span className="row-user"><small>{claim.username ?? 'Private claim'}</small><PublicAttribution className="public-attribution" value={claim.attribution} />{claim.collectorBio ? <span className="row-user-bio">{excerptWords(claim.collectorBio, collectorBioWordLimit)}</span> : null}</span>
+              <span className="row-user">{claim.attribution ? <PublicAttribution className="public-attribution" value={claim.attribution} /> : <small>{claim.displayName ?? claim.username ?? 'Private claim'}</small>}{claim.collectorBio ? <span className="row-user-bio">{excerptWords(claim.collectorBio, collectorBioWordLimit)}</span> : null}</span>
               <a className="row-arrow" href={`/day/${claim.isoDate}`} aria-label={`View ${claim.fullDate}`}>↗</a>
             </div>
           </li>

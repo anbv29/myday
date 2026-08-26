@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
-const sensitivePrefixes = ['/account', '/api', '/claim', '/onboarding', '/payment', '/ready'];
+const sensitivePrefixes = ['/api', '/claim', '/payment', '/ready'];
 const publicPrefixes = ['/', '/activity', '/contact', '/day/', '/explore', '/faq', '/leaderboard', '/privacy', '/search', '/terms', '/trending'];
 
 function securityHeaders(response: NextResponse, requestId: string) {
@@ -20,12 +20,12 @@ function securityHeaders(response: NextResponse, requestId: string) {
         "object-src 'none'",
         "frame-ancestors 'none'",
         "form-action 'self' https://api.razorpay.com",
-        "script-src 'self' 'unsafe-inline' https://*.clerk.accounts.dev https://*.clerk.com https://checkout.razorpay.com",
+        "script-src 'self' 'unsafe-inline' https://checkout.razorpay.com",
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
         "font-src 'self' data: https://fonts.gstatic.com",
         "img-src 'self' data: blob: https:",
-        "connect-src 'self' https://*.supabase.co https://*.clerk.accounts.dev https://*.clerk.com https://*.upstash.io https://api.razorpay.com",
-        "frame-src https://*.clerk.accounts.dev https://*.clerk.com https://api.razorpay.com https://checkout.razorpay.com",
+        "connect-src 'self' https://*.supabase.co https://*.upstash.io https://api.razorpay.com",
+        "frame-src https://api.razorpay.com https://checkout.razorpay.com",
         "worker-src 'self' blob:",
         'upgrade-insecure-requests',
       ].join('; '),

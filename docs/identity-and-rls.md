@@ -1,45 +1,47 @@
-# Identity and RLS setup
+# Anonymous checkout and RLS
 
-MYDAY uses Clerk for authentication and Supabase PostgreSQL for application
-identity and authorization. The Vercel runtime uses Clerk's React SDK in
-the browser and Backend SDK for server verification. Supabase Auth is not used
-as a second password system.
+MYDAY does not require an account or login. Public discovery uses the Supabase
+publishable key through tightly scoped public views and read-only RPCs. Checkout
+mutations run only on the Vercel server through the Supabase secret key.
 
 ## Required provider configuration
 
-1. Create or select a Clerk application.
-2. In Supabase, enable the Clerk Third-Party Auth integration using the Clerk
-   issuer domain. Do not use the deprecated shared JWT-secret template.
-3. Add the values listed in `.env.example` to local and hosted secret storage.
-4. Apply the migrations under `supabase/migrations` using an elevated migration
-   connection, never the application runtime key.
-5. Configure a Clerk webhook endpoint at `/api/webhooks/clerk` for
-   `user.created`, `user.updated`, and `user.deleted`.
-6. Store its signing secret as `CLERK_WEBHOOK_SIGNING_SECRET`.
+1. Create a Supabase project.
+2. Apply every file under `supabase/migrations` in filename order using an
+   elevated migration connection, never the application runtime key.
+3. Store the project URL, publishable key, and secret key in Vercel.
+4. Do not enable a MYDAY password system or Clerk Third-Party Auth connection.
+
+## Anonymous buyer model
+
+- Checkout requires a public `@handle` or complete HTTPS attribution URL.
+- The server normalizes that attribution and PostgreSQL derives a SHA-256-based
+  internal subject. The subject is never shown as proof of external identity.
+- The deterministic internal app-user record preserves existing claim, payment,
+  and audit foreign-key invariants without creating a user account.
+- Public pages show the submitted attribution. It is self-asserted user content,
+  and the Terms and Privacy pages state that MYDAY does not verify ownership of
+  the named third-party account or organisation.
+- Repeated use of the same normalized attribution maps to the same internal
+  buyer record, while payment finalization remains tied to the exact checkout.
 
 ## Authorization model
 
-- Clerk verifies the browser session.
-- The server obtains the Clerk session token and supplies it to Supabase through
-  the `accessToken` client option.
-- Supabase verifies the Clerk token through its Third-Party Auth integration.
-- RLS reads the verified `sub` claim and maps it to `app_users.clerk_user_id`.
-- The browser never supplies an authoritative application user ID.
-- The service-role key is used only by the verified Clerk webhook handler.
+- Public data is returned only through existing RLS-protected public views and
+  bounded read-only RPCs.
+- `create_anonymous_claim_checkout_intent`, `attach_anonymous_claim_checkout`,
+  `fail_anonymous_claim_checkout`, and `get_anonymous_claim_intent` are granted
+  only to `service_role`.
+- The old authenticated checkout RPC grants are revoked by migration 5.
+- The browser never submits an authoritative database user ID.
+- Payment status requires both the unguessable intent UUID and the original
+  16–100 character checkout access key. Responses are private and no-store.
+- Only a valid Razorpay signed webhook can finalize ownership.
 
-## Username guarantees
+## Abuse and degraded behavior
 
-- `normalized_username` is generated in PostgreSQL and has a partial unique
-  index.
-- Case variants such as `Vishu`, `vishu`, and `VISHU` conflict.
-- Reserved names are checked inside the authoritative claim function.
-- Availability checks are advisory, authenticated, private, and rate-limited.
-- `claim_username` performs the final update and records an audit event.
-- Unexpected request fields are rejected before reaching the database.
-
-## Degraded behavior
-
-Public pages continue to render without identity credentials. Sign-in and
-onboarding show an explicit unavailable state rather than creating a mock user.
-In production, missing Upstash configuration fails username checks and changes
-closed. Missing or unverifiable Clerk tokens receive an authentication error.
+Anonymous checkout is protected by same-origin validation, strict and bounded
+input validation, and an Upstash rate limit keyed by a one-way hash of the
+request network/user-agent fingerprint. Missing Redis, Supabase secret access,
+current FX data for INR, or Razorpay credentials causes checkout to fail closed.
+Public read-only pages remain available when safe.

@@ -14,9 +14,6 @@ describe('environment safety', () => {
 
   it('requires the core stack and Razorpay', () => {
     const required = {
-      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: 'pk_test_real',
-      CLERK_SECRET_KEY: 'sk_test_real',
-      CLERK_WEBHOOK_SIGNING_SECRET: 'whsec_real',
       NEXT_PUBLIC_SUPABASE_URL: 'https://project.supabase.co',
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_real',
       SUPABASE_SERVICE_ROLE_KEY: 'sb_secret_real',

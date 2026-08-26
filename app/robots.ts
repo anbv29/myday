@@ -4,7 +4,7 @@ import { getAppOrigin } from '@/lib/env';
 export default function robots(): MetadataRoute.Robots {
   const baseUrl = getAppOrigin();
   return {
-    rules: [{ userAgent: '*', allow: '/', disallow: ['/account/', '/api/', '/maintenance', '/onboarding/', '/payment/'] }],
+    rules: [{ userAgent: '*', allow: '/', disallow: ['/api/', '/maintenance', '/payment/'] }],
     sitemap: `${baseUrl}/sitemap.xml`,
   };
 }

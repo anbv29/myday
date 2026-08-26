@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
-import { AppAuthProvider } from '@/components/auth/app-auth-provider';
 import { SiteUtilities } from '@/components/site-utilities';
 import { getAppOrigin } from '@/lib/env';
 import './globals.css';
+import './future.css';
 
 const themeScript = `
   (() => {
@@ -51,7 +51,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>
-        <AppAuthProvider>{children}</AppAuthProvider>
+        {children}
         <SiteUtilities />
       </body>
     </html>

@@ -15,18 +15,18 @@ type IntentStatus = {
 
 const terminalStatuses = new Set(['completed', 'refunded', 'failed', 'expired']);
 
-export function PaymentStatus({ intentId }: { intentId: string }) {
+export function PaymentStatus({ intentId, accessKey }: { intentId: string; accessKey: string }) {
   const [intent, setIntent] = useState<IntentStatus | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
-    const response = await fetch(`/api/payments/intents/${encodeURIComponent(intentId)}`, { cache: 'no-store' });
+    const response = await fetch(`/api/payments/intents/${encodeURIComponent(intentId)}?access=${encodeURIComponent(accessKey)}`, { cache: 'no-store' });
     const result = await response.json() as IntentStatus & { error?: string };
     if (!response.ok) { setError(result.error ?? 'Payment status could not be loaded.'); return null; }
     setIntent(result);
     setError(null);
     return result;
-  }, [intentId]);
+  }, [accessKey, intentId]);
 
   useEffect(() => {
     let cancelled = false;

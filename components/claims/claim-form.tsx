@@ -28,7 +28,6 @@ function loadRazorpay() {
 type CheckoutResponse = {
   intentId?: string;
   statusUrl?: string;
-  action?: string;
   error?: string;
   checkout?: { provider: 'razorpay'; checkoutReference: string; keyId: string; amountMinor: number; currency: string; name: string; description: string };
 };
@@ -44,7 +43,6 @@ export function ClaimForm({
   const [amountMajor, setAmountMajor] = useState(String(quote.minimumAmountMinor / 100));
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [action, setAction] = useState<string | null>(null);
   const requestKey = useRef(crypto.randomUUID());
   const fxRate = quote.minimumAmountInrMinor && quote.minimumAmountMinor
     ? quote.minimumAmountInrMinor / quote.minimumAmountMinor
@@ -58,7 +56,6 @@ export function ClaimForm({
   async function submitClaim(formData: FormData) {
     setSubmitting(true);
     setError(null);
-    setAction(null);
     const amountMajor = Number(formData.get('amount'));
     const payload = {
       date: quote.date,
@@ -79,7 +76,6 @@ export function ClaimForm({
       const result = await response.json() as CheckoutResponse;
       if (!response.ok || !result.checkout) {
         setError(result.error ?? 'Checkout could not be started.');
-        setAction(result.action ?? (response.status === 401 ? `/sign-in?redirect_url=${encodeURIComponent(`/claim?date=${quote.date}`)}` : null));
         if (response.status !== 409) requestKey.current = crypto.randomUUID();
         return;
       }
@@ -111,13 +107,13 @@ export function ClaimForm({
     <form
       className="claim-form"
       action={submitClaim}
-      onChange={() => { requestKey.current = crypto.randomUUID(); setError(null); setAction(null); }}
+      onChange={() => { requestKey.current = crypto.randomUUID(); setError(null); }}
     >
       <fieldset>
         <legend><span>01</span> Tell the story</legend>
         <label>Short title<input name="title" required minLength={3} maxLength={100} placeholder="Launching the company" /></label>
         <label>Why this day matters<textarea name="story" required minLength={3} maxLength={1000} rows={6} placeholder="I’ve been quietly building it for three years. This is the day it goes public." /></label>
-        <label>Your public @ or link<input name="attribution" required minLength={3} maxLength={200} placeholder="@foundername or https://your-site.com" autoCapitalize="none" autoCorrect="off" spellCheck={false} /><small className="field-help">Shown with your claim on the leaderboard. Links must use HTTPS; private claims keep it hidden.</small></label>
+        <label>Your public @ or link<input name="attribution" required minLength={3} maxLength={200} placeholder="@foundername or https://your-site.com" autoCapitalize="none" autoCorrect="off" spellCheck={false} /><small className="field-help">No login required. This self-submitted attribution is shown on the leaderboard; it is not identity-verified. Links must use HTTPS, and private claims keep it hidden.</small></label>
       </fieldset>
 
       <fieldset>
@@ -152,7 +148,7 @@ export function ClaimForm({
         </div>
         {billingCountry === 'IN' ? <p className="checkout-fineprint">The INR amount uses the latest daily ECB USD/INR reference available at checkout{quote.fxRateDate ? ` (reference date ${quote.fxRateDate})` : ''}. Razorpay receives the final server-calculated amount.</p> : null}
         <label className="claim-consent"><input type="checkbox" required /><span>I understand this is a platform fee for a featured claim—not an investment, resale right, wallet balance, or promise of financial return.</span></label>
-        {error ? <div className="form-error" role="alert"><p>{error}</p>{action ? <a href={action}>Continue ↗</a> : null}</div> : null}
+        {error ? <div className="form-error" role="alert"><p>{error}</p></div> : null}
         {!razorpayConfigured ? <p className="provider-notice" role="status">Razorpay credentials are not connected in this environment, so real checkout is disabled.</p> : null}
         <button className="button button-primary checkout-button" type="submit" disabled={submitting || !razorpayConfigured}>
           <span>{submitting ? 'Opening secure checkout…' : 'Continue to secure checkout'}</span><span aria-hidden="true">↗</span>

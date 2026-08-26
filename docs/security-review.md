@@ -2,7 +2,7 @@
 
 ## Reviewed and implemented
 
-- Identity is verified server-side through Clerk; Supabase RLS maps the verified subject. Client user ids are not authoritative.
+- Purchasing is anonymous. The server creates internal buyer records from normalized public attribution; client-supplied database user IDs are never accepted.
 - Username normalization/uniqueness, reserved-name enforcement, strict input schemas, unknown-field rejection, trusted-origin checks, bounded bodies, and distributed mutation limits are implemented.
 - Public database views suppress private content. Sensitive tables force RLS and use narrow policies/RPC grants.
 - Checkout pricing/provider selection is recomputed server-side. Signed webhooks, raw-body limits, replay controls, unique events/payments, transaction locks, one-current-claim constraint, idempotent retries, and stale-payment refund handling protect ownership.
@@ -16,7 +16,7 @@
 External credentials and dashboards are not present in this repository, so the following cannot be truthfully completed in code alone:
 
 1. Apply migrations and execute anon/user-A/user-B/service-role RLS tests in the target Supabase project.
-2. Exercise Clerk session expiry, account deletion, webhook replay, redirect allowlists, enumeration resistance, and provider MFA.
+2. Exercise anonymous checkout abuse limits, status-key guessing resistance, origin checks, attribution impersonation warnings, webhook replay, and provider MFA.
 3. Run Razorpay test-mode INR and USD success, invalid signature, replay, amount/currency mismatch, simultaneous same-date capture, refund retry, and reconciliation tests. Confirm international cards are approved on the live account.
 4. Configure Vercel Firewall/rate controls and test deployed CSP/HSTS/cache headers, TLS, `/health`, `/ready`, and origin behavior.
 5. Run secret history scanning in the canonical remote and rotate any previously exposed value. This workspace contains placeholders only by inspection.

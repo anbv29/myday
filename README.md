@@ -2,7 +2,7 @@
 
 MYDAY is a public record where people pay a platform fee to attach meaning to a calendar date. One verified claim is current per day; a higher valid claim can replace it while history remains. It is not an investment, resale market, wallet, security, or promise of financial return.
 
-The product is a responsive, light-first editorial Next.js application with public leaderboards, exploration, search, profiles, date monuments, Clerk identity, account controls, and server-verified Razorpay checkout for domestic and enabled international cards.
+The product is a responsive, light-first editorial Next.js application with public leaderboards, exploration, search, profiles, date monuments, anonymous purchasing, and server-verified Razorpay checkout for domestic and enabled international cards.
 
 ## Product rules
 
@@ -19,7 +19,6 @@ The product is a responsive, light-first editorial Next.js application with publ
 flowchart TD
   U[Browser] --> C[Vercel edge network]
   C --> N[Next.js application + functions]
-  N --> K[Clerk identity]
   N --> R[Upstash rate limits + cache version]
   N --> S[(Supabase PostgreSQL\nauthoritative state + RLS)]
   N --> F[ECB USD/INR reference via Frankfurter]
@@ -34,9 +33,8 @@ flowchart TD
 | Service | Responsibility | Failure behavior |
 | --- | --- | --- |
 | Vercel | Next.js hosting, CDN, TLS, functions, and edge controls | Health alerts; authoritative data remains in Supabase |
-| Next.js | UI, validation, authorization orchestration, webhook endpoints | Clean errors; no ownership guess |
-| Clerk | Sessions and verified identity | Private actions deny; public record remains readable |
-| Supabase PostgreSQL | Users, RLS, claims, history, payments, audit log, transactions | Claims and checkout fail closed |
+| Next.js | UI, validation, anonymous checkout orchestration, webhook endpoints | Clean errors; no ownership guess |
+| Supabase PostgreSQL | Anonymous buyer records, RLS, claims, history, payments, audit log, transactions | Claims and checkout fail closed |
 | Upstash | Distributed abuse limits and public cache generation | Production writes fail closed; public reads fall through to Supabase |
 | Razorpay | INR and enabled international payment collection, signed events, refunds | No ownership until a valid webhook transaction commits |
 | Frankfurter/ECB | Latest daily USD/INR reference used for Indian checkout | INR checkout fails closed if a recent rate cannot be verified |
@@ -54,7 +52,7 @@ copy .env.example .env.local
 npm run dev
 ```
 
-Preview records are allowed only when `MYDAY_ENABLE_PREVIEW_DATA=true` and never in production. With placeholder credentials, public preview pages work while auth, checkout, and account mutations show safe unavailable states.
+Preview records are allowed only when `MYDAY_ENABLE_PREVIEW_DATA=true` and never in production. With placeholder credentials, public preview pages work while checkout shows a safe unavailable state.
 
 Verification:
 
@@ -67,22 +65,21 @@ npm run build
 
 ## Environment variables
 
-Public browser values: `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`. Only the optional PostHog project key/host may also be public.
+Public browser values: `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`. Only the optional PostHog project key/host may also be public.
 
-Server-only secrets: `CLERK_SECRET_KEY`, `CLERK_WEBHOOK_SIGNING_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, Upstash credentials, Razorpay keys/webhook secret, `SENTRY_DSN`, and Pinecone credentials. `SUPABASE_DB_URL` is migration-only and must not be available to the runtime. Store secrets in encrypted platform storage, never Git. `/ready` returns 503 until the identity/data stack, Upstash, and Razorpay are completely configured.
+Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, Upstash credentials, Razorpay keys/webhook secret, `SENTRY_DSN`, and Pinecone credentials. `SUPABASE_DB_URL` is migration-only and must not be available to the runtime. Store secrets in encrypted platform storage, never Git. `/ready` returns 503 until Supabase, Upstash, and Razorpay are completely configured.
 
-## Supabase and Clerk
+## Supabase and anonymous checkout
 
 1. Create a Supabase project and apply `supabase/migrations` in filename order with an elevated migration connection. Seed only development with `supabase/seed.sql`.
-2. Enable Clerk Third-Party Auth in Supabase using the Clerk issuer domain. Do not create a duplicate password system or use the deprecated shared-JWT-secret approach.
-3. Create Clerk webhook `POST /api/webhooks/clerk` for `user.created`, `user.updated`, and `user.deleted`.
-4. Set Clerk redirect URLs for `/onboarding/username`, `/account`, and the production origin.
+2. Apply `202608260005_anonymous_checkout.sql` after the original four migrations when upgrading an existing database.
+3. Do not configure a password, social-login, or third-party-auth system; purchasing and public discovery do not require an account.
 
-Clerk verifies the session; its token is forwarded to Supabase, whose RLS maps the verified `sub` to `app_users.clerk_user_id`. The browser never submits an authoritative user id. Tables force RLS, public views omit private fields, private mutations are RPCs with narrow grants, and the service-role key is confined to verified webhook/server paths. See `docs/identity-and-rls.md`.
+The server creates a deterministic internal buyer record from the normalized submitted attribution. The internal identifier exists only to preserve claim and audit foreign keys; public pages show the submitted attribution. Anonymous checkout RPCs are service-role-only, status lookup requires the checkout's unguessable access key, tables force RLS, and public views omit private payment state. See `docs/identity-and-rls.md`.
 
 ## Upstash and Vercel
 
-Create a REST-enabled Upstash Redis database and provide its URL/token. Rate-limit keys are scoped by operation and verified identity/origin context. Checkout and username mutations fail closed without Redis in production. Cache invalidation is best-effort after commit; cache never determines ownership.
+Create a REST-enabled Upstash Redis database and provide its URL/token. Checkout rate-limit keys use a one-way request fingerprint and fail closed without Redis in production. Cache invalidation is best-effort after commit; cache never determines ownership.
 
 For Vercel, import the GitHub repository as a Next.js project. Add all environment values through Vercel Project Settings, bind the custom domain, enforce HTTPS, enable firewall controls, and verify `/health`, `/ready`, CSP/HSTS, logs, and webhooks after deployment. Never place production secrets in build arguments or public variables.
 
@@ -106,15 +103,15 @@ These adapters are deliberately disabled without credentials and privacy configu
 
 ## Caching, scaling, and degraded behavior
 
-Anonymous public GET responses use short shared caching (`s-maxage=60`, stale-while-revalidate 300). Requests with cookies/authorization and all account, API, checkout, onboarding, and payment paths are `private, no-store`. Supabase queries are bounded. Public cache generations change after authoritative claims.
+Anonymous public GET responses use short shared caching (`s-maxage=60`, stale-while-revalidate 300). All API, checkout, and payment paths are `private, no-store`. Supabase queries are bounded. Public cache generations change after authoritative claims.
 
-Critical dependencies fail closed: unverified auth denies; invalid payment signatures do nothing; database/permission uncertainty reveals no private data; checkout provider failure records a safe failure. Optional analytics/search failures do not affect claims. `/maintenance` explains a deliberate pause; `/health` is liveness and `/ready` is configuration readiness without infrastructure details.
+Critical dependencies fail closed: invalid payment signatures do nothing; database/permission uncertainty reveals no private payment data; checkout provider failure records a safe failure. Optional analytics/search failures do not affect claims. `/maintenance` explains a deliberate pause; `/health` is liveness and `/ready` is configuration readiness without infrastructure details.
 
 Graceful shutdown is delegated to the Vercel function lifecycle: handlers hold no in-memory authoritative state, database clients are request-safe HTTP clients, and no local queue/connection requires SIGTERM cleanup. Background work must use a deployment-compatible durable mechanism with bounded retries, jitter, idempotency, and a dead-letter procedure before it is introduced.
 
 ## Operations, load, backup, and recovery
 
-Run the safe local public check with `npm run load:public`; configure its bounded environment values as described in `load/README.md`. Same-date races, signup bursts, and webhook bursts must run only in an isolated staging project with provider test mode. Assert one current claim, unique provider events, bounded p95/p99, and no exhausted database connections.
+Run the safe local public check with `npm run load:public`; configure its bounded environment values as described in `load/README.md`. Same-date races, anonymous checkout bursts, and webhook bursts must run only in an isolated staging project with provider test mode. Assert one current claim, unique provider events, bounded p95/p99, and no exhausted database connections.
 
 Enable Supabase scheduled backups/PITR appropriate to business requirements and test restoration quarterly into an isolated project. Export payment/audit reconciliation data according to retention policy. Recovery, outage, alerting, secret rotation, and restore steps are in `docs/operations.md`.
 
@@ -125,7 +122,7 @@ Enable Supabase scheduled backups/PITR appropriate to business requirements and 
 Deployment order:
 
 1. Verify and back up the target Supabase project; apply migrations.
-2. Configure Clerk, Upstash, test-mode provider webhooks, and hosted secrets.
+2. Configure Upstash, test-mode Razorpay webhooks, and hosted secrets.
 3. Run the full verification suite and staging race/replay tests.
 4. Deploy a protected Vercel preview, verify health/readiness/security headers and smoke tests, then promote the verified build to production.
 5. Switch payment providers to live keys only after webhook reconciliation and rollback exercises succeed.
@@ -133,8 +130,8 @@ Deployment order:
 ## Security checklist
 
 - [ ] No real secret is tracked or present in client bundles/build logs; rotate anything ever committed.
-- [ ] RLS policies and grants are applied and tested with anon, two user identities, and service role.
-- [ ] Clerk/webhook origins, redirects, signatures, replay windows, and event idempotency are verified.
+- [ ] RLS policies and grants are applied and tested with anon and service role; old authenticated checkout grants are revoked.
+- [ ] Mutation origins, anonymous status access keys, webhook signatures, replay handling, and event idempotency are verified.
 - [ ] Same-date concurrency leaves exactly one current claim; stale captures are reconciled/refunded.
 - [ ] CORS/origin rules, request sizes, validation, rate limits, CSP, HSTS, frame denial, and no-store paths are verified on the deployed host.
 - [ ] Provider dashboards use MFA, least privilege, alerts, live/test isolation, and secret rotation ownership.

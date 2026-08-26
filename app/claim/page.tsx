@@ -22,7 +22,7 @@ export default async function ClaimPage({ searchParams }: Props) {
   return (
     <PublicPage source={result.source} mainClassName="claim-page shell">
       <header className="claim-page-header">
-        <div><p className="eyebrow">Make a date public</p><h1>CLAIM<br />YOUR DAY.</h1></div>
+        <div><p className="eyebrow">No account required</p><h1>CLAIM<br />YOUR DAY.</h1></div>
         <div className="date-picker-panel">
           <form action="/claim" method="get">
             <label htmlFor="claim-date">Choose a date</label>
