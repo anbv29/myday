@@ -26,7 +26,7 @@ begin
     raise exception using errcode = '22023', message = 'invalid_attribution';
   end if;
 
-  attribution_digest := encode(digest(normalized_attribution, 'sha256'), 'hex');
+  attribution_digest := encode(extensions.digest(normalized_attribution, 'sha256'), 'hex');
   anonymous_subject := 'anon:' || attribution_digest;
   anonymous_username := 'buyer_' || left(attribution_digest, 14);
 
