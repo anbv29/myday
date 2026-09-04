@@ -54,6 +54,14 @@ The partial unique index from migration 2 remains the final invariant preventing
 
 Configure `POST /api/webhooks/razorpay` for the `payment.captured` event. The handler reads the raw body with a 1 MB limit and verifies the HMAC before JSON processing. Razorpay's `X-Razorpay-Event-Id` is mandatory for replay protection.
 
+Standard Checkout's browser handler sends the returned payment ID, order ID, and
+signature to `POST /api/payments/verify`. That route looks up the order ID stored
+for the anonymous checkout intent and verifies the HMAC with
+`RAZORPAY_KEY_SECRET`; it never changes ownership or marks a claim paid. The
+signed `payment.captured` webhook remains the only authoritative finalization
+path. Checkout cancellation and `payment.failed` events are reported in the form
+without granting a claim.
+
 ## Provider setup
 
 Set the server-only placeholders documented in `.env.example`. Never prefix secrets with `NEXT_PUBLIC_`.

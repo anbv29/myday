@@ -23,6 +23,18 @@ function clientCheckout(reference: string, input: CheckoutCreation): ClientCheck
   };
 }
 
+export async function verifyRazorpayCheckoutSignature(
+  orderId: string,
+  paymentId: string,
+  signature: string,
+) {
+  return verifyHmacSha256(
+    `${orderId}|${paymentId}`,
+    requireServerEnv('RAZORPAY_KEY_SECRET'),
+    signature,
+  );
+}
+
 export class RazorpayPaymentProvider implements PaymentProvider {
   readonly name = 'razorpay' as const;
 
@@ -33,6 +45,9 @@ export class RazorpayPaymentProvider implements PaymentProvider {
   }
 
   async createCheckout(input: CheckoutCreation) {
+    if (!Number.isSafeInteger(input.amountMinor) || input.amountMinor < 100) {
+      throw new Error('invalid_payment_amount');
+    }
     const data = await paymentFetch('https://api.razorpay.com/v1/orders', {
       method: 'POST',
       headers: razorpayHeaders(),

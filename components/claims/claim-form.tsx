@@ -3,7 +3,22 @@
 import { useRef, useState } from 'react';
 import type { ClaimQuote } from '@/server/claims/quotes';
 
-type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
+type RazorpayPaymentResponse = {
+  razorpay_payment_id: string;
+  razorpay_order_id: string;
+  razorpay_signature: string;
+};
+
+type RazorpayFailureResponse = {
+  error?: { description?: string };
+};
+
+type RazorpayInstance = {
+  open: () => void;
+  on: (event: 'payment.failed', handler: (response: RazorpayFailureResponse) => void) => void;
+};
+
+type RazorpayConstructor = new (options: Record<string, unknown>) => RazorpayInstance;
 declare global { interface Window { Razorpay?: RazorpayConstructor } }
 
 function loadRazorpay() {
@@ -91,8 +106,40 @@ export function ClaimForm({
         name: checkout.name,
         description: checkout.description,
         theme: { color: '#ff5833' },
-        handler: () => window.location.assign(result.statusUrl ?? `/payment/status?intent=${result.intentId}`),
-        modal: { ondismiss: () => setSubmitting(false) },
+        handler: async (payment: RazorpayPaymentResponse) => {
+          setSubmitting(true);
+          try {
+            const verification = await fetch('/api/payments/verify', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                intentId: result.intentId,
+                accessKey: requestKey.current,
+                ...payment,
+              }),
+            });
+            const verificationResult = await verification.json() as { verified?: boolean; error?: string };
+            if (!verification.ok || !verificationResult.verified) {
+              setError(verificationResult.error ?? 'Payment verification failed. No claim has been granted.');
+              return;
+            }
+            window.location.assign(result.statusUrl ?? `/payment/status?intent=${result.intentId}`);
+          } catch {
+            setError('Payment verification could not be completed. Check the payment status before retrying.');
+          } finally {
+            setSubmitting(false);
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            setSubmitting(false);
+            setError('Payment window closed. You have not been charged.');
+          },
+        },
+      });
+      razorpay.on('payment.failed', (failure) => {
+        setSubmitting(false);
+        setError(failure.error?.description ?? 'Payment failed. Try again or use another payment method.');
       });
       razorpay.open();
     } catch {

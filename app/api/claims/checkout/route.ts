@@ -136,6 +136,17 @@ export async function POST(request: Request) {
         safe_failure_code: 'provider_checkout_failed',
       });
     }
-    return Response.json({ error: 'The payment provider could not start checkout. You have not been charged.' }, { status: 503 });
+    const credentialsRejected = providerError instanceof Error && providerError.message === 'payment_provider_401';
+    const invalidAmount = providerError instanceof Error && providerError.message === 'invalid_payment_amount';
+    return Response.json(
+      {
+        error: credentialsRejected
+          ? 'Razorpay rejected the configured credentials.'
+          : invalidAmount
+            ? 'The payment amount must be at least 100 currency subunits.'
+            : 'The payment provider could not start checkout. You have not been charged.',
+      },
+      { status: credentialsRejected ? 401 : invalidAmount ? 400 : 500 },
+    );
   }
 }

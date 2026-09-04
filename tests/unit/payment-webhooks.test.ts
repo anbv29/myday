@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { selectPaymentProvider } from '@/server/payments';
-import { RazorpayPaymentProvider } from '@/server/payments/razorpay';
+import { RazorpayPaymentProvider, verifyRazorpayCheckoutSignature } from '@/server/payments/razorpay';
 
 async function hmacHex(value: string, secret: string) {
   const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
@@ -9,6 +9,7 @@ async function hmacHex(value: string, secret: string) {
 }
 
 afterEach(() => {
+  delete process.env.RAZORPAY_KEY_SECRET;
   delete process.env.RAZORPAY_WEBHOOK_SECRET;
 });
 
@@ -43,5 +44,33 @@ describe('Razorpay webhook verification', () => {
     const body = JSON.stringify({ event: 'payment.captured' });
     const signature = await hmacHex(body, process.env.RAZORPAY_WEBHOOK_SECRET);
     await expect(new RazorpayPaymentProvider().verifyWebhook(body, new Headers({ 'x-razorpay-signature': signature }))).rejects.toThrow('missing_razorpay_signature');
+  });
+});
+
+describe('Razorpay Standard Checkout verification', () => {
+  it('accepts a valid order and payment signature', async () => {
+    process.env.RAZORPAY_KEY_SECRET = 'checkout_test_secret';
+    const signature = await hmacHex('order_123456|pay_123456', process.env.RAZORPAY_KEY_SECRET);
+
+    await expect(verifyRazorpayCheckoutSignature('order_123456', 'pay_123456', signature)).resolves.toBe(true);
+  });
+
+  it('rejects a tampered payment signature', async () => {
+    process.env.RAZORPAY_KEY_SECRET = 'checkout_test_secret';
+    const signature = await hmacHex('order_123456|pay_different', process.env.RAZORPAY_KEY_SECRET);
+
+    await expect(verifyRazorpayCheckoutSignature('order_123456', 'pay_123456', signature)).resolves.toBe(false);
+  });
+
+  it('rejects orders below 100 currency subunits before contacting Razorpay', async () => {
+    const provider = new RazorpayPaymentProvider();
+    await expect(provider.createCheckout({
+      intentId: 'intent_123',
+      date: '2026-10-29',
+      title: 'Birthday',
+      amountMinor: 99,
+      currency: 'INR',
+      appUrl: 'http://localhost:3000',
+    })).rejects.toThrow('invalid_payment_amount');
   });
 });
