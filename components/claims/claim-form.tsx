@@ -96,7 +96,11 @@ export function ClaimForm({
       }
 
       const loaded = await loadRazorpay();
-      if (!loaded || !window.Razorpay) throw new Error('razorpay_script_unavailable');
+      if (!loaded || !window.Razorpay) {
+        setError('Razorpay Checkout was blocked by the browser. Disable payment-blocking extensions and try again.');
+        requestKey.current = crypto.randomUUID();
+        return;
+      }
       const checkout = result.checkout;
       const razorpay = new window.Razorpay({
         key: checkout.keyId,
@@ -142,7 +146,8 @@ export function ClaimForm({
         setError(failure.error?.description ?? 'Payment failed. Try again or use another payment method.');
       });
       razorpay.open();
-    } catch {
+    } catch (checkoutError) {
+      console.error('Razorpay Checkout could not be opened', checkoutError);
       setError('The secure payment window could not be opened. You have not been charged.');
       requestKey.current = crypto.randomUUID();
     } finally {
