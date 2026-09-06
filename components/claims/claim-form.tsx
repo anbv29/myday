@@ -109,7 +109,7 @@ export function ClaimForm({
         currency: checkout.currency,
         name: checkout.name,
         description: checkout.description,
-        theme: { color: '#ff5833' },
+        theme: { color: '#d8613c' },
         handler: async (payment: RazorpayPaymentResponse) => {
           setSubmitting(true);
           try {
