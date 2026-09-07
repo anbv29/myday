@@ -6,9 +6,7 @@ export function SiteFooter() {
         <p>A public market for the days people refuse to forget.</p>
       </div>
       <div className="future-footer-links">
-        <nav aria-label="Product navigation"><strong>Product</strong><a href="/explore">Explore</a><a href="/leaderboard">Leaderboard</a><a href="/trending">Trending</a><a href="/activity">Activity</a></nav>
-        <nav aria-label="Company navigation"><strong>Company</strong><a href="/faq">FAQ</a><a href="/contact">Support</a><a href="/shipping">Delivery</a></nav>
-        <nav aria-label="Legal navigation"><strong>Legal</strong><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/refunds">Refunds</a></nav>
+        <nav aria-label="Footer navigation"><a href="/explore">Explore</a><a href="/leaderboard">Leaderboard</a><a href="/trending">Trending</a><a href="/activity">Activity</a><a href="/faq">FAQ</a><a href="/contact">Support</a><a href="/shipping">Delivery</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/refunds">Refunds</a></nav>
       </div>
       <div className="future-footer-bottom">
         <p>© {new Date().getUTCFullYear()} MYDAY. Every date means something.</p>

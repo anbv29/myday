@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { AuctionCountdown } from '@/components/auctions/countdown';
 import { PublicAttribution } from '@/components/public/attribution';
 import { visualForAuction } from '@/lib/auction-display';
 import type { PublicClaim } from '@/lib/public/types';
@@ -41,23 +40,21 @@ export function AuctionCard({ claim, index }: { claim: PublicClaim; index: numbe
       transition={{ duration: 0.35, delay: Math.min(index * 0.04, 0.2), ease: [0.22, 1, 0.36, 1] }}
     >
       <div className="auction-card-link">
-        <div className="auction-card-media">
-          <AuctionVisual claim={claim} index={index} />
-          <span className="live-badge"><i /> Live</span>
-          <span className="auction-card-time"><AuctionCountdown target={claim.isoDate} compact /></span>
+        <span className="auction-card-index">{String(index + 1).padStart(2, '0')}</span>
+        <div className="auction-card-date">
+          <strong>{claim.day}</strong>
+          <span>{claim.month.slice(0, 3)} · {claim.year}</span>
         </div>
         <div className="auction-card-body">
           <div>
             <p>{claim.fullDate}</p>
             <h3>{claim.title}</h3>
+            <span className="auction-card-story">{claim.story}</span>
           </div>
           <span className="auction-card-owner">Held by {claim.attribution ? <PublicAttribution value={claim.attribution} /> : claim.username ?? 'Private'}</span>
-          <div className="auction-card-meta">
-            <span><small>Current claim</small><strong>{claim.amount}</strong></span>
-            <span><small>Activity</small><strong>{Math.max(1, Math.round(claim.trendScore / 100))} bids</strong></span>
-            <a href={`/day/${claim.isoDate}`} aria-label={`View ${claim.fullDate}`}>↗</a>
-          </div>
         </div>
+        <div className="auction-card-value"><small>Current claim</small><strong>{claim.amount}</strong><span>{Math.max(1, Math.round(claim.trendScore / 100))} bids</span></div>
+        <a className="auction-card-arrow" href={`/day/${claim.isoDate}`} aria-label={`View ${claim.fullDate}`}>View →</a>
       </div>
     </motion.article>
   );

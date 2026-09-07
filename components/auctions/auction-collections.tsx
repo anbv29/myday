@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
-import { AuctionCard, AuctionVisual } from '@/components/auctions/auction-card';
+import { AuctionCard } from '@/components/auctions/auction-card';
 import { auctionFilters, matchesAuctionFilter, trendIncrease, type AuctionFilter } from '@/lib/auction-display';
 import type { PublicClaim } from '@/lib/public/types';
 
@@ -39,10 +39,11 @@ export function TrendingRail({ claims }: { claims: PublicClaim[] }) {
       </div>
       <div className="trending-rail">
         {claims.slice(0, 8).map((claim, index) => (
-          <motion.a className="trend-card" href={`/day/${claim.isoDate}`} whileHover={{ y: -6 }} transition={{ duration: 0.22 }} key={claim.claimId}>
-            <div className="trend-card-visual"><AuctionVisual claim={claim} index={index + 1} /><span>{String(index + 1).padStart(2, '0')}</span></div>
-            <div className="trend-card-copy"><div><h3>{claim.fullDate}</h3><p>{claim.title}</p></div><strong>{claim.amount}</strong></div>
-            <div className="trend-card-meta"><span>Highest claim</span><b>↗ {trendIncrease(claim)}%</b></div>
+          <motion.a className="trend-card" href={`/day/${claim.isoDate}`} whileHover={{ x: 4 }} transition={{ duration: 0.18 }} key={claim.claimId}>
+            <span className="trend-card-rank">{String(index + 1).padStart(2, '0')}</span>
+            <div className="trend-card-copy"><h3>{claim.fullDate}</h3><p>{claim.title}</p></div>
+            <strong>{claim.amount}</strong>
+            <div className="trend-card-meta"><b>+{trendIncrease(claim)}%</b><span>Open →</span></div>
           </motion.a>
         ))}
       </div>
