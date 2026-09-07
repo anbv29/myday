@@ -10,9 +10,9 @@ export function FeaturedAuction({ claim }: { claim: PublicClaim }) {
   return (
     <motion.article
       className="featured-auction"
-      initial={{ opacity: 0, y: 24, rotate: 0.4 }}
-      animate={{ opacity: 1, y: 0, rotate: 0 }}
-      transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+      initial={{ opacity: 0.25, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
     >
       <div className="featured-auction-media">
         <AuctionVisual claim={claim} index={0} featured />
