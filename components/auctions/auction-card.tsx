@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { PublicAttribution } from '@/components/public/attribution';
 import { visualForAuction } from '@/lib/auction-display';
@@ -19,6 +19,7 @@ export function AuctionVisual({ claim, index, featured = false }: { claim: Publi
 
 export function AuctionCard({ claim, index }: { claim: PublicClaim; index: number }) {
   const router = useRouter();
+  const reducedMotion = useReducedMotion();
 
   return (
     <motion.article
@@ -34,7 +35,7 @@ export function AuctionCard({ claim, index }: { claim: PublicClaim; index: numbe
         if (event.key === 'Enter') router.push(`/day/${claim.isoDate}`);
       }}
       layout
-      initial={{ opacity: 0, y: 18 }}
+      initial={reducedMotion ? false : { opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.97 }}
       transition={{ duration: 0.35, delay: Math.min(index * 0.04, 0.2), ease: [0.22, 1, 0.36, 1] }}
@@ -53,7 +54,7 @@ export function AuctionCard({ claim, index }: { claim: PublicClaim; index: numbe
           </div>
           <span className="auction-card-owner">Held by {claim.attribution ? <PublicAttribution value={claim.attribution} /> : claim.username ?? 'Private'}</span>
         </div>
-        <div className="auction-card-value"><small>Current claim</small><strong>{claim.amount}</strong><span>{Math.max(1, Math.round(claim.trendScore / 100))} bids</span></div>
+        <div className="auction-card-value"><small>Current claim</small><strong>{claim.amount}</strong></div>
         <a className="auction-card-arrow" href={`/day/${claim.isoDate}`} aria-label={`View ${claim.fullDate}`}>View →</a>
       </div>
     </motion.article>

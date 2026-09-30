@@ -62,12 +62,13 @@ export default async function DatePage({ params }: DatePageProps) {
             <span>{claim.year}</span>
           </div>
           <div className="date-monument-copy">
-            <p className="eyebrow">Why this day matters</p>
-            <h1 id="claim-story">“{claim.story}”</h1>
+            <p className="eyebrow">Date dossier · {claim.fullDate}</p>
+            <h1 id="claim-story">{claim.title}</h1>
+            <p className="date-dedication">“{claim.story}”</p>
             <div className="claim-owner-line">
               <span>Current claim</span>
               <strong>{claim.amount}</strong>
-              <span className="date-attribution">{claim.username ? `by ${claim.username}` : 'Claimant private'}<PublicAttribution className="public-attribution" value={claim.attribution} /></span>
+              <span className="date-attribution">Claimed by {claim.attribution ? <PublicAttribution className="public-attribution" value={claim.attribution} /> : claim.username ?? 'Private claimant'}</span>
             </div>
           </div>
         </section>

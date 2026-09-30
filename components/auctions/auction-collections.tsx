@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
 import { AuctionCard } from '@/components/auctions/auction-card';
-import { auctionFilters, matchesAuctionFilter, trendIncrease, type AuctionFilter } from '@/lib/auction-display';
+import { auctionFilters, matchesAuctionFilter, type AuctionFilter } from '@/lib/auction-display';
 import type { PublicClaim } from '@/lib/public/types';
 
 export function LiveAuctions({ claims }: { claims: PublicClaim[] }) {
@@ -43,7 +43,7 @@ export function TrendingRail({ claims }: { claims: PublicClaim[] }) {
             <span className="trend-card-rank">{String(index + 1).padStart(2, '0')}</span>
             <div className="trend-card-copy"><h3>{claim.fullDate}</h3><p>{claim.title}</p></div>
             <strong>{claim.amount}</strong>
-            <div className="trend-card-meta"><b>+{trendIncrease(claim)}%</b><span>Open →</span></div>
+            <div className="trend-card-meta"><b>Current claim</b><span>Open →</span></div>
           </motion.a>
         ))}
       </div>

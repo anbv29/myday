@@ -221,3 +221,31 @@ body { letter-spacing: 0; line-height: 1.6; }
 .claim-form :is(input, textarea, select):focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 .field-help { font-size: 13px; }
 .visibility-options { gap: 10px; border: 0; }
+.visibility-options label { padding: 14px; border: 1px solid var(--line); border-radius: 12px; }
+.visibility-options label:last-child { border-right: 1px solid var(--line); }
+.visibility-options label:has(input:checked) { border-color: var(--accent); background: var(--violet-bg); }
+.visibility-options strong { font-size: 14px; }
+.visibility-options small { font-size: 12px; }
+.checkout-summary { padding: 4px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); }
+.checkout-summary p { font-size: 14px; }
+.checkout-summary p:last-child { border: 0; }
+.checkout-fineprint, .claim-legal-note { font-size: 12px; }
+.claim-consent { font-size: 12px; text-transform: none; font-weight: 500; line-height: 1.5; }
+.form-error, .provider-notice { border-radius: 10px; font-size: 14px; }
+.payment-state { padding: 36px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper-raised); box-shadow: var(--shadow); }
+.date-dedication { margin: 0; color: var(--muted); font-size: 17px; line-height: 1.75; overflow-wrap: anywhere; }
+.activity-list { padding: 8px 22px; border: 1px solid var(--line); border-radius: 16px; background: var(--paper-raised); }
+.activity-list time { font-size: 12px; }
+.activity-list p { font-size: 15px; }
+.search-form, .info-hero { border-color: var(--line); }
+.search-form label { font-size: 12px; }
+.search-form > div { border-radius: 12px; overflow: hidden; }
+.search-form button { border-radius: 0; }
+.info-hero { padding-bottom: 36px; }
+.info-hero > p:not(.eyebrow), .info-content p { font-size: 16px; }
+.info-hero time { font-size: 12px; }
+.info-content h2 { font-size: 25px; }
+.profile-hero { margin-bottom: 36px; border-color: var(--line); }
+.profile-avatar { border-radius: 18px; border-color: var(--line); }
+.profile-hero > div > p:last-child { font-size: 15px; }
+.profile-hero dt { font-size: 12px; }
