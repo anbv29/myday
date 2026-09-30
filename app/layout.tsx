@@ -1,9 +1,13 @@
 import type { Metadata } from 'next';
+import { Inter, Outfit } from 'next/font/google';
 import { SiteUtilities } from '@/components/site-utilities';
 import { getAppOrigin } from '@/lib/env';
 import './globals.css';
 import './future.css';
 import './stitch.css';
+
+const inter = Inter({ subsets: ['latin'], variable: '--stitch-copy', display: 'swap' });
+const outfit = Outfit({ subsets: ['latin'], variable: '--stitch-display', display: 'swap' });
 
 const themeScript = `
   (() => {
@@ -46,11 +50,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" />
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>

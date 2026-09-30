@@ -39,7 +39,7 @@ export function CalendarShowcase({ claims }: { claims: PublicClaim[] }) {
         <div className="calendar-tile-meta"><span>Rank #{String(claim.rank).padStart(2, '0')}</span><strong>{claim.amount}</strong></div>
         <a className="calendar-tile-date" href={`/day/${claim.isoDate}`}><small>{claim.month} {claim.year}</small><strong>{claim.day}</strong><h3>{claim.title}</h3></a>
         <p>{claim.story}</p>
-        <div className="calendar-tile-footer"><PublicAttribution value={claim.attribution} /><a href={`/claim?date=${claim.isoDate}`}>Make a claim ↗</a></div>
+        <div className="calendar-tile-footer"><PublicAttribution className="public-attribution" value={claim.attribution} /><a href={`/claim?date=${claim.isoDate}`}>Make a claim ↗</a></div>
       </article>)}
       {!visible.length ? <div className="showcase-empty"><h3>No claims in this view yet.</h3><p>Choose a meaningful date and start its story.</p><a className="button button-primary" href="/claim">Claim a date ↗</a></div> : null}
     </div>

@@ -16,8 +16,8 @@
   --violet-bg: #f2ebff;
   --radius: 20px;
   --shadow: 0 8px 30px rgb(40 26 75 / 6%);
-  --font-display: 'Outfit', 'Trebuchet MS', 'Segoe UI', sans-serif;
-  --font-copy: 'Inter', 'Segoe UI', Arial, sans-serif;
+  --font-display: var(--stitch-display), 'Segoe UI', sans-serif;
+  --font-copy: var(--stitch-copy), 'Segoe UI', Arial, sans-serif;
   --font-secondary: var(--font-copy);
 }
 :root[data-theme='dark'] {
@@ -221,6 +221,34 @@ body { letter-spacing: 0; line-height: 1.6; }
 .claim-form :is(input, textarea, select):focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 .field-help { font-size: 13px; }
 .visibility-options { gap: 10px; border: 0; }
+.calendar-tile:only-child { grid-column: 2; }
+.calendar-showcase, #how-it-works, #leaderboard { scroll-margin-top: 96px; }
+.future-hero { background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--accent) 5%, transparent), transparent 65%); }
+.future-hero-actions .future-button-primary { box-shadow: 0 5px 16px color-mix(in srgb, var(--accent) 18%, transparent); }
+.calendar-tile-date, .auction-card-body, .trend-card-copy, .row-user, .date-attribution { min-width: 0; overflow-wrap: anywhere; }
+.calendar-tile-footer .public-attribution { max-width: 100%; white-space: normal; }
+.stitch-tabs button { min-height: 44px; }
+.date-navigator-controls button:hover { color: var(--accent); border-color: var(--accent); }
+.auction-card-story { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+.auction-card-owner { display: flex; flex-wrap: wrap; align-items: baseline; gap: 5px; }
+.auction-card-owner .public-attribution { white-space: normal; }
+.date-monument-copy h1 { margin-block: 0; }
+.date-monument-copy .claim-owner-line { margin-top: auto; }
+.future-mobile-nav strong { font-size: 15px; }
+.future-mobile-nav span { font-size: 12px; color: var(--accent); }
+.calendar-tile-meta strong, .row-amount, .calendar-tile-date > strong { font-variant-numeric: tabular-nums; }
+.button:disabled { opacity: .55; }
+.future-section-heading > a { font-size: 14px; }
+.future-market-bar span, .future-market-bar a { font-size: 12px; }
+@media (max-width: 900px) {
+  .calendar-tile:only-child { grid-column: 1 / -1; max-width: 520px; width: 100%; justify-self: center; }
+}
+@media (max-width: 600px) {
+  .stitch-badge { max-width: 100%; font-size: 10px; line-height: 1.5; }
+  .calendar-tile:only-child { grid-column: 1; }
+  .future-search-panel input { font-size: 16px; }
+  .future-search-panel form { gap: 10px; }
+}
 .visibility-options label { padding: 14px; border: 1px solid var(--line); border-radius: 12px; }
 .visibility-options label:last-child { border-right: 1px solid var(--line); }
 .visibility-options label:has(input:checked) { border-color: var(--accent); background: var(--violet-bg); }

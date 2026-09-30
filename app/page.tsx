@@ -8,7 +8,7 @@ import { getLeaderboard, getTrending } from '@/server/public-data';
 
 export default async function Home() {
   const [leaderboard, trending] = await Promise.all([
-    getLeaderboard({ limit: 12 }),
+    getLeaderboard({ limit: 30 }),
     getTrending(8),
   ]);
   const topClaim = leaderboard.data[0];
@@ -51,7 +51,7 @@ export default async function Home() {
 
         <CalendarShowcase claims={leaderboard.data} />
         <div className="shell future-home-sections">
-          <LiveAuctions claims={leaderboard.data} />
+          <LiveAuctions claims={leaderboard.data.slice(0, 12)} />
           <TrendingRail claims={trending.data} />
 
           <section className="future-section market-board" id="leaderboard" aria-labelledby="market-board-title">
