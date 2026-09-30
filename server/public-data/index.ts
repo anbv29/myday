@@ -18,7 +18,7 @@ export type DateScope = 'all' | 'future' | 'past';
 const previewEnabled = process.env.NODE_ENV !== 'production'
   && process.env.MYDAY_ENABLE_PREVIEW_DATA !== 'false';
 
-function publicClient() {
+export function publicClient() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL as string,
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY as string,
@@ -40,7 +40,7 @@ function usernameLabel(value: unknown) {
   return formatPublicUsername(stringValue(value) || null);
 }
 
-function mapClaim(row: Row): PublicClaim {
+export function mapClaim(row: Row): PublicClaim {
   const isoDate = stringValue(row.date_value);
   const amountMinor = numberValue(row.display_amount_minor);
   const currency = stringValue(row.display_currency, 'USD');
