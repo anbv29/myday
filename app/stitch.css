@@ -517,6 +517,52 @@ a { text-underline-offset: .22em; }
   .claim-history li { gap: 10px; font-size: 12px; }
   .payment-state { padding: 24px; }
 }
+@media (max-width: 1000px) {
+  .calendar-workspace { grid-template-columns: minmax(0,1fr) 290px; gap: 16px; }
+  .calendar-workspace .date-navigator { padding: 20px; }
+  .date-navigator-heading { flex-wrap: wrap; gap: 14px; }
+  .selected-date-stamp { padding-inline: 20px; }
+  .selected-date-content { margin-inline: 20px; }
+  .selected-date-action { padding-inline: 20px; }
+}
+@media (max-width: 760px) {
+  .calendar-workspace { grid-template-columns: 1fr; }
+  .calendar-intro { align-items: start; padding-top: 28px; }
+  .calendar-intro > a { display: none; }
+  .calendar-intro h1 { font-size: clamp(30px, 5vw, 40px); }
+  .calendar-intro p { max-width: 48ch; font-size: 15px; line-height: 1.65; }
+  .date-navigator-heading { justify-content: space-between; }
+  .selected-date-summary { display: grid; grid-template-columns: 120px minmax(0,1fr); }
+  .selected-date-stamp { padding: 22px 16px; }
+  .selected-date-stamp > span { flex-direction: column; align-items: start; gap: 5px; font-size: 16px; }
+  .selected-date-stamp > strong { margin-top: 14px; font-size: 66px; }
+  .selected-date-content { border: 0; padding-top: 22px; margin-left: 0; margin-right: 20px; }
+  .selected-date-content h2 { font-size: 21px; }
+  .selected-date-content dl > div { flex-direction: column; gap: 4px; }
+  .selected-date-content dd { text-align: left; }
+  .selected-date-action { grid-column: 1 / -1; padding: 6px 20px 22px; }
+  .selected-date-action > a { justify-content: center; gap: 18px; }
+  .calendar-first-page .future-how > div { gap: 30px; padding-block: 48px; }
+  .calendar-first-page .future-how h3 { font-size: 22px; }
+}
+@media (max-width: 480px) {
+  .calendar-workspace .date-navigator { padding: 18px 12px; }
+  .date-navigator-heading h2 { font-size: 24px; }
+  .date-navigator-heading { margin-bottom: 18px; }
+  .date-navigator-controls { width: 100%; gap: 8px; }
+  .date-navigator-controls select { flex: 1; }
+  .calendar-jump { gap: 10px; padding-bottom: 12px; }
+  .calendar-jump input, .calendar-jump select { padding-inline: 8px; font-size: 13px; }
+  .month-grid { gap: 4px; }
+  .calendar-day { padding: 8px 5px; min-height: 58px; border-radius: 6px; }
+  .calendar-day strong { font-size: 16px; }
+  .calendar-day small { font-size: 11px; }
+  .month-grid .weekday { font-size: 11px; }
+  .calendar-assurance { justify-content: flex-start; gap: 12px 18px; line-height: 1.6; }
+  .calendar-records summary { font-size: 16px; gap: 12px; }
+  .calendar-first-page .future-section { padding-block: 32px; }
+  .calendar-first-page .future-final-cta { padding-block: 48px; }
+}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
   .calendar-board, .calendar-tile:hover { transform: none !important; }
