@@ -173,3 +173,51 @@ body { letter-spacing: 0; line-height: 1.6; }
 .auction-card-story { font-size: 14px; line-height: 1.6; }
 .auction-card-value { display: flex; align-items: center; gap: 12px; margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line); }
 .auction-card-value strong { font-size: 22px; }
+.auction-card-value span { display: none; }
+.auction-card-arrow { align-self: flex-end; opacity: 1; font-size: 13px; }
+.trending-rail { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; }
+.trend-card { border: 1px solid var(--line); border-radius: 14px; padding: 18px; background: var(--paper-raised); }
+.trend-card-rank { font-size: 15px; color: var(--gold); }
+.trend-card-copy h3 { font-size: 20px; }
+.trend-card-meta b { color: var(--accent); }
+.data-empty { padding: 36px; border: 1px dashed var(--line-strong); border-radius: var(--radius); background: var(--paper-raised); }
+.data-empty h2 { font-size: clamp(26px, 3.5vw, 40px); line-height: 1.2; text-transform: none; }
+.data-empty > p:last-child { font-size: 16px; }
+.date-page { padding-block: 32px 72px; }
+.date-topline { font-size: 12px; }
+.date-monument { min-height: 440px; border: 1px solid var(--line); border-radius: 24px; overflow: hidden; background: var(--paper-raised); box-shadow: var(--shadow); }
+.date-monument-calendar { gap: 18px; background: var(--gold-bg); color: var(--gold); border-right: 1px solid var(--gold-line); }
+.date-monument-calendar span { font-size: 32px; line-height: 1; }
+.date-monument-calendar strong { font-size: clamp(130px, 15vw, 190px); }
+.date-monument-copy { border: 0; padding: 36px; gap: 28px; }
+.date-monument-copy h1 { font-size: clamp(26px, 3vw, 40px); line-height: 1.25; font-weight: 650; overflow-wrap: anywhere; }
+.claim-owner-line { align-items: center; }
+.claim-owner-line > span:first-child { font-size: 12px; }
+.claim-owner-line strong { color: var(--gold); font-size: 38px; }
+.date-attribution, .date-attribution .public-attribution { font-size: 17px; }
+.date-facts { margin-top: 20px; padding-inline: 24px; border: 1px solid var(--line); border-radius: 14px; background: var(--paper-raised); }
+.date-facts span { font-size: 11px; }
+.date-facts strong { font-size: 15px; }
+.date-claim-action { margin-top: 24px; padding: 24px; border: 1px solid var(--line); border-radius: 16px; background: var(--violet-bg); }
+.date-claim-action strong { font-size: 14px; }
+.claim-history { padding-top: 48px; gap: 32px; }
+.claim-history h2 { font-size: 32px; line-height: 1.2; }
+.claim-history ol { padding: 0 20px; border: 1px solid var(--line); border-radius: 16px; background: var(--paper-raised); }
+.claim-history li { font-size: 14px; }
+.claim-page-header { margin-bottom: 32px; gap: 36px; }
+.date-picker-panel { padding: 8px 20px; border: 1px solid var(--line); border-radius: 16px; background: var(--paper-raised); }
+.date-picker-panel label, .date-picker-panel dt { font-size: 11px; }
+.date-picker-panel dd { font-size: 14px; }
+.claim-workspace { grid-template-columns: 270px minmax(0,1fr); gap: 28px; }
+.claim-workspace > aside { padding: 24px; border: 1px solid var(--line); border-radius: 16px; background: var(--violet-bg); }
+.claim-workspace > aside li { font-size: 13px; }
+.claim-workspace > aside > p:last-child { font-size: 13px; }
+.claim-form { padding: 28px; border: 1px solid var(--line); border-radius: 20px; background: var(--paper-raised); box-shadow: var(--shadow); }
+.claim-form fieldset { padding: 16px 0 26px; }
+.claim-form legend { padding-bottom: 18px; font-size: 23px; }
+.claim-form legend span { font-size: 12px; }
+.claim-form > fieldset > label:not(.claim-consent), .claim-payment-grid label { color: var(--ink); font-size: 13px; letter-spacing: 0; text-transform: none; }
+.claim-form input:not([type='radio']):not([type='checkbox']), .claim-form textarea, .claim-form select { border-color: var(--line-strong); border-radius: 10px; background: var(--paper); }
+.claim-form :is(input, textarea, select):focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.field-help { font-size: 13px; }
+.visibility-options { gap: 10px; border: 0; }
