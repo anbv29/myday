@@ -1,13 +1,13 @@
 import type { Metadata } from 'next';
-import { Inter, Space_Grotesk } from 'next/font/google';
+import { DM_Sans, Manrope } from 'next/font/google';
 import { SiteUtilities } from '@/components/site-utilities';
 import { getAppOrigin } from '@/lib/env';
 import './globals.css';
 import './future.css';
 import './stitch.css';
 
-const inter = Inter({ subsets: ['latin'], variable: '--stitch-copy', display: 'swap' });
-const displayFont = Space_Grotesk({ subsets: ['latin'], variable: '--stitch-display', display: 'swap' });
+const copyFont = DM_Sans({ subsets: ['latin'], variable: '--stitch-copy', display: 'swap' });
+const displayFont = Manrope({ subsets: ['latin'], variable: '--stitch-display', display: 'swap' });
 
 const themeScript = `
   (() => {
@@ -50,7 +50,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${displayFont.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${copyFont.variable} ${displayFont.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

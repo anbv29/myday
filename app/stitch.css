@@ -45,7 +45,7 @@ body { letter-spacing: 0; line-height: 1.6; }
 ::selection { color: var(--ink); background: var(--selection); }
 .future-hero { display: grid; grid-template-columns: 1.2fr 1fr; align-items: center; gap: 40px; min-height: 0; padding-block: 88px 32px; text-align: left; }
 .future-hero-copy { width: 100%; }
-.future-hero h1 { max-width: 760px; margin: 24px 0; font-size: clamp(52px, 6.8vw, 96px); line-height: .99; letter-spacing: -.065em; }
+.future-hero h1 { max-width: 760px; margin: 24px 0; font-size: clamp(52px, 6.4vw, 90px); font-weight: 600; line-height: 1.08; letter-spacing: -.045em; }
 .future-hero h1 em { color: var(--accent); }
 .future-hero-copy > p { max-width: 490px; margin-inline: 0; font-size: 18px; line-height: 1.7; }
 .future-hero-actions, .future-proof { justify-content: flex-start; }
@@ -64,7 +64,7 @@ body { letter-spacing: 0; line-height: 1.6; }
 .folio-date { position: relative; display: grid; grid-template-columns: 1fr auto; padding-block: 24px 18px; border-bottom: 1px solid var(--gold-line); }
 .folio-date > span { grid-column: 1 / -1; display: flex; justify-content: space-between; font-size: 25px; font-family: var(--font-display); }
 .folio-date small { font-size: 15px; color: var(--muted); align-self: center; }
-.folio-date > strong { font-family: var(--font-display); font-size: clamp(110px, 12vw, 176px); line-height: .96; letter-spacing: -.09em; color: var(--gold); }
+.folio-date > strong { font-family: var(--font-display); font-weight: 600; font-size: clamp(110px, 12vw, 176px); line-height: 1; letter-spacing: -.055em; color: var(--gold); }
 .folio-date > i { width: 54px; height: 54px; align-self: end; display: grid; place-items: center; border: 1px solid var(--gold-line); border-radius: 50%; font-size: 26px; font-style: normal; transition: background 180ms, transform 180ms; }
 .folio-date:hover > i { background: var(--accent); color: var(--accent-ink); transform: rotate(45deg); }
 .folio-story { position: relative; padding-block: 22px; }
@@ -82,7 +82,7 @@ body { letter-spacing: 0; line-height: 1.6; }
 .hero-empty p { font-family: var(--font-display); font-size: 42px; line-height: 1.1; }
 .calendar-showcase { padding-block: 56px 72px; }
 .showcase-heading { max-width: 740px; margin: 0 0 36px; text-align: left; }
-.showcase-heading h2 { margin: 14px 0 10px; font-size: clamp(34px, 4.4vw, 60px); line-height: 1.05; letter-spacing: -.05em; }
+.showcase-heading h2 { margin: 14px 0 10px; font-size: clamp(34px, 4.4vw, 60px); line-height: 1.15; letter-spacing: -.04em; }
 .showcase-heading p { color: var(--muted); margin: 0; font-size: 16px; }
 .showcase-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
 .stitch-tabs { display: flex; width: fit-content; flex-wrap: wrap; gap: 4px; padding: 5px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper-raised); }
@@ -308,6 +308,41 @@ body { letter-spacing: 0; line-height: 1.6; }
 .profile-avatar { border-radius: 18px; border-color: var(--line); }
 .profile-hero > div > p:last-child { font-size: 15px; }
 .profile-hero dt { font-size: 12px; }
+/* A single type hierarchy across the calendar, stories, and checkout. */
+h1, h2, h3 { font-family: var(--font-display); }
+h2, h3 { font-weight: 600; }
+.future-section-heading h2, .future-how-intro h2, .future-final-cta h2 {
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -.04em;
+}
+.future-how h3, .folio-story h2, .auction-card-body h3, .trend-card-copy h3 {
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -.025em;
+}
+.future-wordmark { font-weight: 750; letter-spacing: -.035em; }
+.future-desktop-nav a { font-size: 14px; font-weight: 550; }
+.button, .future-button, .future-header-claim { font-weight: 600; letter-spacing: 0; }
+.future-proof { font-size: 13px; font-weight: 450; text-transform: none; line-height: 1.6; }
+.eyebrow, .future-kicker, .stitch-badge { font-weight: 600; letter-spacing: .065em; }
+.folio-topline { font-size: 12px; letter-spacing: .055em; }
+.folio-owner small, .folio-bottom small { font-size: 12px; letter-spacing: .035em; }
+.folio-owner strong, .folio-owner .public-attribution { font-weight: 600; }
+.auction-countdown strong { font-family: var(--font-copy); font-weight: 600; letter-spacing: 0; }
+.auction-countdown small { font-size: 10px; letter-spacing: .03em; }
+.calendar-tile-date > strong, .auction-card-date strong, .date-monument-calendar strong {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -.04em;
+  line-height: 1;
+}
+.stitch-stat-ribbon span { font-size: 12px; font-weight: 550; }
+.stitch-stat-ribbon strong { font-weight: 600; letter-spacing: -.02em; }
+.claim-page-header h1, .discovery-hero h1, .search-hero h1, .info-hero h1 {
+  font-weight: 600; line-height: 1.12; letter-spacing: -.035em; text-transform: none;
+}
+.claim-form legend, .calendar-tile-date h3 { font-weight: 600; letter-spacing: -.02em; }
 @media (max-width: 1100px) {
   .future-desktop-nav a { padding-inline: 8px; font-size: 12px; }
   .future-header-inner { gap: 14px; }
