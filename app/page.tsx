@@ -30,12 +30,15 @@ export default async function Home() {
           <div className="calendar-assurance"><span>No account required</span><span>Verified payments via Razorpay</span><a href="/activity">Public claim history</a></div>
         </div>
         <div className="shell future-home-sections">
-          <LiveAuctions claims={leaderboard.data.slice(0, 12)} />
-          <TrendingRail claims={trending.data} />
-
+          <details className="calendar-records">
+            <summary>Explore featured stories <span>{leaderboard.data.length} records</span></summary>
+            <CalendarShowcase claims={leaderboard.data} showNavigator={false} />
+            {leaderboard.data.length > 1 ? <LiveAuctions claims={leaderboard.data.slice(0, 12)} /> : null}
+          </details>
+          {trending.data.length > 1 ? <TrendingRail claims={trending.data} /> : null}
           <section className="future-section market-board" id="leaderboard" aria-labelledby="market-board-title">
             <div className="future-section-heading">
-              <div><span className="future-kicker">Market leaders</span><h2 id="market-board-title">The dates at the top</h2></div>
+              <div><h2 id="market-board-title">Dates that made their mark.</h2></div>
               <p>Ranked by the value of each current, verified claim.</p>
             </div>
             {leaderboard.data.length ? <Leaderboard claims={leaderboard.data} /> : <DataEmptyState unavailable={leaderboard.source === 'unavailable'} title="No claims to rank." message={leaderboard.error ?? 'Confirmed claims will appear here.'} />}
@@ -44,21 +47,19 @@ export default async function Home() {
 
         <section className="future-how" id="how-it-works" aria-labelledby="future-how-title">
           <div className="shell">
-            <div className="future-how-intro"><span className="future-kicker">Simple by design</span><h2 id="future-how-title">A date becomes yours in three moves.</h2><p>No account. No resale market. Just a verified claim and the story behind it.</p></div>
+            <div className="future-how-intro"><h2 id="future-how-title">A little date.<br />A lot of meaning.</h2><p>Make a verified public claim, not a purchase of permanent ownership. A higher valid claim can replace the current holder.</p></div>
             <ol>
-              <li><span>01</span><div><small>Find</small><h3>Choose your date.</h3><p>Past, present, or future—discover the day that means something to you.</p></div><b aria-hidden="true">⌁</b></li>
-              <li><span>02</span><div><small>Claim</small><h3>Put meaning behind it.</h3><p>Set a valid claim, add your story and public handle, then pay securely.</p></div><b aria-hidden="true">↗</b></li>
-              <li><span>03</span><div><small>Hold</small><h3>Take your place.</h3><p>Your name becomes part of the record until a higher valid claim arrives.</p></div><b aria-hidden="true">✦</b></li>
+              <li><span>01</span><div><h3>Find a meaningful day.</h3><p>Browse the calendar and check the latest claim for your date.</p></div></li>
+              <li><span>02</span><div><h3>Give it your story.</h3><p>Add a story and public handle, set a valid amount, and pay securely.</p></div></li>
+              <li><span>03</span><div><h3>Become part of the record.</h3><p>Confirmed claims appear publicly. Your claim stays current until a higher valid claim arrives.</p></div></li>
             </ol>
           </div>
         </section>
 
         <section className="future-final-cta shell">
-          <div className="final-cta-orbit" aria-hidden="true"><i /><i /><i /></div>
-          <span className="future-kicker">Your moment is on the calendar</span>
-          <h2>Something worth claiming is waiting.</h2>
-          <p>Find the date. Tell its story. Make it yours.</p>
-          <a className="future-button future-button-primary" href="/claim">Claim your date <span>↗</span></a>
+          <h2>Which day means everything to you?</h2>
+          <p>The first hello. The big leap. The day it all began.</p>
+          <a className="future-button future-button-primary" href="#matrix-view">Find your date</a>
         </section>
       </main>
 
