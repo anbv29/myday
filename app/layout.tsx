@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter, Outfit } from 'next/font/google';
+import { Inter, Space_Grotesk } from 'next/font/google';
 import { SiteUtilities } from '@/components/site-utilities';
 import { getAppOrigin } from '@/lib/env';
 import './globals.css';
@@ -7,12 +7,12 @@ import './future.css';
 import './stitch.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--stitch-copy', display: 'swap' });
-const outfit = Outfit({ subsets: ['latin'], variable: '--stitch-display', display: 'swap' });
+const displayFont = Space_Grotesk({ subsets: ['latin'], variable: '--stitch-display', display: 'swap' });
 
 const themeScript = `
   (() => {
     const saved = localStorage.getItem('myday-theme');
-    document.documentElement.dataset.theme = saved || 'light';
+    document.documentElement.dataset.theme = saved === 'light' ? 'light' : 'dark';
   })();
 `;
 
@@ -50,7 +50,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} ${displayFont.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

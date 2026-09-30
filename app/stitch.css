@@ -1,21 +1,21 @@
 /* Visual tokens adapted from the supplied MYDAY Stitch export. */
 :root, :root[data-theme='light'] {
-  --paper: #faf8ff;
-  --paper-raised: #ffffff;
-  --ink: #0f172a;
-  --muted: #596579;
-  --line: #e2e5ef;
-  --line-strong: #c5c9da;
-  --accent: #6b38d4;
-  --accent-hover: #5426b4;
+  --paper: #f5f2eb;
+  --paper-raised: #fffdf7;
+  --ink: #1d211c;
+  --muted: #61675d;
+  --line: #dedfd2;
+  --line-strong: #a4ab9c;
+  --accent: #96601c;
+  --accent-hover: #784812;
   --accent-ink: #ffffff;
-  --selection: #e4d5ff;
-  --gold: #b77913;
-  --gold-bg: #fffbeb;
-  --gold-line: #f4ce78;
-  --violet-bg: #f2ebff;
-  --radius: 20px;
-  --shadow: 0 8px 30px rgb(40 26 75 / 6%);
+  --selection: #ebd3a5;
+  --gold: #96601c;
+  --gold-bg: #ede3cf;
+  --gold-line: #cab78f;
+  --violet-bg: #eaece2;
+  --radius: 12px;
+  --shadow: 0 12px 32px rgb(25 32 20 / 8%);
   --font-display: var(--stitch-display), 'Segoe UI', sans-serif;
   --font-copy: var(--stitch-copy), 'Segoe UI', Arial, sans-serif;
   --font-secondary: var(--font-copy);
