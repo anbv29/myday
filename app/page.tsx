@@ -1,4 +1,4 @@
-import { FeaturedAuction } from '@/components/auctions/featured-auction';
+import { CalendarShowcase } from '@/components/calendar-showcase';
 import { LiveAuctions, TrendingRail } from '@/components/auctions/auction-collections';
 import { Leaderboard } from '@/components/leaderboard';
 import { DataEmptyState, DataSourceRibbon } from '@/components/public/data-state';
@@ -23,11 +23,11 @@ export default async function Home() {
         <section className="future-hero shell" aria-labelledby="future-hero-title">
           <div className="future-hero-glow" aria-hidden="true" />
           <div className="future-hero-copy">
-            <span className="future-kicker"><i /> The public market for meaningful dates</span>
-            <h1 id="future-hero-title">Own a moment.<br /><em>Make it unforgettable.</em></h1>
-            <p>Claim the date that changed everything, tell the world why it matters, and hold its place in a permanent public record.</p>
+            <span className="stitch-badge">A calendar of meaningful moments</span>
+            <h1 id="future-hero-title">Own the day that<br /><em>changed everything.</em></h1>
+            <p>Your anniversary, breakthrough, or unforgettable milestone. Give it a story and a place on the MYDAY calendar.</p>
             <div className="future-hero-actions">
-              <a className="future-button future-button-primary" href="/explore">Explore dates <span>↗</span></a>
+              <a className="future-button future-button-primary" href="#matrix-view">Explore the calendar <span>↗</span></a>
               <a className="future-button future-button-secondary" href="#how-it-works">How it works <span>↓</span></a>
             </div>
             <div className="future-proof">
@@ -37,14 +37,11 @@ export default async function Home() {
             </div>
           </div>
 
-          <div className="future-hero-feature">
-            {topClaim ? <FeaturedAuction claim={topClaim} /> : (
-              <DataEmptyState
-                unavailable={leaderboard.source === 'unavailable'}
-                title={leaderboard.source === 'unavailable' ? 'The live market is offline.' : 'The first date is waiting.'}
-                message={leaderboard.error ?? 'Choose a date and become the first name on the record.'}
-              />
-            )}
+          <div className="stitch-stat-ribbon">
+            <div><span>Featured public claims</span><strong>{leaderboard.data.length}</strong><small>In this calendar view</small></div>
+            <div><span>Highest current claim</span><strong>{topClaim?.amount ?? '—'}</strong><small>{topClaim?.shortDate ?? 'The first date is waiting'}</small></div>
+            <div><span>Make your mark</span><strong>Your date. Your story.</strong><small>No account required</small></div>
+            <div><span>Secure checkout</span><strong>Razorpay</strong><small>Confirmed payments only</small></div>
           </div>
         </section>
 
@@ -52,6 +49,7 @@ export default async function Home() {
           <div className="shell"><span><i /> Live claims</span><p>One calendar. Infinite stories. One current claim for every day.</p><a href="/activity">View activity ↗</a></div>
         </div>
 
+        <CalendarShowcase claims={leaderboard.data} />
         <div className="shell future-home-sections">
           <LiveAuctions claims={leaderboard.data} />
           <TrendingRail claims={trending.data} />
