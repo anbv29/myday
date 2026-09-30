@@ -1,4 +1,5 @@
 import { CalendarShowcase } from '@/components/calendar-showcase';
+import { FeaturedAuction } from '@/components/auctions/featured-auction';
 import { LiveAuctions, TrendingRail } from '@/components/auctions/auction-collections';
 import { Leaderboard } from '@/components/leaderboard';
 import { DataEmptyState, DataSourceRibbon } from '@/components/public/data-state';
@@ -24,7 +25,7 @@ export default async function Home() {
           <div className="future-hero-glow" aria-hidden="true" />
           <div className="future-hero-copy">
             <span className="stitch-badge">A calendar of meaningful moments</span>
-            <h1 id="future-hero-title">Own the day that<br /><em>changed everything.</em></h1>
+            <h1 id="future-hero-title">Some days<br />deserve to<br /><em>be yours.</em></h1>
             <p>Your anniversary, breakthrough, or unforgettable milestone. Give it a story and a place on the MYDAY calendar.</p>
             <div className="future-hero-actions">
               <a className="future-button future-button-primary" href="#matrix-view">Explore the calendar <span>↗</span></a>
@@ -36,7 +37,7 @@ export default async function Home() {
               <span><b>03</b>Public claim history</span>
             </div>
           </div>
-
+          {topClaim ? <FeaturedAuction claim={topClaim} /> : <div className="hero-empty"><span className="future-kicker">An open calendar</span><p>Your story could start here.</p><a href="/claim">Find your date ↗</a></div>}
           <div className="stitch-stat-ribbon">
             <div><span>Featured public claims</span><strong>{leaderboard.data.length}</strong><small>In this calendar view</small></div>
             <div><span>Highest current claim</span><strong>{topClaim?.amount ?? '—'}</strong><small>{topClaim?.shortDate ?? 'The first date is waiting'}</small></div>
