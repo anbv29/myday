@@ -8,7 +8,7 @@ const monthNames = Array.from({ length: 12 }, (_, index) =>
   new Intl.DateTimeFormat('en', { month: 'long', timeZone: 'UTC' }).format(new Date(Date.UTC(2026, index, 1))));
 
 export function DateNavigator({ claims }: { claims: PublicClaim[] }) {
-  const initial = claims[0]?.isoDate ?? '2026-10-01';
+  const initial = claims[0]?.isoDate ?? new Date().toISOString().slice(0, 10);
   const [selected, setSelected] = useState(initial);
   const [year, setYear] = useState(Number(initial.slice(0, 4)));
   const [month, setMonth] = useState(Number(initial.slice(5, 7)) - 1);
@@ -25,21 +25,26 @@ export function DateNavigator({ claims }: { claims: PublicClaim[] }) {
     const next = new Date(Date.UTC(year, month + direction, 1));
     const nextYear = next.getUTCFullYear();
     if (nextYear < 1900 || nextYear > 2100) return;
-    setYear(nextYear);
-    setMonth(next.getUTCMonth());
+    selectDate(`${nextYear}-${String(next.getUTCMonth() + 1).padStart(2, '0')}-01`);
   }
 
-  return <section className="date-navigator" aria-label="Browse calendar dates">
+  return <section className="calendar-workspace" aria-label="Browse calendar dates" id="matrix-view">
+    <div className="date-navigator">
     <div className="date-navigator-heading">
-      <div><span className="eyebrow">Find your moment</span><h3>{monthNames[month]} {year}</h3></div>
+      <h2>{monthNames[month]} <span>{year}</span></h2>
       <div className="date-navigator-controls">
-        <button type="button" onClick={() => moveMonth(-1)} aria-label="Previous month">←</button>
+        <button type="button" onClick={() => selectDate(new Date().toISOString().slice(0, 10))}>Today</button>
+        <button type="button" onClick={() => moveMonth(-1)} disabled={year === 1900 && month === 0} aria-label="Previous month"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="m14 6-6 6 6 6" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
         <label className="sr-only" htmlFor="calendar-year">Calendar year</label>
-        <select id="calendar-year" value={year} onChange={(event) => setYear(Number(event.target.value))}>
+        <select id="calendar-year" value={year} onChange={(event) => selectDate(`${event.target.value}-${String(month + 1).padStart(2, '0')}-01`)}>
           {Array.from({ length: 201 }, (_, index) => 1900 + index).map((value) => <option key={value}>{value}</option>)}
         </select>
-        <button type="button" onClick={() => moveMonth(1)} aria-label="Next month">→</button>
+        <button type="button" onClick={() => moveMonth(1)} disabled={year === 2100 && month === 11} aria-label="Next month"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="m10 6 6 6-6 6" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg></button>
       </div>
+    </div>
+    <div className="calendar-jump">
+      <label htmlFor="calendar-month">Jump to month<select id="calendar-month" value={month} onChange={(event) => selectDate(`${year}-${String(Number(event.target.value) + 1).padStart(2, '0')}-01`)}>{monthNames.map((name, index) => <option value={index} key={name}>{name}</option>)}</select></label>
+      <label htmlFor="calendar-date">Find a specific date<input id="calendar-date" type="date" min="1900-01-01" max="2100-12-31" value={selected} onChange={(event) => selectDate(event.target.value)} /></label>
     </div>
     <div className="month-grid">
       {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => <span className="weekday" key={day}>{day}</span>)}
@@ -47,9 +52,12 @@ export function DateNavigator({ claims }: { claims: PublicClaim[] }) {
       {Array.from({ length: days }, (_, index) => {
         const iso = `${year}-${String(month + 1).padStart(2, '0')}-${String(index + 1).padStart(2, '0')}`;
         const claim = dates.get(iso);
-        return <a className={claim ? 'has-claim' : undefined} href={claim ? `/day/${iso}` : `/claim?date=${iso}`} key={iso} aria-label={`${monthNames[month]} ${index + 1}, ${year}${claim ? `: ${claim.title}` : ': check date'}`}><strong>{index + 1}</strong><small>{claim?.amount ?? 'Check date'}</small></a>;
+        return <button type="button" className={`calendar-day${claim ? ' has-claim' : ''}${selected === iso ? ' is-selected' : ''}`} onClick={() => selectDate(iso)} aria-pressed={selected === iso} key={iso} aria-label={`${monthNames[month]} ${index + 1}, ${year}${claim ? `: ${claim.title}, ${claim.amount}` : ': check date'}`}><strong>{index + 1}</strong>{claim ? <small>{claim.amount}</small> : <span aria-hidden="true" className="calendar-day-mark" />}</button>;
       })}
     </div>
-    <p>Highlighted dates appear in this showcase. Choose any other date to check its current claim.</p>
+    <div className="calendar-legend"><span><i /> Featured claim</span><span><i /> Selected date</span></div>
+    <p>Featured records are a limited public showcase, not the complete calendar. Check a date for its latest claim.</p>
+    </div>
+    <SelectedDateSummary isoDate={selected} claim={dates.get(selected)} />
   </section>;
 }
