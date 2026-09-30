@@ -38,14 +38,14 @@ Primary: peach marks actions and selected dates; warm rust supplies accent text 
 ## Typography
 Manrope serves headings, copy, labels, and controls through the shared display/copy variables. Headings use moderate weight and tight tracking; date numerals use tabular figures. Selected-date numerals are (100px), reducing to (66px) in the stacked layout.
 ## Layout
-The shared container caps at (1240px), with (32px) desktop gutters and (16px) below (600px). The homepage working composition uses a flexible calendar plus a (330px) detail column and (24px) gap; at (1000px) the detail becomes (290px), and at (760px) it stacks below the calendar. The month retains seven columns; below (480px) days use a (58px) minimum height.
+The shared container caps at (1240px), with (32px) desktop gutters and (16px) below (600px). The homepage collection uses three columns with (20px) gaps; it becomes two below (1000px) and one below (540px). Records show actual submitted dates, not empty days. Registration pairs a form with supporting rules, stacking below (760px).
 ## Elevation & Depth
 Calendar, selected record, checkout, leaderboard, and standard cards use flat backgrounds and borders without shadows. Search and floating utilities retain the existing ambient shadow variable. Tonal contrast, not decorative gradients or lifted calendar boards, establishes the primary workspace hierarchy.
 ## Shapes
 Working panels have gently curved corners (16px); fields and days use compact corners (8px), reducing days to (6px) below (480px). Buttons use (11px), filter controls (8px), and badges retain capsule corners.
 ## Components
 Primary actions use peach with dark peach ink; hover mixes peach with the accent. Fields use native controls, paper fill, quiet borders, and (44px) minimum height. Focus uses an accent outline (3px) with (4px) offset. Navigation marks the current route with tonal fill; mobile exposes a menu below (900px).
-Calendar day selection updates the record panel inline; selected and featured states use different fills plus accessible labels. Arrow keys move through dates. The record panel keeps date, attribution, story, current value, and claim action together; filters use pressed states and native details exposes secondary records.
+Collection records keep date, attribution, story, current value, and claim action together. Paid featured records use pale peach; free records use white. Filters use pressed states, year and order use native selects, and native details exposes secondary records. The separate free-registration form uses readable labels, public-entry consent, pending, conflict and saved states.
 ## Do's and Don'ts
 Do reuse theme-bound CSS variables, preserve visible focus, use the single Manrope hierarchy, and show real date/claim states.
 Don't invent availability or ownership guarantees, add decorative depth to the working calendar, or reintroduce competing font families.
