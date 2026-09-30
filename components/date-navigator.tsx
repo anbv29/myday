@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { SelectedDateSummary } from '@/components/selected-date-summary';
 import type { PublicClaim } from '@/lib/public/types';
 
 const monthNames = Array.from({ length: 12 }, (_, index) =>
@@ -8,11 +9,18 @@ const monthNames = Array.from({ length: 12 }, (_, index) =>
 
 export function DateNavigator({ claims }: { claims: PublicClaim[] }) {
   const initial = claims[0]?.isoDate ?? '2026-10-01';
+  const [selected, setSelected] = useState(initial);
   const [year, setYear] = useState(Number(initial.slice(0, 4)));
   const [month, setMonth] = useState(Number(initial.slice(5, 7)) - 1);
   const days = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
   const offset = (new Date(Date.UTC(year, month, 1)).getUTCDay() + 6) % 7;
   const dates = new Map(claims.map((claim) => [claim.isoDate, claim]));
+  function selectDate(iso: string) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(iso) || iso < '1900-01-01' || iso > '2100-12-31') return;
+    setSelected(iso);
+    setYear(Number(iso.slice(0, 4)));
+    setMonth(Number(iso.slice(5, 7)) - 1);
+  }
   function moveMonth(direction: number) {
     const next = new Date(Date.UTC(year, month + direction, 1));
     const nextYear = next.getUTCFullYear();
