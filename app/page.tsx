@@ -1,16 +1,20 @@
 import { CalendarShowcase } from '@/components/calendar-showcase';
-import { DateNavigator } from '@/components/date-navigator';
+import { DateCollection } from '@/components/date-collection';
 import { LiveAuctions, TrendingRail } from '@/components/auctions/auction-collections';
 import { Leaderboard } from '@/components/leaderboard';
 import { DataEmptyState, DataSourceRibbon } from '@/components/public/data-state';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
 import { getLeaderboard, getTrending } from '@/server/public-data';
+import { getDateCollection } from '@/server/public-data/date-collection';
+
+export const dynamic = 'force-dynamic';
 
 export default async function Home() {
-  const [leaderboard, trending] = await Promise.all([
+  const [leaderboard, trending, collection] = await Promise.all([
     getLeaderboard({ limit: 30 }),
     getTrending(8),
+    getDateCollection(),
   ]);
 
   return (
@@ -22,11 +26,11 @@ export default async function Home() {
       <main id="main-content" className="future-home calendar-first-page">
         <section className="calendar-intro shell" aria-labelledby="calendar-home-title">
           <div><h1 id="calendar-home-title">Every day has a story. <span>Find yours.</span></h1>
-          <p>Pick a date. Discover who claimed it, or give it a story of your own.</p></div>
-          <a href="#how-it-works">How claiming works</a>
+          <p>A collection of meaningful dates, ordered through time. Add yours for free, or make it a paid featured date.</p></div>
+          <div className="collection-intro-actions"><a className="future-button future-button-primary" href="/claim">Feature a date</a><a className="future-button" href="/register">Register for free</a></div>
         </section>
         <div className="shell calendar-primary">
-          <DateNavigator claims={leaderboard.data} />
+          <DateCollection entries={collection.data} error={collection.error} />
           <div className="calendar-assurance"><span>No account required</span><span>Verified payments via Razorpay</span><a href="/activity">Public claim history</a></div>
         </div>
         <div className="shell future-home-sections">
@@ -47,11 +51,11 @@ export default async function Home() {
 
         <section className="future-how" id="how-it-works" aria-labelledby="future-how-title">
           <div className="shell">
-            <div className="future-how-intro"><h2 id="future-how-title">A little date.<br />A lot of meaning.</h2><p>Make a verified public claim, not a purchase of permanent ownership. A higher valid claim can replace the current holder.</p></div>
+            <div className="future-how-intro"><h2 id="future-how-title">Your date. Your story.</h2><p>Register a date for free or make a paid featured claim. Paid claims take priority over free registrations; a higher valid payment can replace the paid holder.</p></div>
             <ol>
-              <li><span>01</span><div><h3>Find a meaningful day.</h3><p>Browse the calendar and check the latest claim for your date.</p></div></li>
-              <li><span>02</span><div><h3>Give it your story.</h3><p>Add a story and public handle, set a valid amount, and pay securely.</p></div></li>
-              <li><span>03</span><div><h3>Become part of the record.</h3><p>Confirmed claims appear publicly. Your claim stays current until a higher valid claim arrives.</p></div></li>
+              <li><span>01</span><div><h3>Choose your date.</h3><p>A birthday, a milestone, a moment worth remembering. Every date includes its year.</p></div></li>
+              <li><span>02</span><div><h3>Register or feature it.</h3><p>Add your story and public handle. Register for free if unclaimed, or pay the latest valid price to feature it.</p></div></li>
+              <li><span>03</span><div><h3>See it in the collection.</h3><p>Dates appear chronologically. Paid claims replace free entries and join the payment-ranked leaderboard.</p></div></li>
             </ol>
           </div>
         </section>
