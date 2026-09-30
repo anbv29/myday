@@ -3,6 +3,7 @@ import { SiteUtilities } from '@/components/site-utilities';
 import { getAppOrigin } from '@/lib/env';
 import './globals.css';
 import './future.css';
+import './stitch.css';
 
 const themeScript = `
   (() => {

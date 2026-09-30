@@ -1,0 +1,45 @@
+/* Visual tokens adapted from the supplied MYDAY Stitch export. */
+:root, :root[data-theme='light'] {
+  --paper: #faf8ff;
+  --paper-raised: #ffffff;
+  --ink: #0f172a;
+  --muted: #596579;
+  --line: #e2e5ef;
+  --line-strong: #c5c9da;
+  --accent: #6b38d4;
+  --accent-hover: #5426b4;
+  --accent-ink: #ffffff;
+  --selection: #e4d5ff;
+  --gold: #b77913;
+  --gold-bg: #fffbeb;
+  --gold-line: #f4ce78;
+  --violet-bg: #f2ebff;
+  --radius: 20px;
+  --shadow: 0 8px 30px rgb(40 26 75 / 6%);
+  --font-display: 'Trebuchet MS', 'Segoe UI', sans-serif;
+  --font-copy: 'Segoe UI', Arial, sans-serif;
+  --font-secondary: var(--font-copy);
+}
+:root[data-theme='dark'] {
+  --paper: #141020;
+  --paper-raised: #201a2f;
+  --ink: #f2eff9;
+  --muted: #b3abc4;
+  --line: #383044;
+  --line-strong: #655975;
+  --accent: #a985ff;
+  --accent-hover: #bd9eff;
+  --accent-ink: #191226;
+  --selection: #49316e;
+  --gold: #edc575;
+  --gold-bg: #2c251e;
+  --gold-line: #715b35;
+  --violet-bg: #2c2142;
+  --shadow: 0 8px 30px rgb(0 0 0 / 16%);
+}
+body { letter-spacing: 0; line-height: 1.6; }
+.shell { width: min(calc(100% - 64px), 1240px); }
+.eyebrow, .future-kicker { font-size: 12px; letter-spacing: .08em; }
+.button, .future-button, .future-header-claim { border-radius: 11px; min-height: 46px; font-size: 14px; }
+:is(a, button, input, textarea, select):focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+::selection { color: var(--ink); background: var(--selection); }
