@@ -4,6 +4,7 @@ import { useState, type FormEvent } from 'react';
 import { freeRegistrationSchema } from '@/lib/validation/registration';
 
 export function FreeRegistrationForm({ date }: { date: string }) {
+  const [selectedDate, setSelectedDate] = useState(date);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
   const [registered, setRegistered] = useState(false);
@@ -30,7 +31,7 @@ export function FreeRegistrationForm({ date }: { date: string }) {
   if (registered) return <section className="registration-success" role="status"><h2>Your date is registered.</h2><p>Your free entry is saved. It appears in the collection unless a paid claim takes priority.</p><a className="future-button future-button-primary" href="/">View the date collection</a></section>;
   return <form className="free-registration-form" onSubmit={submit} aria-busy={pending}>
     <fieldset disabled={pending}><legend>Your public date registration</legend>
-      <label>Date<input type="date" name="date" defaultValue={date} min="1900-01-01" max="2100-12-31" required /></label>
+      <label>Date<input type="date" name="date" value={selectedDate} onChange={(event) => setSelectedDate(event.target.value)} min="1900-01-01" max="2100-12-31" required /></label>
       <label>Title<input name="title" minLength={3} maxLength={100} placeholder="A day worth remembering" required /></label>
       <label>Your story<textarea name="story" minLength={3} maxLength={1000} rows={4} placeholder="What makes this day yours?" required /></label>
       <label>Public handle or HTTPS link<input name="attribution" minLength={3} maxLength={200} placeholder="@yourhandle" autoCapitalize="none" spellCheck={false} required /></label>
@@ -39,5 +40,6 @@ export function FreeRegistrationForm({ date }: { date: string }) {
     {error ? <p className="registration-error" role="alert">{error}</p> : null}
     <button className="future-button future-button-primary" type="submit" disabled={pending}>{pending ? 'Saving your date…' : 'Register this date for free'}</button>
     <p className="registration-note">No payment or account required. Already registered or paid dates cannot be replaced for free.</p>
+    <a className="collection-date-link" href={selectedDate ? `/claim?date=${selectedDate}` : '/claim'}>Feature this date instead</a>
   </form>;
 }
