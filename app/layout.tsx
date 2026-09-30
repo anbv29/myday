@@ -1,18 +1,17 @@
 import type { Metadata } from 'next';
-import { DM_Sans, Manrope } from 'next/font/google';
+import { Manrope } from 'next/font/google';
 import { SiteUtilities } from '@/components/site-utilities';
 import { getAppOrigin } from '@/lib/env';
 import './globals.css';
 import './future.css';
 import './stitch.css';
 
-const copyFont = DM_Sans({ subsets: ['latin'], variable: '--stitch-copy', display: 'swap' });
 const displayFont = Manrope({ subsets: ['latin'], variable: '--stitch-display', display: 'swap' });
 
 const themeScript = `
   (() => {
     const saved = localStorage.getItem('myday-theme');
-    document.documentElement.dataset.theme = saved === 'light' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = saved === 'dark' ? 'dark' : 'light';
   })();
 `;
 
@@ -50,7 +49,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${copyFont.variable} ${displayFont.variable}`} suppressHydrationWarning>
+    <html lang="en" className={displayFont.variable} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

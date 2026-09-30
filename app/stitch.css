@@ -1,40 +1,44 @@
 /* Visual tokens adapted from the supplied MYDAY Stitch export. */
 :root, :root[data-theme='light'] {
-  --paper: #f5f2eb;
-  --paper-raised: #fffdf7;
-  --ink: #1d211c;
-  --muted: #61675d;
-  --line: #dedfd2;
-  --line-strong: #a4ab9c;
-  --accent: #96601c;
-  --accent-hover: #784812;
+  --paper: #fcfaf7;
+  --paper-raised: #ffffff;
+  --ink: #28262a;
+  --muted: #6b6260;
+  --line: #e7e0dc;
+  --line-strong: #aba09a;
+  --accent: #93452d;
+  --accent-hover: #743322;
   --accent-ink: #ffffff;
-  --selection: #ebd3a5;
-  --gold: #96601c;
-  --gold-bg: #ede3cf;
-  --gold-line: #cab78f;
-  --violet-bg: #eaece2;
+  --selection: #ffd6c3;
+  --gold: #93452d;
+  --gold-bg: #fff0e8;
+  --gold-line: #e8bda9;
+  --violet-bg: #fff0e8;
+  --peach: #ffceb7;
+  --peach-ink: #512f24;
   --radius: 12px;
   --shadow: 0 12px 32px rgb(25 32 20 / 8%);
   --font-display: var(--stitch-display), 'Segoe UI', sans-serif;
-  --font-copy: var(--stitch-copy), 'Segoe UI', Arial, sans-serif;
+  --font-copy: var(--stitch-display), 'Segoe UI', Arial, sans-serif;
   --font-secondary: var(--font-copy);
 }
 :root[data-theme='dark'] {
-  --paper: #101310;
-  --paper-raised: #191d18;
+  --paper: #191719;
+  --paper-raised: #232022;
   --ink: #f7f3e9;
   --muted: #a3ab9e;
   --line: #30372d;
   --line-strong: #626c59;
-  --accent: #e9b86a;
-  --accent-hover: #f5cc8e;
+  --accent: #ffc5aa;
+  --accent-hover: #ffd9c6;
   --accent-ink: #201b12;
   --selection: #514126;
-  --gold: #e9b86a;
-  --gold-bg: #29271d;
-  --gold-line: #675637;
-  --violet-bg: #262d21;
+  --gold: #ffc5aa;
+  --gold-bg: #352923;
+  --gold-line: #775141;
+  --violet-bg: #352923;
+  --peach: #ffc5aa;
+  --peach-ink: #512f24;
   --shadow: 0 8px 30px rgb(0 0 0 / 16%);
 }
 body { letter-spacing: 0; line-height: 1.6; }
