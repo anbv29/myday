@@ -120,7 +120,7 @@ body { letter-spacing: 0; line-height: 1.6; }
 .future-section-heading > p { font-size: 15px; }
 .auction-filter-row button, .filter-group button, .query-filters a { font-size: 13px; min-height: 38px; border-radius: 9px; text-transform: none; letter-spacing: 0; }
 .auction-filter-row button.active, .filter-group button.active, .query-filters a.active { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
-.future-final-cta { padding-block: 96px; background: radial-gradient(ellipse at 50% 100%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 60%); }
+.future-final-cta { min-height: 0; padding-block: 96px; background: radial-gradient(ellipse at 50% 100%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 60%); }
 .future-final-cta h2 { max-width: 980px; font-size: clamp(42px, 6.8vw, 88px); line-height: 1.02; letter-spacing: -.055em; }
 .future-final-cta > p { font-size: 16px; }
 .final-cta-orbit { display: none; }
@@ -203,7 +203,8 @@ body { letter-spacing: 0; line-height: 1.6; }
 .auction-card-arrow { align-self: flex-end; opacity: 1; font-size: 13px; }
 .trending-rail { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; }
 .trending-section { padding: 36px; border: 1px solid var(--gold-line); border-radius: 16px; background: var(--gold-bg); }
-.trend-card { border: 0; border-top: 1px solid var(--gold-line); border-radius: 0; padding: 22px 0; background: transparent; }
+.trend-card { grid-template-columns: 42px minmax(0,1fr) auto; border: 0; border-top: 1px solid var(--gold-line); border-radius: 0; padding: 22px 0; background: transparent; }
+.trend-card-meta { grid-column: 2 / -1; display: flex; justify-content: space-between; font-size: 11px; }
 .trend-card-rank { font-family: var(--font-display); font-size: 42px; line-height: 1; letter-spacing: -.07em; color: var(--gold); }
 .trend-card-copy h3 { font-size: 20px; }
 .trend-card-meta b { color: var(--accent); }
