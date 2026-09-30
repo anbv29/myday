@@ -13,7 +13,9 @@ export async function getDateCollection(): Promise<PublicResult<DateCollectionEn
     // Read paid records by date, not the top-N leaderboard. Free entries are separate.
     const [paid, free] = await Promise.all([
       publicClient().from('public_claims').select('*').order('date_value').limit(300),
-      createAdminSupabaseClient().from('visible_free_date_registrations').select('*').order('date_value').limit(300),
+      Promise.resolve().then(() => createAdminSupabaseClient()
+        .from('visible_free_date_registrations').select('*').order('date_value').limit(300))
+        .catch(() => ({ data: null, error: { message: 'free_registration_unavailable' } })),
     ]);
     if (paid.error) throw paid.error;
     const registrations: FreeDateRegistration[] = free.error ? [] : (free.data ?? []).map((row) => ({

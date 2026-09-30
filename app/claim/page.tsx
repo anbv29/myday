@@ -39,6 +39,7 @@ export default async function ClaimPage({ searchParams }: Props) {
       </header>
 
       {params.cancelled ? <div className="checkout-cancelled" role="status"><strong>Checkout was closed.</strong><span>No ownership change was recorded. Review the details whenever you’re ready.</span></div> : null}
+      {!result.quote?.currentClaimId ? <p className="claim-legal-note">Not looking for a paid featured claim? <a href={`/register?date=${date}`}>Register this date for free</a>. Paid claims take priority over free registrations.</p> : null}
 
       {result.quote ? (
         <div className="claim-workspace">
