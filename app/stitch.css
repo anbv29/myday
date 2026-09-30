@@ -16,8 +16,8 @@
   --violet-bg: #f2ebff;
   --radius: 20px;
   --shadow: 0 8px 30px rgb(40 26 75 / 6%);
-  --font-display: 'Trebuchet MS', 'Segoe UI', sans-serif;
-  --font-copy: 'Segoe UI', Arial, sans-serif;
+  --font-display: 'Outfit', 'Trebuchet MS', 'Segoe UI', sans-serif;
+  --font-copy: 'Inter', 'Segoe UI', Arial, sans-serif;
   --font-secondary: var(--font-copy);
 }
 :root[data-theme='dark'] {
@@ -293,4 +293,41 @@ body { letter-spacing: 0; line-height: 1.6; }
   .month-grid strong { font-size: 17px; }
   .month-grid small { font-size: 9px; }
   .month-grid .weekday { padding-inline: 0; font-size: 10px; }
+  .auction-grid, .claim-grid, .trending-rail { grid-template-columns: 1fr; }
+  .future-section { padding-block: 24px; margin-top: 28px; }
+  .future-section-heading h2, .future-how h2 { font-size: 30px; }
+  .future-how > div { padding-block: 48px; gap: 28px; }
+  .future-how li { grid-template-columns: 28px 1fr; gap: 12px; padding-block: 22px; }
+  .future-how li > b { display: none; }
+  .future-final-cta { min-height: 0; padding-block: 48px; }
+  .future-final-cta h2 { font-size: 36px; }
+  .leaderboard-head { display: none; }
+  .leaderboard-row { grid-template-columns: 28px minmax(0,1fr) auto; padding: 18px 16px; gap: 9px; }
+  .leaderboard-row:hover { padding-left: 16px; }
+  .row-date strong, .row-amount { font-size: 17px; }
+  .row-user { display: flex; grid-column: 2 / -1; grid-row: 3; }
+  .row-user .public-attribution { font-size: 14px; }
+  .claim-page-header, .discovery-hero { grid-template-columns: 1fr; }
+  .claim-page-header h1, .discovery-hero h1, .search-hero h1, .info-hero h1, .profile-hero h1, .payment-state h1 { font-size: 36px; line-height: 1.12; }
+  .claim-form { padding: 20px; }
+  .claim-form legend { font-size: 21px; }
+  .date-picker-panel dl > div { padding-inline: 0; }
+  .visibility-options label { min-height: 0; border: 1px solid var(--line); }
+  .checkout-summary { padding-inline: 12px; }
+  .checkout-summary p { font-size: 12px; }
+  .date-monument { grid-template-columns: 1fr; }
+  .date-monument-calendar { min-height: 280px; border-right: 0; border-bottom: 1px solid var(--gold-line); }
+  .date-monument-copy { min-height: 0; padding: 24px; }
+  .date-monument-copy h1 { font-size: 28px; }
+  .date-dedication { font-size: 15px; }
+  .date-attribution, .date-attribution .public-attribution { font-size: 15px; }
+  .date-facts p, .date-facts p:not(:first-child) { padding-block: 16px; }
+  .claim-history { grid-template-columns: 1fr; }
+  .claim-history li { gap: 10px; font-size: 12px; }
+  .payment-state { padding: 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+  .calendar-board, .calendar-tile:hover { transform: none !important; }
+  .auction-card { opacity: 1 !important; transform: none !important; }
 }
