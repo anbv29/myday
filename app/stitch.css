@@ -106,3 +106,24 @@ body { letter-spacing: 0; line-height: 1.6; }
 .future-how-intro h2 { font-size: clamp(30px, 3.5vw, 44px); line-height: 1.15; }
 .future-how h3 { font-size: clamp(24px, 2.5vw, 32px); }
 .future-how li > span, .future-how li small { font-size: 12px; }
+.future-header-inner { display: flex; min-height: 80px; gap: 28px; justify-content: space-between; }
+.future-wordmark { font-size: 22px; letter-spacing: -.04em; }
+.future-wordmark i { width: 24px; height: 24px; border-radius: 7px; transform: rotate(-8deg); border-width: 2px; }
+.future-wordmark i::after { top: 4px; right: 3px; width: 7px; height: 7px; border-radius: 2px; }
+.future-desktop-nav { gap: 4px; }
+.future-desktop-nav a { padding: 9px 12px; border-radius: 8px; font-size: 13px; white-space: nowrap; }
+.future-desktop-nav a::after { display: none; }
+.future-desktop-nav a:hover, .future-desktop-nav a.is-active { color: var(--accent); background: var(--violet-bg); }
+.future-icon-button, .future-avatar, .future-menu-button { border-radius: 10px; min-width: 42px; height: 42px; }
+.future-header-claim { white-space: nowrap; }
+.future-search-panel { background: var(--paper-raised); box-shadow: var(--shadow); }
+.future-search-panel input { font-size: 16px; }
+.future-search-panel button { font-size: 14px; min-height: 44px; }
+.future-footer.site-footer { padding-block: 40px 24px; }
+.future-footer-links nav { font-size: 14px; line-height: 1.6; }
+.future-footer-brand p { font-size: 14px; }
+.future-footer-bottom p { font-size: 12px; text-transform: none; letter-spacing: 0; }
+.floating-support, .back-to-top { border-color: var(--line); border-radius: 12px; box-shadow: var(--shadow); font-size: 13px; }
+.cookie-notice { border-color: var(--line); border-radius: 16px; box-shadow: var(--shadow); }
+.cookie-notice p { font-size: 12px; }
+.future-mobile-nav a[aria-current='page'] { color: var(--accent); background: var(--violet-bg); }

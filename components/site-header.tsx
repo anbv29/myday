@@ -6,14 +6,16 @@ import { useEffect, useRef, useState } from 'react';
 type Theme = 'light' | 'dark';
 
 const navigation = [
+  { href: '/', label: 'Calendar' },
   { href: '/explore', label: 'Explore' },
-  { href: '/#how-it-works', label: 'How it works', anchor: true },
   { href: '/leaderboard', label: 'Leaderboard' },
+  { href: '/activity', label: 'Live feed' },
+  { href: '/#how-it-works', label: 'How it works', anchor: true },
 ] as const;
 
 function isCurrentPath(pathname: string, href: string) {
   const base = href.split('#')[0] || '/';
-  return base !== '/' && (pathname === base || pathname.startsWith(`${base}/`));
+  return base === '/' ? pathname === '/' : pathname === base || pathname.startsWith(`${base}/`);
 }
 
 function SearchIcon() {
@@ -26,6 +28,17 @@ export function SiteHeader() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [theme, setTheme] = useState<Theme | null>(null);
   const searchInput = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const shortcut = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        setSearchOpen((open) => !open);
+      }
+    };
+    document.addEventListener('keydown', shortcut);
+    return () => document.removeEventListener('keydown', shortcut);
+  }, []);
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => setTheme(document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'));
@@ -77,7 +90,7 @@ export function SiteHeader() {
 
       {menuOpen ? (
         <nav className="future-mobile-nav" aria-label="Mobile navigation">
-          {[...navigation, { href: '/trending', label: 'Trending' }, { href: '/activity', label: 'Activity' }, { href: '/search', label: 'Search' }].map((item, index) => <a href={item.href} onClick={() => setMenuOpen(false)} key={item.href}><span>0{index + 1}</span><strong>{item.label}</strong><b>↗</b></a>)}
+          {[...navigation, { href: '/trending', label: 'Trending' }, { href: '/search', label: 'Search' }].map((item, index) => <a href={item.href} aria-current={isCurrentPath(pathname, item.href) && !('anchor' in item) ? 'page' : undefined} onClick={() => setMenuOpen(false)} key={item.href}><span>0{index + 1}</span><strong>{item.label}</strong><b>↗</b></a>)}
           <a className="future-mobile-claim" href="/claim" onClick={() => setMenuOpen(false)}>Claim your date <b>↗</b></a>
         </nav>
       ) : null}
