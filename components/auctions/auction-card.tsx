@@ -35,10 +35,10 @@ export function AuctionCard({ claim, index }: { claim: PublicClaim; index: numbe
         if (event.key === 'Enter') router.push(`/day/${claim.isoDate}`);
       }}
       layout
-      initial={reducedMotion ? false : { opacity: 0, y: 18 }}
+      initial={false}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.97 }}
-      transition={{ duration: 0.35, delay: Math.min(index * 0.04, 0.2), ease: [0.22, 1, 0.36, 1] }}
+      exit={reducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.97 }}
+      transition={{ duration: reducedMotion ? 0 : 0.35, ease: [0.22, 1, 0.36, 1] }}
     >
       <div className="auction-card-link">
         <span className="auction-card-index">{String(index + 1).padStart(2, '0')}</span>

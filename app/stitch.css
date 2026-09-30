@@ -225,7 +225,7 @@ body { letter-spacing: 0; line-height: 1.6; }
 .date-monument-copy h1 { font-size: clamp(26px, 3vw, 40px); line-height: 1.25; font-weight: 650; overflow-wrap: anywhere; }
 .claim-owner-line { align-items: center; }
 .claim-owner-line > span:first-child { font-size: 12px; }
-.claim-owner-line strong { color: var(--gold); font-size: 38px; }
+.claim-owner-line strong { color: var(--gold); font-family: var(--font-display); font-size: 38px; font-weight: 650; letter-spacing: -.025em; font-variant-numeric: tabular-nums; }
 .date-attribution, .date-attribution .public-attribution { font-size: 17px; }
 .date-facts { margin-top: 20px; padding-inline: 24px; border: 1px solid var(--line); border-radius: 14px; background: var(--paper-raised); }
 .date-facts span { font-size: 11px; }
