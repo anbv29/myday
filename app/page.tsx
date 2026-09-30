@@ -21,7 +21,7 @@ export default async function Home() {
 
       <main id="main-content" className="future-home calendar-first-page">
         <section className="calendar-intro shell" aria-labelledby="calendar-home-title">
-          <div><h1 id="calendar-home-title">Every day has a story.<br /><span>Find yours.</span></h1>
+          <div><h1 id="calendar-home-title">Every day has a story. <span>Find yours.</span></h1>
           <p>Pick a date. Discover who claimed it, or give it a story of your own.</p></div>
           <a href="#how-it-works">How claiming works</a>
         </section>
@@ -31,7 +31,7 @@ export default async function Home() {
         </div>
         <div className="shell future-home-sections">
           <details className="calendar-records">
-            <summary>Explore featured stories <span>{leaderboard.data.length} records</span></summary>
+            <summary>Explore featured stories <span>{leaderboard.data.length} {leaderboard.data.length === 1 ? 'record' : 'records'}</span></summary>
             <CalendarShowcase claims={leaderboard.data} showNavigator={false} />
             {leaderboard.data.length > 1 ? <LiveAuctions claims={leaderboard.data.slice(0, 12)} /> : null}
           </details>

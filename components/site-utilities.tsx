@@ -36,7 +36,7 @@ export function SiteUtilities() {
   return <>
     <div className="scroll-progress" aria-hidden="true"><div ref={progress} /></div>
     <a className="floating-support" href="/contact" aria-label="Contact MYDAY support">Support</a>
-    <button className={`back-to-top${showBackToTop ? ' visible' : ''}`} type="button" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} aria-label="Back to top">↑</button>
+    <button className={`back-to-top${showBackToTop ? ' visible' : ''}`} type="button" onClick={() => window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' })} aria-label="Back to top"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M12 19V5m-6 6 6-6 6 6" /></svg></button>
     {showCookieNotice ? <aside className="cookie-notice" aria-label="Cookie notice"><p>MYDAY uses essential browser storage for your theme and this notice. <a href="/privacy">Privacy details ↗</a></p><button className="button button-primary" type="button" onClick={acknowledgeCookies}>Got it</button></aside> : null}
   </>;
 }
