@@ -127,3 +127,49 @@ body { letter-spacing: 0; line-height: 1.6; }
 .cookie-notice { border-color: var(--line); border-radius: 16px; box-shadow: var(--shadow); }
 .cookie-notice p { font-size: 12px; }
 .future-mobile-nav a[aria-current='page'] { color: var(--accent); background: var(--violet-bg); }
+.date-navigator { margin-top: 36px; padding: 28px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper-raised); box-shadow: var(--shadow); }
+.date-navigator-heading { display: flex; justify-content: space-between; gap: 20px; align-items: center; margin-bottom: 24px; }
+.date-navigator-heading h3 { margin: 4px 0 0; font-size: 25px; }
+.date-navigator-controls { display: flex; gap: 8px; }
+.date-navigator-controls button, .date-navigator-controls select { height: 42px; min-width: 42px; border: 1px solid var(--line); border-radius: 9px; background: var(--paper); color: var(--ink); cursor: pointer; }
+.date-navigator-controls select { padding-inline: 10px; }
+.month-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+.month-grid .weekday { padding: 8px; color: var(--muted); text-align: center; font-size: 12px; font-weight: 650; }
+.month-grid a { display: grid; gap: 5px; min-height: 88px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); transition: background 180ms, transform 180ms; }
+.month-grid a:hover { transform: translateY(-2px); border-color: var(--accent); background: var(--violet-bg); }
+.month-grid a.has-claim { color: var(--accent); background: var(--violet-bg); border-color: color-mix(in srgb, var(--accent) 30%, var(--line)); }
+.month-grid strong { font-size: 21px; }
+.month-grid small { font-size: 11px; color: var(--muted); }
+.date-navigator > p { margin: 18px 0 0; color: var(--muted); font-size: 12px; }
+.discovery-page, .claim-page { padding-block: 48px 80px; }
+.discovery-hero { gap: 24px; margin-bottom: 32px; }
+.discovery-hero h1, .search-hero h1, .profile-hero h1, .claim-page-header h1, .info-hero h1, .payment-state h1, .not-found h1 { font-size: clamp(34px, 4.5vw, 56px); line-height: 1.12; letter-spacing: -.04em; text-transform: none; }
+.discovery-hero > .eyebrow { margin-bottom: -8px; }
+.discovery-hero > p:last-child { font-size: 16px; }
+.query-filters { border: 1px solid var(--line); border-radius: 14px; padding: 16px; background: var(--paper-raised); }
+.query-filters span, .result-count { font-size: 12px; }
+.leaderboard-wrap { border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper-raised); overflow: hidden; box-shadow: var(--shadow); }
+.board-controls { padding-inline: 20px; }
+.leaderboard-head, .leaderboard-row { padding-inline: 20px; grid-template-columns: 45px 1.15fr .7fr 1.4fr 1.1fr 30px; }
+.leaderboard-head { font-size: 11px; background: var(--paper); }
+.leaderboard-row { min-height: 94px; }
+.leaderboard-row:hover { padding-left: 20px; background: var(--violet-bg); }
+.leaderboard-list li:first-child { background: var(--gold-bg); }
+.rank { font-size: 14px; }
+.row-date strong, .row-amount { font-size: 20px; line-height: 1.2; letter-spacing: -.02em; }
+.row-date small { font-size: 11px; }
+.row-user, .row-story { font-size: 14px; }
+.row-user .public-attribution { font-size: 15px; }
+.row-arrow { opacity: 1; }
+.auction-grid, .claim-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 18px; }
+.auction-card { overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--paper-raised); box-shadow: var(--shadow); }
+.auction-card-link { display: flex; min-height: 300px; flex-direction: column; align-items: stretch; padding: 22px; gap: 14px; }
+.auction-card-index { display: none; }
+.auction-card-date { display: flex; gap: 12px; align-items: baseline; min-height: 0; }
+.auction-card-date strong { color: var(--accent); font-size: 54px; }
+.auction-card-date span { font-size: 12px; }
+.auction-card-body h3 { font-size: 22px; line-height: 1.2; }
+.auction-card-owner, .auction-card-owner .public-attribution { font-size: 16px; margin-top: 12px; }
+.auction-card-story { font-size: 14px; line-height: 1.6; }
+.auction-card-value { display: flex; align-items: center; gap: 12px; margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line); }
+.auction-card-value strong { font-size: 22px; }

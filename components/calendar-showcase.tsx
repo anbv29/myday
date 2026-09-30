@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { DateNavigator } from '@/components/date-navigator';
 import { PublicAttribution } from '@/components/public/attribution';
 import type { PublicClaim } from '@/lib/public/types';
 
@@ -42,5 +43,6 @@ export function CalendarShowcase({ claims }: { claims: PublicClaim[] }) {
       </article>)}
       {!visible.length ? <div className="showcase-empty"><h3>No claims in this view yet.</h3><p>Choose a meaningful date and start its story.</p><a className="button button-primary" href="/claim">Claim a date ↗</a></div> : null}
     </div>
+    <DateNavigator claims={claims} />
   </section>;
 }
