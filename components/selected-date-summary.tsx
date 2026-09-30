@@ -11,11 +11,12 @@ export function SelectedDateSummary({ isoDate, claim }: { isoDate: string; claim
       <p>{date.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' })}</p>
     </div>
     <div className="selected-date-content" aria-live="polite" aria-atomic="true">
+      <p className="sr-only">Selected date: {date.toLocaleDateString('en-US', { dateStyle: 'full', timeZone: 'UTC' })}</p>
       {claim ? <>
         <h2>{claim.title}</h2>
         <p className="selected-date-story">{claim.story}</p>
         <dl>
-          <div><dt>Claimed by</dt><dd><PublicAttribution value={claim.attribution} /></dd></div>
+          <div><dt>Claimed by</dt><dd>{claim.attribution ? <PublicAttribution value={claim.attribution} /> : claim.username ?? 'Private attribution'}</dd></div>
           <div><dt>Current claim</dt><dd>{claim.amount}</dd></div>
         </dl>
         <a className="selected-record-link" href={`/day/${isoDate}`}>View story & claim history</a>

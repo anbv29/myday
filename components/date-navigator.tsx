@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type KeyboardEvent } from 'react';
 import { SelectedDateSummary } from '@/components/selected-date-summary';
 import type { PublicClaim } from '@/lib/public/types';
 
@@ -17,9 +17,22 @@ export function DateNavigator({ claims }: { claims: PublicClaim[] }) {
   const dates = new Map(claims.map((claim) => [claim.isoDate, claim]));
   function selectDate(iso: string) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(iso) || iso < '1900-01-01' || iso > '2100-12-31') return;
+    const parsed = new Date(`${iso}T12:00:00Z`);
+    if (Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== iso) return;
     setSelected(iso);
     setYear(Number(iso.slice(0, 4)));
     setMonth(Number(iso.slice(5, 7)) - 1);
+  }
+  function navigateDay(event: KeyboardEvent<HTMLButtonElement>, iso: string) {
+    const direction = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[event.key];
+    if (direction === undefined) return;
+    event.preventDefault();
+    const next = new Date(`${iso}T12:00:00Z`);
+    next.setUTCDate(next.getUTCDate() + direction);
+    const nextIso = next.toISOString().slice(0, 10);
+    if (nextIso < '1900-01-01' || nextIso > '2100-12-31') return;
+    selectDate(nextIso);
+    requestAnimationFrame(() => document.getElementById(`calendar-day-${nextIso}`)?.focus());
   }
   function moveMonth(direction: number) {
     const next = new Date(Date.UTC(year, month + direction, 1));
@@ -52,10 +65,10 @@ export function DateNavigator({ claims }: { claims: PublicClaim[] }) {
       {Array.from({ length: days }, (_, index) => {
         const iso = `${year}-${String(month + 1).padStart(2, '0')}-${String(index + 1).padStart(2, '0')}`;
         const claim = dates.get(iso);
-        return <button type="button" className={`calendar-day${claim ? ' has-claim' : ''}${selected === iso ? ' is-selected' : ''}`} onClick={() => selectDate(iso)} aria-pressed={selected === iso} key={iso} aria-label={`${monthNames[month]} ${index + 1}, ${year}${claim ? `: ${claim.title}, ${claim.amount}` : ': check date'}`}><strong>{index + 1}</strong>{claim ? <small>{claim.amount}</small> : <span aria-hidden="true" className="calendar-day-mark" />}</button>;
+        return <button type="button" id={`calendar-day-${iso}`} tabIndex={selected === iso ? 0 : -1} onKeyDown={(event) => navigateDay(event, iso)} className={`calendar-day${claim ? ' has-claim' : ''}${selected === iso ? ' is-selected' : ''}`} onClick={() => selectDate(iso)} aria-pressed={selected === iso} key={iso} aria-label={`${monthNames[month]} ${index + 1}, ${year}${claim ? `: ${claim.title}, ${claim.amount}` : ': check date'}`}><strong>{index + 1}</strong>{claim ? <small>{claim.amount}</small> : <span aria-hidden="true" className="calendar-day-mark" />}</button>;
       })}
     </div>
-    <div className="calendar-legend"><span><i /> Featured claim</span><span><i /> Selected date</span></div>
+    <div className="calendar-legend"><span><i /> Featured claim</span><span><i /> Selected date</span><span>Arrow keys move between days</span></div>
     <p>Featured records are a limited public showcase, not the complete calendar. Check a date for its latest claim.</p>
     </div>
     <SelectedDateSummary isoDate={selected} claim={dates.get(selected)} />
