@@ -33,10 +33,13 @@ export function isProductionConfigurationComplete() {
     && isEnvValuePresent(process.env.SUPABASE_SERVICE_ROLE_KEY);
   const distributedSafety = isEnvValuePresent(process.env.UPSTASH_REDIS_REST_URL)
     && isEnvValuePresent(process.env.UPSTASH_REDIS_REST_TOKEN);
-  const razorpay = isEnvValuePresent(process.env.RAZORPAY_KEY_ID)
-    && isEnvValuePresent(process.env.RAZORPAY_KEY_SECRET)
-    && isEnvValuePresent(process.env.RAZORPAY_WEBHOOK_SECRET);
-  return data && distributedSafety && razorpay;
+  return data && distributedSafety && isDodoConfigured();
+}
+
+export function isDodoConfigured() {
+  return ['test_mode', 'live_mode'].includes(process.env.DODO_PAYMENTS_ENVIRONMENT ?? '')
+    && ['DODO_PAYMENTS_API_KEY', 'DODO_PAYMENTS_WEBHOOK_KEY', 'DODO_PAYMENTS_PRODUCT_ID_USD', 'DODO_PAYMENTS_PRODUCT_ID_INR']
+      .every((name) => isEnvValuePresent(process.env[name]));
 }
 
 export function requireServerEnv(name: string) {
