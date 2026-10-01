@@ -44,7 +44,7 @@ export async function POST(request: Request) {
 
   const provider = selectPaymentProvider(parsed.data.billingCountry);
   if (!provider.isConfigured()) {
-    return Response.json({ error: 'Razorpay checkout is not configured yet.' }, { status: 503 });
+    return Response.json({ error: 'Dodo Payments checkout is not configured yet.' }, { status: 503 });
   }
 
   const supabase = createAdminSupabaseClient();
@@ -92,7 +92,7 @@ export async function POST(request: Request) {
   const shouldCreate = Boolean(row.should_create_checkout);
   const status = String(row.claim_status);
   const providerName = String(row.payment_provider);
-  if (providerName !== provider.name) return Response.json({ error: 'Payment routing could not be verified.' }, { status: 503 });
+  if (providerName !== provider.name) return Response.json({ error: 'Payment routing could not be verified. Check that the Dodo Payments database migration has been applied.' }, { status: 503 });
 
   if (!shouldCreate && !checkoutReference) {
     return Response.json({ error: 'Checkout creation is already in progress.', intentId }, { status: 409 });
@@ -101,6 +101,7 @@ export async function POST(request: Request) {
     return Response.json({ error: 'This checkout cannot be restarted.', intentId, status }, { status: 409 });
   }
 
+  const statusUrl = `/payment/status?intent=${encodeURIComponent(intentId)}&access=${encodeURIComponent(parsed.data.idempotencyKey)}`;
   const checkoutInput = {
     intentId,
     date: parsed.data.date,
@@ -108,6 +109,7 @@ export async function POST(request: Request) {
     amountMinor: Number(row.amount_minor),
     currency: String(row.currency),
     appUrl: getAppOrigin(),
+    returnUrl: new URL(statusUrl, getAppOrigin()).toString(),
   };
 
   try {
@@ -122,7 +124,6 @@ export async function POST(request: Request) {
       });
       if (attached.error) throw new Error('checkout_attach_failed');
     }
-    const statusUrl = `/payment/status?intent=${encodeURIComponent(intentId)}&access=${encodeURIComponent(parsed.data.idempotencyKey)}`;
     return Response.json(
       { intentId, checkout, statusUrl },
       { status: 201, headers: { 'Cache-Control': 'private, no-store' } },
@@ -138,12 +139,15 @@ export async function POST(request: Request) {
     }
     const credentialsRejected = providerError instanceof Error && providerError.message === 'payment_provider_401';
     const invalidAmount = providerError instanceof Error && providerError.message === 'invalid_payment_amount';
+    const invalidProduct = providerError instanceof Error && providerError.message === 'dodo_product_configuration_invalid';
     return Response.json(
       {
         error: credentialsRejected
-          ? 'Razorpay rejected the configured credentials.'
+          ? 'Dodo Payments rejected the configured credentials. Check the API key and test/live environment.'
           : invalidAmount
             ? 'The payment amount must be at least 100 currency subunits.'
+            : invalidProduct
+              ? 'The Dodo product must use matching currency, Pay What You Want, tax-inclusive pricing, and no discounts or PPP.'
             : 'The payment provider could not start checkout. You have not been charged.',
       },
       { status: credentialsRejected ? 401 : invalidAmount ? 400 : 500 },

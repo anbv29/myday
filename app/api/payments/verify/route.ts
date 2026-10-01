@@ -41,6 +41,7 @@ export async function POST(request: Request) {
     .from('claim_checkout_intents')
     .select('provider_checkout_id,status')
     .eq('id', parsed.data.intentId)
+    .eq('provider', 'razorpay')
     .eq('idempotency_key', parsed.data.accessKey)
     .maybeSingle();
 
