@@ -1,5 +1,6 @@
 import { invalidatePublicClaimCache } from '@/server/cache/invalidation';
 import { sha256Hex } from '@/server/payments/crypto';
+import { handleVerifiedRefund } from '@/server/payments/refund-event';
 import type { PaymentProvider } from '@/server/payments/types';
 import { createAdminSupabaseClient } from '@/server/supabase/admin';
 
@@ -19,6 +20,7 @@ export async function handlePaymentWebhook(request: Request, provider: PaymentPr
   if (!event) return Response.json({ received: true, ignored: true });
 
   try {
+    if (event.kind === 'refund') return await handleVerifiedRefund(event);
     const admin = createAdminSupabaseClient();
     const payloadDigest = await sha256Hex(rawBody);
     const { data, error } = await admin.rpc('finalize_verified_claim', {
@@ -47,6 +49,7 @@ export async function handlePaymentWebhook(request: Request, provider: PaymentPr
       const refundAmount = Number(row.refund_amount_minor || event.amountMinor);
       try {
         const refundReference = await provider.refund(paymentReference, refundAmount, intentId);
+        if (!refundReference) return Response.json({ received: true, refundPending: true });
         const marked = await admin.rpc('mark_claim_payment_refunded', {
           target_intent_id: intentId,
           provider_refund_reference: refundReference,
