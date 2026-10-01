@@ -2,7 +2,7 @@
 
 MYDAY is a public record where people pay a platform fee to attach meaning to a calendar date. One verified claim is current per day; a higher valid claim can replace it while history remains. It is not an investment, resale market, wallet, security, or promise of financial return.
 
-The product is a responsive, light-first editorial Next.js application with public leaderboards, exploration, search, profiles, date monuments, anonymous purchasing, and server-verified Razorpay checkout for domestic and enabled international cards.
+The product is a responsive, light-first editorial Next.js application with public leaderboards, exploration, search, profiles, date monuments, anonymous purchasing, and server-verified Dodo Payments hosted checkout.
 
 ## Product rules
 
@@ -23,7 +23,7 @@ flowchart TD
   N --> S[(Supabase PostgreSQL\nauthoritative state + RLS)]
   N --> F[ECB USD/INR reference via Frankfurter]
   N --> P{Server currency policy}
-  P -->|India / INR| Z[Razorpay]
+  P -->|India / INR| Z[Dodo Payments]
   P -->|International / USD| Z
   Z --> W[Signed webhook]
   W --> N
@@ -36,7 +36,7 @@ flowchart TD
 | Next.js | UI, validation, anonymous checkout orchestration, webhook endpoints | Clean errors; no ownership guess |
 | Supabase PostgreSQL | Anonymous buyer records, RLS, claims, history, payments, audit log, transactions | Claims and checkout fail closed |
 | Upstash | Distributed abuse limits and public cache generation | Production writes fail closed; public reads fall through to Supabase |
-| Razorpay | INR and enabled international payment collection, signed events, refunds | No ownership until a valid webhook transaction commits |
+| Dodo Payments | Hosted checkout, signed payment/refund events | No ownership until a valid webhook transaction commits |
 | Frankfurter/ECB | Latest daily USD/INR reference used for Indian checkout | INR checkout fails closed if a recent rate cannot be verified |
 | PostHog/Sentry/Pinecone | Optional analytics, errors, derived semantic index | Core flow continues; lexical PostgreSQL search remains available |
 
@@ -67,7 +67,7 @@ npm run build
 
 Public browser values: `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`. Only the optional PostHog project key/host may also be public.
 
-Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, Upstash credentials, Razorpay keys/webhook secret, `SENTRY_DSN`, and Pinecone credentials. `SUPABASE_DB_URL` is migration-only and must not be available to the runtime. Store secrets in encrypted platform storage, never Git. `/ready` returns 503 until Supabase, Upstash, and Razorpay are completely configured.
+Server-only secrets: `SUPABASE_SERVICE_ROLE_KEY`, Upstash credentials, Dodo API/webhook keys, `SENTRY_DSN`, and Pinecone credentials. `SUPABASE_DB_URL` is migration-only and must not be available to the runtime. Store secrets in encrypted platform storage, never Git. `/ready` returns 503 until Supabase, Upstash, and Dodo are completely configured.
 
 ## Supabase and anonymous checkout
 
@@ -85,11 +85,11 @@ For Vercel, import the GitHub repository as a Next.js project. Add all environme
 
 ## Payments
 
-The client supplies a validated billing country, never a provider name. Every checkout uses Razorpay. `IN` creates an INR order using a recent server-fetched ECB USD/INR reference; other supported countries create a USD order. The canonical claim value remains in USD minor units. Configure:
+The client supplies a validated billing country, never a provider name. New checkout uses Dodo Payments. `IN` uses a recent server-fetched ECB USD/INR reference; other supported countries pay USD. The canonical claim value remains in USD minor units. Configure:
 
-- Razorpay webhook: `POST /api/webhooks/razorpay`, event `payment.captured`; enable automatic capture.
+- Dodo webhook: `POST /api/webhooks/dodo`, events `payment.succeeded`, `payment.failed`, `payment.cancelled`, and `refund.succeeded`.
 
-International payments require Razorpay dashboard approval, completed KYC, the site policy pages, and international cards enabled for the account. The app cannot bypass that account-level approval. If the daily FX feed or secure database refresh fails, INR checkout stops instead of using a client or stale unverified rate.
+Follow [the Dodo setup guide](docs/dodo-setup.md) for product settings, Vercel variables, the additive compatibility migration, webhook setup, test payments, and live-mode approval. Keep legacy Razorpay secrets/webhooks only until earlier payments/refunds finish. If the daily FX feed or secure database refresh fails, INR checkout stops instead of using a client or stale unverified rate.
 
 Handlers read the bounded raw body, verify signatures/replay windows, and call `finalize_verified_claim`. That transaction locks the intent and date, validates price/currency/provider/version, records a unique event/payment, supersedes the old claim, and commits one new current claim. A stale verified payment enters an idempotent refund path. Redirect pages only poll server state. See `docs/payments-and-claims.md`.
 
@@ -122,7 +122,7 @@ Enable Supabase scheduled backups/PITR appropriate to business requirements and 
 Deployment order:
 
 1. Verify and back up the target Supabase project; apply migrations.
-2. Configure Upstash, test-mode Razorpay webhooks, and hosted secrets.
+2. Configure Upstash, test-mode Dodo products/webhooks, and hosted secrets.
 3. Run the full verification suite and staging race/replay tests.
 4. Deploy a protected Vercel preview, verify health/readiness/security headers and smoke tests, then promote the verified build to production.
 5. Switch payment providers to live keys only after webhook reconciliation and rollback exercises succeed.
