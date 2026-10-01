@@ -32,8 +32,9 @@ export async function createDodoCheckout(client: DodoPayments, input: CheckoutCr
 export async function resumeDodoCheckout(client: DodoPayments, reference: string, input: CheckoutCreation): Promise<ClientCheckout> {
   if (!/^[A-Za-z0-9_-]+$/.test(reference)) throw new Error('invalid_dodo_session');
   const session = await client.checkoutSessions.retrieve(reference);
-  if (session.id !== reference || session.payment_status === 'succeeded'
-    || Date.now() - Date.parse(session.created_at) >= 24 * 60 * 60 * 1000) throw new Error('dodo_session_expired_or_paid');
+  const createdAt = Date.parse(session.created_at);
+  if (session.id !== reference || ['succeeded', 'failed', 'cancelled'].includes(session.payment_status ?? '')
+    || !Number.isFinite(createdAt) || Date.now() - createdAt >= 24 * 60 * 60 * 1000) throw new Error('dodo_session_expired_or_paid');
   const host = process.env.DODO_PAYMENTS_ENVIRONMENT === 'live_mode' ? 'checkout.dodopayments.com' : 'test.checkout.dodopayments.com';
   return { provider: 'dodo', checkoutReference: reference, url: `https://${host}/session/${reference}`, amountMinor: input.amountMinor, currency: input.currency };
 }

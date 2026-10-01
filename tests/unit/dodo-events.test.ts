@@ -35,9 +35,13 @@ describe('Dodo signed events', () => {
     const { body, headers } = signed({ ...payment, data: { ...payment.data, checkout_session_id: null } });
     await expect(provider.verifyWebhook(body, headers)).rejects.toThrow('invalid_dodo_payment');
   });
-  it('ignores failed payments without granting a claim', async () => {
+  it('ignores unrelated failed payments without a session', async () => {
     const { body, headers } = signed({ type: 'payment.failed', data: { payment_id: 'pay_test' } });
     expect(await provider.verifyWebhook(body, headers)).toBeNull();
+  });
+  it('recognizes signed failure without granting a claim', async () => {
+    const { body, headers } = signed({ type: 'payment.failed', data: { ...payment.data, status: 'failed' } });
+    expect(await provider.verifyWebhook(body, headers)).toMatchObject({ kind: 'failure', checkoutReference: 'cks_test' });
   });
   it('recognizes confirmed full refunds', async () => {
     const { body, headers } = signed({ type: 'refund.succeeded', data: { status: 'succeeded', is_partial: false, payment_id: 'pay_test', refund_id: 'ref_test', amount: 100, currency: 'USD' } });

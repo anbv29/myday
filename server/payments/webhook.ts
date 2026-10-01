@@ -22,6 +22,14 @@ export async function handlePaymentWebhook(request: Request, provider: PaymentPr
   try {
     if (event.kind === 'refund') return await handleVerifiedRefund(event);
     const admin = createAdminSupabaseClient();
+    if (event.kind === 'failure') {
+      const { error } = await admin.from('claim_checkout_intents')
+        .update({ status: 'failed', failure_code: 'provider_payment_failed' })
+        .eq('provider', event.provider).eq('provider_checkout_id', event.checkoutReference)
+        .in('status', ['checkout_created']);
+      if (error) throw error;
+      return Response.json({ received: true });
+    }
     const payloadDigest = await sha256Hex(rawBody);
     const { data, error } = await admin.rpc('finalize_verified_claim', {
       payment_provider: event.provider,

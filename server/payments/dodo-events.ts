@@ -1,7 +1,7 @@
 import type DodoPayments from 'dodopayments';
-import type { VerifiedPaymentEvent, VerifiedRefundEvent } from '@/server/payments/types';
+import type { VerifiedFailureEvent, VerifiedPaymentEvent, VerifiedRefundEvent } from '@/server/payments/types';
 
-export function verifyDodoEvent(client: DodoPayments, rawBody: string, headers: Headers): VerifiedPaymentEvent | VerifiedRefundEvent | null {
+export function verifyDodoEvent(client: DodoPayments, rawBody: string, headers: Headers): VerifiedPaymentEvent | VerifiedRefundEvent | VerifiedFailureEvent | null {
   const eventId = headers.get('webhook-id');
   const timestamp = headers.get('webhook-timestamp');
   const signature = headers.get('webhook-signature');
@@ -16,6 +16,11 @@ export function verifyDodoEvent(client: DodoPayments, rawBody: string, headers: 
       || !Number.isSafeInteger(refund.amount) || (refund.amount ?? 0) < 1 || !refund.currency) throw new Error('invalid_dodo_refund');
     return { kind: 'refund', provider: 'dodo', eventId, paymentReference: refund.payment_id,
       refundReference: refund.refund_id, amountMinor: refund.amount as number, currency: refund.currency };
+  }
+  if (event.type === 'payment.failed' || event.type === 'payment.cancelled') {
+    if (!event.data.checkout_session_id) return null; // Unrelated payments have no MYDAY session.
+    if (!['failed', 'cancelled'].includes(event.data.status ?? '')) throw new Error('invalid_dodo_failure');
+    return { kind: 'failure', provider: 'dodo', eventId, checkoutReference: event.data.checkout_session_id };
   }
   if (event.type !== 'payment.succeeded') return null;
   const payment = event.data;

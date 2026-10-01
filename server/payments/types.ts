@@ -34,11 +34,18 @@ export type VerifiedRefundEvent = {
   currency: string;
 };
 
+export type VerifiedFailureEvent = {
+  kind: 'failure';
+  provider: PaymentProviderName;
+  eventId: string;
+  checkoutReference: string;
+};
+
 export interface PaymentProvider {
   readonly name: PaymentProviderName;
   isConfigured(): boolean;
   createCheckout(input: CheckoutCreation): Promise<ClientCheckout>;
   resumeCheckout(reference: string, input: CheckoutCreation): Promise<ClientCheckout>;
-  verifyWebhook(rawBody: string, headers: Headers): Promise<VerifiedPaymentEvent | VerifiedRefundEvent | null>;
+  verifyWebhook(rawBody: string, headers: Headers): Promise<VerifiedPaymentEvent | VerifiedRefundEvent | VerifiedFailureEvent | null>;
   refund(paymentReference: string, amountMinor: number, intentId: string): Promise<string | null>;
 }
