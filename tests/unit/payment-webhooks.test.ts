@@ -14,10 +14,10 @@ afterEach(() => {
 });
 
 describe('payment routing', () => {
-  it('routes Indian and international billing contexts to Razorpay', () => {
-    expect(selectPaymentProvider('IN').name).toBe('razorpay');
-    expect(selectPaymentProvider('US').name).toBe('razorpay');
-    expect(selectPaymentProvider('GB').name).toBe('razorpay');
+  it('routes all new billing contexts to Dodo Payments', () => {
+    expect(selectPaymentProvider('IN').name).toBe('dodo');
+    expect(selectPaymentProvider('US').name).toBe('dodo');
+    expect(selectPaymentProvider('GB').name).toBe('dodo');
   });
 });
 

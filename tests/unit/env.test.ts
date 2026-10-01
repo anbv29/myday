@@ -12,20 +12,22 @@ describe('environment safety', () => {
     expect(isEnvValuePresent('real-value')).toBe(true);
   });
 
-  it('requires the core stack and Razorpay', () => {
+  it('requires the core stack and Dodo Payments', () => {
     const required = {
       NEXT_PUBLIC_SUPABASE_URL: 'https://project.supabase.co',
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_real',
       SUPABASE_SERVICE_ROLE_KEY: 'sb_secret_real',
       UPSTASH_REDIS_REST_URL: 'https://redis.upstash.io',
       UPSTASH_REDIS_REST_TOKEN: 'redis-real',
-      RAZORPAY_KEY_ID: 'rzp_test_real',
-      RAZORPAY_KEY_SECRET: 'razor-secret-real',
-      RAZORPAY_WEBHOOK_SECRET: 'razor-webhook-real',
+      DODO_PAYMENTS_ENVIRONMENT: 'test_mode',
+      DODO_PAYMENTS_API_KEY: 'dodo-key-test',
+      DODO_PAYMENTS_WEBHOOK_KEY: 'whsec_test',
+      DODO_PAYMENTS_PRODUCT_ID_USD: 'pdt_usd',
+      DODO_PAYMENTS_PRODUCT_ID_INR: 'pdt_inr',
     };
     Object.entries(required).forEach(([name, value]) => vi.stubEnv(name, value));
     expect(isProductionConfigurationComplete()).toBe(true);
-    vi.stubEnv('RAZORPAY_WEBHOOK_SECRET', 'replace_me');
+    vi.stubEnv('DODO_PAYMENTS_WEBHOOK_KEY', 'replace_me');
     expect(isProductionConfigurationComplete()).toBe(false);
   });
 });
