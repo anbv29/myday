@@ -58,6 +58,9 @@ Only then remove the old keys. New purchases never route to Razorpay.
 ## 6. Test before live mode
 
 Run `npm run typecheck`, `npm run lint`, `npm test`, `npm run build`.
+The current dependency audit flags pre-existing Next.js/sharp advisories, which
+were deliberately not upgraded as part of this payment-only migration. The CI
+audit step may remain red until those separate security patches are approved.
 Visit `/ready` after configuring real Supabase/Redis/Dodo values. Choose a date,
 enter a title/story/handle and amount, accept the consent, and continue to Dodo.
 Use Dodo's documented test payment methods; test INR and USD with supported methods.
