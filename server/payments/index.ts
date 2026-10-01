@@ -1,12 +1,12 @@
-import { RazorpayPaymentProvider } from '@/server/payments/razorpay';
+import { DodoPaymentProvider } from '@/server/payments/dodo';
 
-const razorpay = new RazorpayPaymentProvider();
+const dodo = new DodoPaymentProvider();
 
 export function selectPaymentProvider(billingCountry: string) {
   if (!/^[A-Z]{2}$/.test(billingCountry.toUpperCase())) throw new Error('invalid_billing_country');
-  return razorpay;
+  return dodo;
 }
 
 export function getPaymentProvider() {
-  return razorpay;
+  return dodo;
 }

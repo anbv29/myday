@@ -1,9 +1,10 @@
-import { RazorpayPaymentProvider } from '@/server/payments/razorpay';
+import { getPaymentProvider } from '@/server/payments';
 import { handlePaymentWebhook } from '@/server/payments/webhook';
 
+export const runtime = 'nodejs';
+
 export async function POST(request: Request) {
-  // Retain verification of payments already started before the provider switch.
-  const provider = new RazorpayPaymentProvider();
+  const provider = getPaymentProvider();
   if (!provider.isConfigured()) return Response.json({ error: 'Webhook is not configured.' }, { status: 503 });
   return handlePaymentWebhook(request, provider);
 }
