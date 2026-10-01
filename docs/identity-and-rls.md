@@ -36,12 +36,12 @@ mutations run only on the Vercel server through the Supabase secret key.
 - The browser never submits an authoritative database user ID.
 - Payment status requires both the unguessable intent UUID and the original
   16–100 character checkout access key. Responses are private and no-store.
-- Only a valid Razorpay signed webhook can finalize ownership.
+- Only a valid signed payment-provider webhook can finalize ownership.
 
 ## Abuse and degraded behavior
 
 Anonymous checkout is protected by same-origin validation, strict and bounded
 input validation, and an Upstash rate limit keyed by a one-way hash of the
 request network/user-agent fingerprint. Missing Redis, Supabase secret access,
-current FX data for INR, or Razorpay credentials causes checkout to fail closed.
+current FX data for INR, or Dodo Payments configuration causes checkout to fail closed.
 Public read-only pages remain available when safe.

@@ -17,7 +17,7 @@ External credentials and dashboards are not present in this repository, so the f
 
 1. Apply migrations and execute anon/user-A/user-B/service-role RLS tests in the target Supabase project.
 2. Exercise anonymous checkout abuse limits, status-key guessing resistance, origin checks, attribution impersonation warnings, webhook replay, and provider MFA.
-3. Run Razorpay test-mode INR and USD success, invalid signature, replay, amount/currency mismatch, simultaneous same-date capture, refund retry, and reconciliation tests. Confirm international cards are approved on the live account.
+3. Run Dodo test-mode INR and USD success, invalid signature, replay, amount/currency mismatch, simultaneous same-date payment, refund retry, and reconciliation tests. Confirm Dodo approves the actual product model before enabling live mode; check any pending legacy Razorpay payments separately.
 4. Configure Vercel Firewall/rate controls and test deployed CSP/HSTS/cache headers, TLS, `/health`, `/ready`, and origin behavior.
 5. Run secret history scanning in the canonical remote and rotate any previously exposed value. This workspace contains placeholders only by inspection.
 6. Enable redacted Sentry/PostHog/Pinecone adapters only after privacy review and credentials; confirm their failure cannot break checkout.
