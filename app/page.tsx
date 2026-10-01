@@ -31,7 +31,7 @@ export default async function Home() {
         </section>
         <div className="shell calendar-primary">
           <DateCollection entries={collection.data} error={collection.error} />
-          <div className="calendar-assurance"><span>No account required</span><span>Verified payments via Razorpay</span><a href="/activity">Public claim history</a></div>
+          <div className="calendar-assurance"><span>No account required</span><span>Verified payments via Dodo Payments</span><a href="/activity">Public claim history</a></div>
         </div>
         <div className="shell future-home-sections">
           <details className="calendar-records">

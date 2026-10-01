@@ -2,57 +2,21 @@
 
 import { useRef, useState } from 'react';
 import type { ClaimQuote } from '@/server/claims/quotes';
-
-type RazorpayPaymentResponse = {
-  razorpay_payment_id: string;
-  razorpay_order_id: string;
-  razorpay_signature: string;
-};
-
-type RazorpayFailureResponse = {
-  error?: { description?: string };
-};
-
-type RazorpayInstance = {
-  open: () => void;
-  on: (event: 'payment.failed', handler: (response: RazorpayFailureResponse) => void) => void;
-};
-
-type RazorpayConstructor = new (options: Record<string, unknown>) => RazorpayInstance;
-declare global { interface Window { Razorpay?: RazorpayConstructor } }
-
-function loadRazorpay() {
-  return new Promise<boolean>((resolve) => {
-    if (window.Razorpay) return resolve(true);
-    const existing = document.querySelector<HTMLScriptElement>('script[data-myday-razorpay]');
-    if (existing) {
-      existing.addEventListener('load', () => resolve(true), { once: true });
-      existing.addEventListener('error', () => resolve(false), { once: true });
-      return;
-    }
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.async = true;
-    script.dataset.mydayRazorpay = 'true';
-    script.onload = () => resolve(true);
-    script.onerror = () => resolve(false);
-    document.head.appendChild(script);
-  });
-}
+import { isDodoCheckoutUrl } from '@/lib/payments/checkout-url';
 
 type CheckoutResponse = {
   intentId?: string;
   statusUrl?: string;
   error?: string;
-  checkout?: { provider: 'razorpay'; checkoutReference: string; keyId: string; amountMinor: number; currency: string; name: string; description: string };
+  checkout?: { provider: 'dodo'; checkoutReference: string; url: string; amountMinor: number; currency: string };
 };
 
 export function ClaimForm({
   quote,
-  razorpayConfigured,
+  paymentConfigured,
 }: {
   quote: ClaimQuote;
-  razorpayConfigured: boolean;
+  paymentConfigured: boolean;
 }) {
   const [billingCountry, setBillingCountry] = useState('IN');
   const [amountMajor, setAmountMajor] = useState(String(quote.minimumAmountMinor / 100));
@@ -95,61 +59,13 @@ export function ClaimForm({
         return;
       }
 
-      const loaded = await loadRazorpay();
-      if (!loaded || !window.Razorpay) {
-        setError('Razorpay Checkout was blocked by the browser. Disable payment-blocking extensions and try again.');
-        requestKey.current = crypto.randomUUID();
-        return;
-      }
       const checkout = result.checkout;
-      const razorpay = new window.Razorpay({
-        key: checkout.keyId,
-        order_id: checkout.checkoutReference,
-        amount: checkout.amountMinor,
-        currency: checkout.currency,
-        name: checkout.name,
-        description: checkout.description,
-        theme: { color: '#d8613c' },
-        handler: async (payment: RazorpayPaymentResponse) => {
-          setSubmitting(true);
-          try {
-            const verification = await fetch('/api/payments/verify', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                intentId: result.intentId,
-                accessKey: requestKey.current,
-                ...payment,
-              }),
-            });
-            const verificationResult = await verification.json() as { verified?: boolean; error?: string };
-            if (!verification.ok || !verificationResult.verified) {
-              setError(verificationResult.error ?? 'Payment verification failed. No claim has been granted.');
-              return;
-            }
-            window.location.assign(result.statusUrl ?? `/payment/status?intent=${result.intentId}`);
-          } catch {
-            setError('Payment verification could not be completed. Check the payment status before retrying.');
-          } finally {
-            setSubmitting(false);
-          }
-        },
-        modal: {
-          ondismiss: () => {
-            setSubmitting(false);
-            setError('Payment window closed. You have not been charged.');
-          },
-        },
-      });
-      razorpay.on('payment.failed', (failure) => {
-        setSubmitting(false);
-        setError(failure.error?.description ?? 'Payment failed. Try again or use another payment method.');
-      });
-      razorpay.open();
+      if (checkout.provider !== 'dodo' || !isDodoCheckoutUrl(checkout.url)) throw new Error('invalid_checkout_url');
+      // Redirect is never proof of payment; the return page polls authoritative server state.
+      window.location.assign(checkout.url);
     } catch (checkoutError) {
-      console.error('Razorpay Checkout could not be opened', checkoutError);
-      setError('The secure payment window could not be opened. You have not been charged.');
-      requestKey.current = crypto.randomUUID();
+      console.error('Dodo Payments Checkout could not be opened', checkoutError);
+      setError('Secure checkout could not be opened. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -195,17 +111,17 @@ export function ClaimForm({
         <div className="checkout-summary">
           <p><span>Minimum valid claim</span><strong>{quote.minimumAmount}</strong></p>
           <p><span>{billingCountry === 'IN' ? 'Estimated INR checkout' : 'Checkout amount'}</span><strong>{billingCountry === 'IN' ? (estimatedInr ?? 'Live rate at checkout') : `$${numericAmountMajor.toFixed(2)}`}</strong></p>
-          <p><span>Secure checkout</span><strong>Razorpay · {checkoutCurrency}</strong></p>
+          <p><span>Secure checkout</span><strong>Dodo Payments · {checkoutCurrency}</strong></p>
           <p><span>Ownership rule</span><strong>Verified webhook only</strong></p>
         </div>
-        {billingCountry === 'IN' ? <p className="checkout-fineprint">The INR amount uses the latest daily ECB USD/INR reference available at checkout{quote.fxRateDate ? ` (reference date ${quote.fxRateDate})` : ''}. Razorpay receives the final server-calculated amount.</p> : null}
+        {billingCountry === 'IN' ? <p className="checkout-fineprint">The INR amount uses the latest daily ECB USD/INR reference available at checkout{quote.fxRateDate ? ` (reference date ${quote.fxRateDate})` : ''}. Dodo Payments receives the final server-calculated amount.</p> : null}
         <label className="claim-consent"><input type="checkbox" required /><span>I understand this is a platform fee for a featured claim—not an investment, resale right, wallet balance, or promise of financial return.</span></label>
         {error ? <div className="form-error" role="alert"><p>{error}</p></div> : null}
-        {!razorpayConfigured ? <p className="provider-notice" role="status">Razorpay credentials are not connected in this environment, so real checkout is disabled.</p> : null}
-        <button className="button button-primary checkout-button" type="submit" disabled={submitting || !razorpayConfigured}>
+        {!paymentConfigured ? <p className="provider-notice" role="status">Dodo Payments is not connected in this environment, so checkout is disabled.</p> : null}
+        <button className="button button-primary checkout-button" type="submit" disabled={submitting || !paymentConfigured}>
           <span>{submitting ? 'Opening secure checkout…' : 'Continue to secure checkout'}</span><span aria-hidden="true">↗</span>
         </button>
-        <p className="checkout-fineprint">The server will re-check the latest date price before creating checkout. A return page never grants ownership; only a verified provider webhook can do that.</p>
+        <p className="checkout-fineprint">You’ll continue to Dodo’s secure payment page. The server re-checks the date price first. Only a verified payment webhook can grant the claim.</p>
       </fieldset>
     </form>
   );
