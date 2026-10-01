@@ -1,80 +1,63 @@
 # Claims and payments
 
-Section 4 implements a server-authoritative claim state machine. Browser redirects and payment callbacks never change date ownership.
+MYDAY keeps the existing server-authoritative Supabase claim state machine.
+Browser redirects and checkout callbacks never grant ownership.
 
-## Routing policy
+## Routing and prices
 
-- Every payment routes to Razorpay.
-- A validated billing country of `IN` charges INR using the latest verified daily ECB USD/INR reference fetched server-side through Frankfurter.
-- Other supported billing countries create a Razorpay order in USD for enabled international cards.
-- The client submits billing context, not a provider name. The server and database independently derive the provider.
-- The canonical leaderboard amount is stored in USD minor units. Razorpay display amounts use the database FX snapshot stored on the checkout intent.
+- New purchases use Dodo Payments hosted Checkout Sessions.
+- Indian billing uses the latest verified daily ECB USD/INR reference via Frankfurter.
+- Other supported billing countries pay USD; canonical leaderboard values remain USD.
+- Server/database calculate the provider and exact price, not the browser.
+- Separate USD/INR one-time PWYW products must be tax-inclusive with no discounts/PPP.
+- Sessions use quantity 1 and disable discounts and currency selection.
+- Product settings are checked before creation; mismatched gross payment totals refund.
+- Metadata contains only the intent ID and date, never private stories or access keys.
+- A checked same-origin return URL carries the existing anonymous status access key.
 
-The singleton `payment_configuration` row controls the base amount, percentage increment, minimum increment, maximum amount, INR conversion snapshot, and quote lifetime. Operational changes should be audited and performed with migration/admin credentials.
+## State and concurrency
 
-Every checkout also requires a public attribution: either an `@handle` or a complete HTTPS URL. It is stored in the signed-payment claim intent, copied into the claim only during authoritative finalization, and displayed on public leaderboard/date surfaces. Outbound URLs are normalized server-side and rendered with `noopener`, `noreferrer`, `nofollow`, and `ugc`; private claims suppress the attribution with the rest of the claimant identity.
+creating_checkout -> checkout_created -> payment_verified -> completed
 
-## State machine
-
-```text
-creating_checkout
-  -> checkout_created
-  -> payment_verified
-  -> completed
-
-Any stale, expired, amount-mismatched, or currency-mismatched verified payment:
-payment_verified -> refund_pending -> refunded
-
-Provider creation failure:
-creating_checkout -> failed
-```
-
-The initial base claim is USD 1. An occupied date requires the current canonical amount plus the greater of 10% or USD 1. The server re-reads this configuration and the locked date state; displayed browser prices are informational. INR rate responses must identify USD/INR, stay within a conservative sanity range, and be no more than seven days old. The server writes the fetched rate and observation time through its service role; the checkout transaction refuses INR conversion if that observation is more than one hour old.
-
-## Concurrency boundary
-
-Checkout creation never holds a database lock while calling the FX reference service or Razorpay. After a signed webhook is verified, `finalize_verified_claim` runs one short transaction:
-
-1. Serializes duplicate provider events with an advisory transaction lock.
-2. Locks the checkout intent and the single calendar-date row.
-3. Verifies provider, payment identifier, amount, currency, expiry, expected current claim, date version, and latest minimum amount.
-4. Supersedes the old current claim, creates the new claim, advances the date version, records activity and audit history, and commits atomically.
-5. If the expected date state changed, ownership remains untouched and the captured payment is routed to an idempotent provider refund.
-
-The partial unique index from migration 2 remains the final invariant preventing two current claims for one date.
-
-## Idempotency
-
-- Checkout requests require a 16–100 character idempotency/access key unique per anonymous attribution record.
-- An idempotency key cannot be reused with different claim content.
-- Razorpay orders are protected by the leased database checkout-creation state; refunds use the claim-intent UUID as Razorpay's idempotent `receipt` value.
-- Provider event IDs are unique per provider and raw webhook bodies are represented only by a SHA-256 digest.
+Stale, expired, or mismatched verified payments enter refund_pending -> refunded.
+Failed session creation marks the intent failed. Signed failed/cancelled payment
+events only mark checkout_created intents failed; completed claims cannot be overwritten.
+The opening amount is USD 1; the next minimum adds the greater of 10% or USD 1.
+Existing configuration, FX snapshots, visibility, anonymous attribution, RLS,
+date version checks, advisory locks, and the one-current-claim index remain unchanged.
+Provider API calls run outside the short database finalization transaction.
+Anonymous request/access keys are unchanged and cannot be reused for different content.
+Sessions resume without creating a second checkout; expired/paid sessions are rejected.
 
 ## Webhooks
 
-Configure `POST /api/webhooks/razorpay` for the `payment.captured` event. The handler reads the raw body with a 1 MB limit and verifies the HMAC before JSON processing. Razorpay's `X-Razorpay-Event-Id` is mandatory for replay protection.
+POST /api/webhooks/dodo reads a bounded raw body. The official SDK validates
+webhook-id, webhook-timestamp, webhook-signature and its replay window before use.
+payment.succeeded must have a succeeded status, session ID, payment ID, currency,
+and integer total_amount. Verification uses the gross customer payment, never
+settlement_amount (which may exclude fees/tax or use a different currency).
+The existing finalize_verified_claim RPC validates exact provider/amount/currency,
+intent expiry and date version, then atomically updates the claim/history/audit log.
+Unique provider-event IDs and payment IDs protect duplicate delivery.
+DB failures return 503 for retry. Invalid signatures return 400 with no DB writes.
 
-Standard Checkout's browser handler sends the returned payment ID, order ID, and
-signature to `POST /api/payments/verify`. That route looks up the order ID stored
-for the anonymous checkout intent and verifies the HMAC with
-`RAZORPAY_KEY_SECRET`; it never changes ownership or marks a claim paid. The
-signed `payment.captured` webhook remains the only authoritative finalization
-path. Checkout cancellation and `payment.failed` events are reported in the form
-without granting a claim.
+## Refunds and legacy records
 
-## Provider setup
+Stale payments request a full refund only after verifying the actual paid amount.
+A Redis cooldown blocks concurrent refund requests; provider refunds are checked
+before issuing another request. Pending/review refunds stay refund_pending.
+A succeeded refund response or signed refund.succeeded event can mark them refunded;
+the event must match the stored full payment amount/currency and pending state.
+Partial/dashboard refunds of delivered claims need manual reconciliation, never
+automatic ownership changes. Monitor pending refunds and provider delivery failures.
+Existing Razorpay rows and callbacks remain valid for in-flight old payments.
+The legacy browser verification endpoint is restricted to Razorpay intents and
+cannot mark a claim paid. New frontend checkout never calls it or loads Razorpay.
 
-Set the server-only placeholders documented in `.env.example`. Never prefix secrets with `NEXT_PUBLIC_`.
+## Deployment
 
-Use Razorpay test-mode keys and a test webhook secret locally. A real claim can only be exercised after all Supabase migrations, Upstash, and Razorpay are connected. Complete Razorpay KYC and request international-card activation before foreign payments; keep the Terms, Privacy, Refund/Cancellation, and Delivery policy pages publicly reachable for the review.
-
-Razorpay must have automatic capture enabled so the configured `payment.captured` webhook is authoritative. Webhook-time refund calls use a three-second provider timeout to remain within Razorpay's delivery window; a timeout leaves the intent `refund_pending` and deliberately returns a retryable HTTP 503.
-
-## Failure behavior
-
-- Missing provider configuration disables checkout visibly and returns HTTP 503.
-- Missing Redis in production fails closed for checkout initiation.
-- Provider creation failure marks the intent failed and tells the user they were not charged.
-- Database finalization failure returns HTTP 503 so the provider retries.
-- A failed automatic refund remains `refund_pending`; webhook retries reuse the same refund idempotency key.
-- Public cache version invalidation is best-effort after the authoritative transaction. PostgreSQL remains the source of truth.
+See [Dodo setup](dodo-setup.md). Apply migration 008 after all previous migrations.
+It patches provider literals only and keeps prior claim fixes, transactions and grants.
+Configure matching test/live API keys, webhook key and both product IDs; no Dodo
+secrets are public. Keep legacy keys only until earlier payments/refunds finish.
+Approval and staging payment/refund/race tests are required before live use.
