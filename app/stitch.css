@@ -437,6 +437,33 @@ a { text-underline-offset: .22em; }
   .free-registration-form, .registration-success { padding: 22px; }
 }
 .calendar-primary { padding-bottom: 24px; }
+.ranked-calendar { scroll-margin-top: 110px; }
+.ranked-calendar-heading { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 24px 0; border-top: 1px solid var(--line); }
+.ranked-calendar-heading h2 { margin: 0 0 8px; font-size: clamp(23px, 2.4vw, 30px); font-weight: 650; letter-spacing: -.025em; line-height: 1.25; }
+.ranked-calendar-heading p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.6; }
+.ranked-calendar-count { flex-shrink: 0; color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; }
+.ranked-calendar-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; list-style: none; margin: 0; padding: 0; }
+.ranked-calendar-cell { min-width: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--paper-raised); overflow: hidden; transition: border-color 180ms ease-out, background-color 180ms ease-out; }
+.ranked-calendar-cell:first-child { background: var(--gold-bg); border-color: var(--gold-line); }
+.ranked-calendar-cell:hover { border-color: var(--accent); }
+.ranked-calendar-link { display: block; padding: 18px 16px 12px; color: var(--ink); text-decoration: none; }
+.ranked-calendar-link:focus-visible { outline: 3px solid var(--accent); outline-offset: -4px; border-radius: 12px; }
+.ranked-calendar-value { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 8px; font-variant-numeric: tabular-nums; }
+.ranked-calendar-value > span { color: var(--muted); font-size: 13px; font-weight: 600; }
+.ranked-calendar-value strong { color: var(--accent); font-size: 18px; line-height: 1.4; overflow-wrap: anywhere; }
+.ranked-calendar-link time { display: flex; flex-direction: column; margin-top: 20px; }
+.ranked-calendar-link time > span { color: var(--muted); font-size: 12px; font-weight: 600; line-height: 1.5; }
+.ranked-calendar-link time b { font-size: 48px; line-height: 1.2; letter-spacing: -.03em; font-weight: 600; font-variant-numeric: tabular-nums; }
+.ranked-calendar-link h3 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; min-height: 44px; margin: 14px 0 0; font-size: 16px; line-height: 1.4; font-weight: 600; }
+.ranked-calendar-holder { padding: 0 16px 16px; color: var(--muted); font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }
+.ranked-calendar-holder a { display: inline-flex; align-items: center; min-height: 44px; max-width: 100%; color: var(--ink); text-underline-offset: 3px; }
+.ranked-calendar-empty { padding: 32px; border: 1px dashed var(--line); border-radius: 12px; }
+.ranked-calendar-empty h3 { margin: 0 0 10px; font-size: 23px; font-weight: 600; }
+.ranked-calendar-empty p { margin: 0 0 24px; color: var(--muted); font-size: 16px; line-height: 1.6; }
+@media (max-width: 1100px) { .ranked-calendar-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 760px) { .ranked-calendar-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } .ranked-calendar-heading { align-items: flex-start; flex-direction: column; gap: 12px; } }
+@media (max-width: 540px) { .ranked-calendar-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ranked-calendar-link { padding: 16px 12px 8px; } .ranked-calendar-holder { padding: 0 12px 12px; } .ranked-calendar-empty { padding: 24px; } }
+@media (prefers-reduced-motion: reduce) { .ranked-calendar-cell { transition: none; } }
 .calendar-workspace { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 24px; align-items: stretch; scroll-margin-top: 95px; }
 .calendar-workspace .date-navigator { min-width: 0; margin: 0; padding: 26px; background: var(--paper-raised); border: 1px solid var(--line); border-radius: 16px; box-shadow: none; }
 .date-navigator-heading h2 { margin: 0; font-size: 26px; font-weight: 600; letter-spacing: -.025em; }
