@@ -15,7 +15,9 @@ Enable Pay What You Want and tax-inclusive pricing; disable localized pricing,
 discounts and Purchasing Power Parity. Set the minimum to 100 minor units (USD 1).
 PWYW products cannot have INR as their base currency. The app supplies the
 actual authoritative price. Do not set a minimum above the smallest app claim.
-Disable adaptive-currency/charm-pricing features that could change the exact total.
+Enable Adaptive Currency in Dodo Pricing settings for INR checkout; keep Charm Pricing off.
+India is billed in INR; other countries are billed in USD. The cart price remains USD.
+The exact INR total and any FX fee are shown by Dodo before payment. No fixed INR rate is promised.
 The app validates product pricing before opening checkout; it never changes products.
 
 ## 3. Configure environment variables
@@ -45,6 +47,10 @@ If it reports an unexpected function definition, stop and inspect; do not bypass
 Migration files run once, in order. Do not rerun old migrations over a live database.
 Then apply `202610030009_dodo_usd_checkout.sql` to charge new intents in USD while
 retaining the actual billing country and all historical INR payments.
+Then apply `202610030010_dodo_adaptive_currency.sql`. It adds a service-only payment
+finalizer that checks the signed USD intent binding, preserves canonical USD ranking,
+and stores the signed gross INR amount for receipts and refunds atomically. The original
+finalizer still handles USD and historical payments. No new tables or public permissions.
 
 ## 5. Add the webhook and redeploy
 
@@ -63,7 +69,9 @@ Keep the CI production dependency audit enabled. The previously flagged Next.js
 and sharp advisories were patched; rerun the audit after dependency updates.
 Visit `/ready` after configuring real Supabase/Redis/Dodo values. Choose a date,
 enter a title/story/handle and amount, accept the consent, and continue to Dodo.
-Use Dodo's documented test payment methods; test USD checkout for Indian and other billing countries.
+Use Dodo's documented test payment methods; test INR checkout for India and USD for other countries.
+Run `tests/database/dodo-adaptive-currency.sql` to check completion, rank, replay and
+stale-payment refunds with transaction-only fixtures; it rolls back all simulated records.
 Successful checkout returns to MYDAY's status page with its existing access key.
 The page must not show success until the signed webhook commits the claim.
 Check the date record, leaderboard, and webhook delivery logs after completion.
