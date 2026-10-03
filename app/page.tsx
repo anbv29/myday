@@ -5,13 +5,16 @@ import { DataEmptyState, DataSourceRibbon } from '@/components/public/data-state
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
 import { getLeaderboard, getTrending } from '@/server/public-data';
+import { DateCollection } from '@/components/date-collection';
+import { getDateCollection } from '@/server/public-data/date-collection';
 
 export const dynamic = 'force-dynamic';
 
 export default async function Home() {
-  const [leaderboard, trending] = await Promise.all([
+  const [leaderboard, trending, collection] = await Promise.all([
     getLeaderboard({ limit: 30 }),
     getTrending(8),
+    getDateCollection(),
   ]);
 
   return (
@@ -31,6 +34,13 @@ export default async function Home() {
           <div className="calendar-assurance"><span>No account required</span><span>Verified payments via Dodo Payments</span><a href="/activity">Public claim history</a></div>
         </div>
         <div className="shell future-home-sections">
+          <section className="future-section" aria-labelledby="date-records-title">
+            <div className="future-section-heading">
+              <div><h2 id="date-records-title">Every registered story.</h2></div>
+              <p>Free registrations and paid featured dates, together in the public collection.</p>
+            </div>
+            <DateCollection entries={collection.data} error={collection.error} id="date-records" />
+          </section>
           {leaderboard.data.length > 1 ? <details className="calendar-records">
             <summary>Explore featured stories <span>{leaderboard.data.length} {leaderboard.data.length === 1 ? 'record' : 'records'}</span></summary>
             <LiveAuctions claims={leaderboard.data.slice(0, 12)} />

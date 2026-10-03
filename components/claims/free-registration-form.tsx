@@ -28,7 +28,7 @@ export function FreeRegistrationForm({ date }: { date: string }) {
     } catch (failure) { setError(failure instanceof Error ? failure.message : 'Registration could not be saved. Try again.'); }
     finally { setPending(false); }
   }
-  if (registered) return <section className="registration-success" role="status"><h2>Your date is registered.</h2><p>Your free entry is saved. It appears in the collection unless a paid claim takes priority.</p><a className="future-button future-button-primary" href="/">View the date collection</a></section>;
+  if (registered) return <section className="registration-success" role="status"><h2>Your date is registered.</h2><p>Your free entry is saved. It appears in the collection unless a paid claim takes priority.</p><a className="future-button future-button-primary" href="/#date-records">View the date collection</a></section>;
   return <form className="free-registration-form" onSubmit={submit} aria-busy={pending}>
     <fieldset disabled={pending}><legend>Your public date registration</legend>
       <label>Date<input type="date" name="date" value={selectedDate} onChange={(event) => setSelectedDate(event.target.value)} min="1900-01-01" max="2100-12-31" required /></label>

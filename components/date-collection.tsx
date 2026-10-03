@@ -5,14 +5,14 @@ import { PublicAttribution } from '@/components/public/attribution';
 import { formatPublicDate } from '@/lib/public/format';
 import type { DateCollectionEntry } from '@/lib/public/date-collection';
 
-export function DateCollection({ entries, error }: { entries: DateCollectionEntry[]; error?: string }) {
+export function DateCollection({ entries, error, id = 'matrix-view' }: { entries: DateCollectionEntry[]; error?: string; id?: string }) {
   const [filter, setFilter] = useState('all');
   const [order, setOrder] = useState('date');
   const [year, setYear] = useState('all');
   const years = [...new Set(entries.map((entry) => entry.isoDate.slice(0, 4)))].sort();
   const visible = entries.filter((entry) => (filter === 'all' || entry.kind === filter) && (year === 'all' || entry.isoDate.startsWith(year)))
     .sort((a, b) => order === 'date' ? a.isoDate.localeCompare(b.isoDate) : (a.rank ?? Infinity) - (b.rank ?? Infinity) || a.isoDate.localeCompare(b.isoDate));
-  return <section className="date-collection" id="matrix-view" aria-label="Registered dates collection">
+  return <section className="date-collection" id={id} aria-label="Registered dates collection">
     <div className="collection-toolbar">
       <div className="stitch-tabs" aria-label="Filter registered dates">{[['all', 'All dates'], ['featured', 'Paid featured'], ['free', 'Free registrations']].map(([value, label]) => <button type="button" key={value} aria-pressed={filter === value} onClick={() => setFilter(value)}>{label}</button>)}</div>
       <div className="collection-selects">
