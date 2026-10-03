@@ -30,6 +30,7 @@ export function DateCollection({ entries, error, id = 'matrix-view' }: { entries
           <time dateTime={entry.isoDate}><span>{date.month} {date.year}</span><strong>{date.day}</strong></time>
           <div className="collection-story"><h2>{entry.title}</h2><p>{entry.story}</p></div>
           <div className="collection-claimant"><span>{entry.kind === 'featured' ? 'Claimed by' : 'Registered by'}</span><PublicAttribution value={entry.attribution} /></div>
+          {entry.kind === 'free' && entry.registeredAt ? <p className="collection-caption">Registered <time dateTime={entry.registeredAt} className="collection-registration-time">{new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeZone: 'UTC' }).format(new Date(entry.registeredAt))}</time></p> : null}
           <a className="collection-date-link" href={entry.kind === 'featured' ? `/day/${entry.isoDate}` : `/claim?date=${entry.isoDate}`}>{entry.kind === 'featured' ? 'View story & claim history' : 'Feature this date with a paid claim'}<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg></a>
         </article>;
       })}

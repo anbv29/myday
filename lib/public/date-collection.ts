@@ -18,6 +18,7 @@ export type DateCollectionEntry = {
   kind: 'featured' | 'free';
   amount: string;
   rank: number | null;
+  registeredAt?: string;
 };
 
 export function buildDateCollection(paid: PublicClaim[], free: FreeDateRegistration[]): DateCollectionEntry[] {

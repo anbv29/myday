@@ -180,7 +180,9 @@ input, textarea { caret-color: var(--accent); }
 .discovery-hero h1, .search-hero h1, .profile-hero h1, .claim-page-header h1, .info-hero h1, .payment-state h1, .not-found h1 { font-size: clamp(34px, 4.5vw, 56px); line-height: 1.12; letter-spacing: -.04em; text-transform: none; }
 .discovery-hero > .eyebrow { margin-bottom: -8px; }
 .discovery-hero > p:last-child { font-size: 16px; }
-.query-filters { border: 1px solid var(--line); border-radius: 14px; padding: 16px; background: var(--paper-raised); }
+.query-filters { display: flex; justify-content: center; align-items: center; border: 1px solid var(--line); border-radius: 14px; padding: 16px; background: var(--paper-raised); }
+.query-filters > div { justify-content: center; flex-wrap: wrap; overflow: visible; }
+.query-filters a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; }
 .query-filters span, .result-count { font-size: 12px; }
 .leaderboard-wrap { border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper-raised); overflow: hidden; box-shadow: var(--shadow); }
 .board-controls { padding-inline: 20px; }
@@ -371,7 +373,8 @@ a { text-underline-offset: .22em; }
 .calendar-intro:has(.collection-intro-actions) > div:first-child { flex: 1; min-width: min(100%, 420px); }
 .calendar-intro:has(.collection-intro-actions) p { max-width: 66ch; }
 .date-collection { scroll-margin-top: 100px; }
-.collection-toolbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; padding: 20px 0; border-block: 1px solid var(--line); }
+.collection-toolbar { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 20px; padding: 20px 0; border-block: 1px solid var(--line); }
+.collection-toolbar .stitch-tabs { justify-content: center; }
 .collection-selects { display: flex; gap: 16px; }
 .collection-selects label { display: grid; gap: 6px; color: var(--muted); font-size: 12px; }
 .collection-selects select { min-height: 44px; border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; background: var(--paper-raised); color: var(--ink); font: 450 14px var(--font-copy); }
@@ -388,6 +391,7 @@ a { text-underline-offset: .22em; }
 .collection-date time { display: flex; flex-direction: column; gap: 8px; padding-block: 28px 24px; }
 .collection-date time span { color: var(--muted); font-size: 14px; text-transform: capitalize; }
 .collection-date time strong { font-size: 80px; line-height: 1; letter-spacing: -.03em; font-weight: 550; font-variant-numeric: tabular-nums; }
+.collection-date time.collection-registration-time { display: inline; padding: 0; }
 .collection-story h2 { margin: 0 0 10px; font-size: 22px; font-weight: 600; line-height: 1.3; letter-spacing: -.02em; overflow-wrap: anywhere; }
 .collection-story p { margin: 0 0 24px; color: var(--muted); font-size: 14px; line-height: 1.7; overflow-wrap: anywhere; }
 .collection-claimant { display: grid; gap: 6px; margin-top: auto; padding-top: 16px; border-top: 1px solid var(--line); }

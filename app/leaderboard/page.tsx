@@ -29,13 +29,14 @@ export default async function LeaderboardPage({ searchParams }: Props) {
       <nav className="query-filters" aria-label="Leaderboard filters">
         <div>
           <span>Claimed</span>
-          {ranges.map((item) => <a className={item === range ? 'active' : ''} href={`/leaderboard?range=${item}&scope=${scope}`} key={item}>{item}</a>)}
+          {ranges.map((item) => <a className={item === range ? 'active' : ''} aria-current={item === range ? 'page' : undefined} href={`/leaderboard?range=${item}&scope=${scope}`} key={item}>{item}</a>)}
         </div>
         <div>
           <span>Date</span>
-          {scopes.map((item) => <a className={item === scope ? 'active' : ''} href={`/leaderboard?range=${range}&scope=${item}`} key={item}>{item}</a>)}
+          {scopes.map((item) => <a className={item === scope ? 'active' : ''} aria-current={item === scope ? 'page' : undefined} href={`/leaderboard?range=${range}&scope=${item}`} key={item}>{item}</a>)}
         </div>
       </nav>
+      <p className="collection-caption">This leaderboard ranks paid claims only. <a href="/explore">View all records, including free registrations.</a></p>
       {result.data.length ? <Leaderboard claims={result.data} /> : (
         <DataEmptyState unavailable={result.source === 'unavailable'} title="No claims match this view." message={result.error ?? 'Try another time range or date scope.'} />
       )}
