@@ -23,14 +23,7 @@ export function ClaimForm({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const requestKey = useRef(crypto.randomUUID());
-  const fxRate = quote.minimumAmountInrMinor && quote.minimumAmountMinor
-    ? quote.minimumAmountInrMinor / quote.minimumAmountMinor
-    : null;
   const numericAmountMajor = Number(amountMajor) || 0;
-  const estimatedInr = fxRate
-    ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 2 }).format(numericAmountMajor * fxRate)
-    : null;
-  const checkoutCurrency = billingCountry === 'IN' ? 'INR' : 'USD';
 
   async function submitClaim(formData: FormData) {
     setSubmitting(true);
@@ -96,11 +89,11 @@ export function ClaimForm({
       <fieldset>
         <legend><span>03</span> Review the claim</legend>
         <div className="claim-payment-grid">
-          <label>Claim value (USD benchmark)<input name="amount" type="number" required min={quote.minimumAmountMinor / 100} max={1_000_000} step="0.01" value={amountMajor} onChange={(event) => setAmountMajor(event.target.value)} /></label>
+          <label>Your payment (USD)<input name="amount" type="number" required min={quote.minimumAmountMinor / 100} max={1_000_000} step="0.01" value={amountMajor} onChange={(event) => setAmountMajor(event.target.value)} /></label>
           <label>Billing country
             <select value={billingCountry} onChange={(event) => setBillingCountry(event.target.value)}>
-              <option value="IN">India — pay in INR</option>
-              <option value="US">United States / International — pay in USD</option>
+              <option value="IN">India</option>
+              <option value="US">United States</option>
               <option value="GB">United Kingdom</option>
               <option value="CA">Canada</option>
               <option value="AU">Australia</option>
@@ -110,11 +103,11 @@ export function ClaimForm({
         </div>
         <div className="checkout-summary">
           <p><span>Minimum valid claim</span><strong>{quote.minimumAmount}</strong></p>
-          <p><span>{billingCountry === 'IN' ? 'Estimated INR checkout' : 'Checkout amount'}</span><strong>{billingCountry === 'IN' ? (estimatedInr ?? 'Live rate at checkout') : `$${numericAmountMajor.toFixed(2)}`}</strong></p>
-          <p><span>Secure checkout</span><strong>Dodo Payments · {checkoutCurrency}</strong></p>
+          <p><span>Checkout amount</span><strong>${numericAmountMajor.toFixed(2)} USD</strong></p>
+          <p><span>Secure checkout</span><strong>Dodo Payments · USD</strong></p>
           <p><span>Ownership rule</span><strong>Verified webhook only</strong></p>
         </div>
-        {billingCountry === 'IN' ? <p className="checkout-fineprint">The INR amount uses the latest daily ECB USD/INR reference available at checkout{quote.fxRateDate ? ` (reference date ${quote.fxRateDate})` : ''}. Dodo Payments receives the final server-calculated amount.</p> : null}
+        <p className="checkout-fineprint">Choose your payment above the date’s minimum. Payments are charged in USD; your bank may apply currency conversion fees.</p>
         <label className="claim-consent"><input type="checkbox" required /><span>I understand this is a platform fee for a featured claim—not an investment, resale right, wallet balance, or promise of financial return.</span></label>
         {error ? <div className="form-error" role="alert"><p>{error}</p></div> : null}
         {!paymentConfigured ? <p className="provider-notice" role="status">Dodo Payments is not connected in this environment, so checkout is disabled.</p> : null}
