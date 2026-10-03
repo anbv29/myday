@@ -25,23 +25,23 @@
   --font-secondary: var(--font-copy);
 }
 :root[data-theme='dark'] {
-  --paper: #191719;
-  --paper-raised: #232022;
-  --ink: #f7f3e9;
-  --muted: #b9adaa;
-  --line: #40373a;
-  --line-strong: #877775;
-  --accent: #ffc5aa;
-  --accent-hover: #ffd9c6;
-  --accent-ink: #201b12;
-  --selection: #664137;
-  --gold: #ffc5aa;
-  --gold-bg: #352923;
-  --gold-line: #775141;
-  --violet-bg: #352923;
-  --peach: #ffc5aa;
-  --peach-ink: #512f24;
-  --shadow: 0 8px 30px rgb(0 0 0 / 16%);
+  --paper: #0b1516;
+  --paper-raised: #132224;
+  --ink: #edf8f4;
+  --muted: #abc0b8;
+  --line: #2b4240;
+  --line-strong: #678d81;
+  --accent: #81ebc2;
+  --accent-hover: #b1f7da;
+  --accent-ink: #092b20;
+  --selection: #245645;
+  --gold: #81ebc2;
+  --gold-bg: #19352b;
+  --gold-line: #467e64;
+  --violet-bg: #19352b;
+  --action: #81ebc2;
+  --action-ink: #092b20;
+  --shadow: 0 12px 32px rgb(0 0 0 / 24%);
 }
 body { letter-spacing: 0; line-height: 1.6; }
 html { scrollbar-color: var(--line-strong) var(--paper); }
