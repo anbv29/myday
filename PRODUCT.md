@@ -21,7 +21,7 @@ testimonials, ownership guarantees, or financial returns.
 The homepage list is a limited public showcase, not the complete database.
 
 ## Brand Commitments
-Name: MYDAY. User-approved direction: calendar-first, warm white with peach accents.
+Name: MYDAY. User-approved direction: calendar-first, cool silver and graphite with electric teal and mint accents.
 Retain working light and dark themes and visible claimant attribution.
 
 ## Evidence on Hand
