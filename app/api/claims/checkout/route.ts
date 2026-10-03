@@ -89,6 +89,7 @@ export async function POST(request: Request) {
     title: parsed.data.title,
     amountMinor: Number(row.amount_minor),
     currency: String(row.currency),
+    billingCountry: parsed.data.billingCountry,
     appUrl: getAppOrigin(),
     returnUrl: new URL(statusUrl, getAppOrigin()).toString(),
   };

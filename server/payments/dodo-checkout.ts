@@ -1,6 +1,7 @@
 import type DodoPayments from 'dodopayments';
 import { requireServerEnv } from '@/lib/env';
 import { isDodoCheckoutUrl } from '@/lib/payments/checkout-url';
+import { bindDodoPrice } from '@/server/payments/dodo-price-binding';
 import type { CheckoutCreation, ClientCheckout } from '@/server/payments/types';
 
 export async function createDodoCheckout(client: DodoPayments, input: CheckoutCreation): Promise<ClientCheckout> {
@@ -10,17 +11,20 @@ export async function createDodoCheckout(client: DodoPayments, input: CheckoutCr
   const productId = requireServerEnv('DODO_PAYMENTS_PRODUCT_ID_USD');
   const product = await client.products.retrieve(productId);
   const price = product.price;
-  // The database verifies the exact gross amount; tax/FX/discount changes must not change it.
+  // Rank in USD; only Dodo converts the server-locked cart amount into INR.
   if (price.type !== 'one_time_price' || !price.pay_what_you_want || !price.tax_inclusive
     || price.currency !== input.currency || price.purchasing_power_parity
     || price.discount || price.discount_bps || price.price > input.amountMinor) {
     throw new Error('dodo_product_configuration_invalid');
   }
+  const billingCurrency = input.billingCountry === 'IN' ? 'INR' : 'USD';
   const session = await client.checkoutSessions.create({
     product_cart: [{ product_id: productId, quantity: 1, amount: input.amountMinor }],
-    billing_currency: input.currency,
+    billing_currency: billingCurrency,
+    ...(billingCurrency === 'INR' ? { billing_address: { country: 'IN' as const } } : {}),
     return_url: input.returnUrl,
-    metadata: { claim_intent_id: input.intentId, date: input.date },
+    metadata: { claim_intent_id: input.intentId, date: input.date,
+      ...(billingCurrency === 'INR' ? bindDodoPrice(input.intentId, input.amountMinor) : {}) },
     feature_flags: { allow_currency_selection: false, allow_discount_code: false, redirect_immediately: true },
     minimal_address: true,
     short_link: false,

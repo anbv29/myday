@@ -7,6 +7,7 @@ export type CheckoutCreation = {
   amountMinor: number;
   currency: string;
   appUrl: string;
+  billingCountry?: string;
   returnUrl?: string;
 };
 
@@ -22,6 +23,7 @@ export type VerifiedPaymentEvent = {
   paymentReference: string;
   amountMinor: number;
   currency: string;
+  adaptivePrice?: { intentId: string; amountMinor: number };
 };
 
 export type VerifiedRefundEvent = {
