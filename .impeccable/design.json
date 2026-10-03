@@ -1,18 +1,18 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-30T19:21:45Z",
+  "generatedAt": "2026-10-03T10:50:34Z",
   "title": "Design System: MYDAY",
   "extensions": {
     "typographyMeta": {"headline": {"displayName": "Working headline", "purpose": "Compact page introduction."}, "body": {"displayName": "Manrope copy", "purpose": "One family across stories and controls."}},
     "shadows": [{"name": "utility-ambient", "value": "var(--shadow)", "purpose": "Search and floating utilities; the working calendar stays flat."}],
     "motion": [{"name": "day-state", "value": "background 160ms, border-color 160ms", "purpose": "Calendar hover and selection."}, {"name": "theme", "value": "background-color 180ms ease, color 180ms ease", "purpose": "Body theme changes."}, {"name": "reduced-motion", "value": "0.01ms", "purpose": "Reduce animation/transition duration and disable smooth scrolling when requested."}],
-    "breakpoints": [{"name": "nav-compact", "value": "1100px"}, {"name": "collection-two-column", "value": "1000px"}, {"name": "mobile-navigation", "value": "900px"}, {"name": "registration-stack", "value": "760px"}, {"name": "small-gutters", "value": "600px"}, {"name": "collection-one-column", "value": "540px"}, {"name": "compact-days", "value": "480px"}]
+    "breakpoints": [{"name": "nav-compact", "value": "1100px"}, {"name": "collection-two-column", "value": "1000px"}, {"name": "mobile-navigation", "value": "900px"}, {"name": "registration-stack", "value": "760px"}, {"name": "small-gutters", "value": "600px"}, {"name": "collection-one-column", "value": "540px"}, {"name": "compact-days", "value": "480px"}, {"name": "ranked-grid-four-column", "value": "1100px"}, {"name": "ranked-grid-three-column", "value": "760px"}, {"name": "ranked-grid-two-column", "value": "540px"}]
   },
   "components": [
     {
-      "name": "Primary action", "kind": "button", "refersTo": "button-primary", "description": "Peach action with the shared directional mark.",
+      "name": "Primary action", "kind": "button", "refersTo": "button-primary", "description": "Mint action with a teal border and the shared directional mark.",
       "html": "<button class=\"ds-primary\">Claim a date <svg aria-hidden=\"true\" viewBox=\"0 0 24 24\"><path d=\"M6 18 18 6M6 6h12v12\"/></svg></button>",
-      "css": ".ds-primary{display:inline-flex;align-items:center;gap:18px;min-height:46px;padding:10px 20px;border:0;border-radius:11px;background:var(--peach);color:var(--peach-ink);font:600 14px var(--font-copy);cursor:pointer}.ds-primary svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7}.ds-primary:hover{background:color-mix(in srgb,var(--peach) 85%,var(--accent))}.ds-primary:active{opacity:.9}.ds-primary:focus-visible{outline:3px solid var(--accent);outline-offset:4px}"
+      "css": ".ds-primary{display:inline-flex;align-items:center;gap:18px;min-height:46px;padding:10px 20px;border:1px solid var(--accent);border-radius:11px;background:var(--action);color:var(--action-ink);font:600 14px var(--font-copy);cursor:pointer}.ds-primary svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7}.ds-primary:hover{background:color-mix(in srgb,var(--action) 88%,var(--paper-raised));border-color:var(--accent-hover);color:var(--action-ink)}.ds-primary:active{opacity:.9}.ds-primary:focus-visible{outline:3px solid var(--accent);outline-offset:4px}"
     },
     {
       "name": "Secondary action", "kind": "button", "description": "Quiet bordered control for calendar navigation.",
@@ -40,7 +40,7 @@
       "css": ".ds-record{padding:24px 26px;border:1px solid var(--gold-line);border-radius:16px;background:var(--gold-bg);color:var(--ink);font-family:var(--font-copy)}.ds-record small{color:var(--muted);font-size:14px}.ds-record>strong{display:block;margin-top:14px;font-size:100px;font-weight:550;line-height:1.05;letter-spacing:-.04em;color:var(--accent);font-variant-numeric:tabular-nums}.ds-record h2{font-size:23px;font-weight:600;line-height:1.3;letter-spacing:-.02em}.ds-record a{font-size:13px;color:var(--ink);text-underline-offset:.22em}.ds-record a:hover{color:var(--accent)}.ds-record a:focus-visible{outline:3px solid var(--accent);outline-offset:4px}"
     },
     {
-      "name": "Calendar day", "kind": "custom", "refersTo": "calendar-day-selected", "description": "Selected date uses peach, an accent edge, and pressed semantics.",
+      "name": "Calendar day", "kind": "custom", "refersTo": "calendar-day-selected", "description": "Selected date uses mint, a teal edge, and pressed semantics.",
       "html": "<button class=\"ds-day\" aria-pressed=\"true\" aria-label=\"October 29, 2026: selected date\"><strong>29</strong><span aria-hidden=\"true\"></span></button>",
       "css": ".ds-day{display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;width:86px;min-height:64px;padding:11px;border:1px solid transparent;border-radius:8px;background:var(--paper);color:var(--ink);font-family:var(--font-copy);cursor:pointer;transition:background 160ms,border-color 160ms}.ds-day strong{font-size:18px;font-weight:550;font-variant-numeric:tabular-nums}.ds-day span{width:4px;height:4px;border-radius:50%;background:var(--line-strong)}.ds-day:hover{background:var(--gold-bg);border-color:var(--gold-line)}.ds-day[aria-pressed=true]{background:var(--peach);border-color:var(--accent);color:var(--peach-ink)}.ds-day:focus-visible{outline:3px solid var(--accent);outline-offset:4px}"
     },
@@ -51,7 +51,7 @@
     }
   ],
   "narrative": {
-    "overview": "The approved world is warm white with peach accents, clean Manrope typography, quiet borders, and restrained motion. This is an extraction of the implemented frontend; no named Creative North Star was approved.",
+    "overview": "The approved world is cool silver and graphite with electric teal and mint accents, clean Manrope typography, quiet borders, and restrained motion. This is an extraction of the implemented frontend; no named Creative North Star was approved.",
     "keyCharacteristics": ["flat tonal surfaces", "readable date numerals", "a consistent single-family hierarchy", "retained light and dark themes"],
     "rules": [], "dos": ["Do reuse theme-bound CSS variables, preserve visible focus, use the single Manrope hierarchy, and show real date/claim states."], "donts": ["Don't invent availability or ownership guarantees, add decorative depth to the working calendar, or reintroduce competing font families."]
   }
