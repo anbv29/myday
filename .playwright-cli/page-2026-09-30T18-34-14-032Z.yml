@@ -1,0 +1,650 @@
+- generic [active] [ref=e1]:
+  - link "Skip to content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - status [ref=e3]:
+    - generic [ref=e4]: Development preview
+    - generic [ref=e5]: Sample records · connect Supabase for live data
+  - banner [ref=e6]:
+    - generic [ref=e7]:
+      - link "MYDAY home" [ref=e8] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e10]: MYDAY
+      - navigation "Primary navigation" [ref=e11]:
+        - link "Calendar" [ref=e12] [cursor=pointer]:
+          - /url: /
+        - link "Explore" [ref=e13] [cursor=pointer]:
+          - /url: /explore
+        - link "Leaderboard" [ref=e14] [cursor=pointer]:
+          - /url: /leaderboard
+        - link "Live feed" [ref=e15] [cursor=pointer]:
+          - /url: /activity
+        - link "How it works" [ref=e16] [cursor=pointer]:
+          - /url: /#how-it-works
+      - generic [ref=e17]:
+        - button "Search MYDAY" [ref=e18] [cursor=pointer]
+        - link "Claim a date ↗" [ref=e22] [cursor=pointer]:
+          - /url: /claim
+          - text: Claim a date
+          - generic [ref=e23]: ↗
+        - button "Switch to dark theme" [ref=e24] [cursor=pointer]:
+          - generic [ref=e25]: ◐
+  - main [ref=e26]:
+    - region [ref=e27]:
+      - generic [ref=e28]:
+        - generic [ref=e29]: A calendar of meaningful moments
+        - heading [level=1] [ref=e30]:
+          - text: Some daysdeserve to
+          - emphasis [ref=e31]: be yours.
+        - paragraph [ref=e32]: Your anniversary, breakthrough, or unforgettable milestone. Give it a story and a place on the MYDAY calendar.
+        - generic [ref=e33]:
+          - link "Explore the calendar ↗" [ref=e34] [cursor=pointer]:
+            - /url: "#matrix-view"
+            - text: Explore the calendar
+            - generic [ref=e35]: ↗
+          - link "How it works ↓" [ref=e36] [cursor=pointer]:
+            - /url: "#how-it-works"
+            - text: How it works
+            - generic [ref=e37]: ↓
+        - generic [ref=e38]:
+          - generic [ref=e39]:
+            - generic [ref=e40]: "01"
+            - text: No account required
+          - generic [ref=e41]:
+            - generic [ref=e42]: "02"
+            - text: Verified payments
+          - generic [ref=e43]:
+            - generic [ref=e44]: "03"
+            - text: Public claim history
+      - article [ref=e45]:
+        - generic [ref=e46]:
+          - generic [ref=e47]: From the public calendar
+          - generic [ref=e48]: No. 01
+        - link "Discover October 29, 2026" [ref=e49] [cursor=pointer]:
+          - /url: /day/2026-10-29
+          - generic [ref=e50]:
+            - text: October
+            - generic [ref=e51]: "2026"
+          - strong [ref=e52]: "29"
+          - generic [aria-hidden] [ref=e53]: ↗
+        - generic [ref=e54]:
+          - generic [ref=e55]: A day with a story
+          - heading "My birthday" [level=2] [ref=e56]
+          - paragraph [ref=e57]: “My bday.”
+        - generic [ref=e58]:
+          - generic [ref=e59]:
+            - generic [ref=e60]: Claimed by
+            - strong [ref=e61]:
+              - link "@anewbhev" [ref=e62] [cursor=pointer]:
+                - /url: https://x.com/anewbhev
+          - generic [ref=e63]:
+            - generic [ref=e64]: Current claim
+            - strong [ref=e65]: $10
+        - generic [ref=e66]:
+          - generic [ref=e67]:
+            - generic [ref=e68]: Date countdown
+            - generic [ref=e69]: Open bidding
+          - link "Make a claim ↗" [ref=e70] [cursor=pointer]:
+            - /url: /claim?date=2026-10-29
+      - generic [ref=e71]:
+        - generic [ref=e72]:
+          - generic [ref=e73]: Featured public claims
+          - strong [ref=e74]: "1"
+          - generic [ref=e75]: In this calendar view
+        - generic [ref=e76]:
+          - generic [ref=e77]: Highest current claim
+          - strong [ref=e78]: $10
+          - generic [ref=e79]: OCT 29, 2026
+        - generic [ref=e80]:
+          - generic [ref=e81]: Make your mark
+          - strong [ref=e82]: Your date. Your story.
+          - generic [ref=e83]: No account required
+        - generic [ref=e84]:
+          - generic [ref=e85]: Secure checkout
+          - strong [ref=e86]: Razorpay
+          - generic [ref=e87]: Confirmed payments only
+    - generic "MYDAY market principles" [ref=e88]:
+      - generic [ref=e89]:
+        - generic [ref=e90]: Live claims
+        - paragraph [ref=e92]: One calendar. Infinite stories. One current claim for every day.
+        - link "View activity ↗" [ref=e93] [cursor=pointer]:
+          - /url: /activity
+    - region [ref=e94]:
+      - generic [ref=e95]:
+        - generic [ref=e96]: The public calendar
+        - heading "The dates people made matter." [level=2] [ref=e97]
+        - paragraph [ref=e98]: Explore current claims and the people behind them. Every date has a story.
+      - generic [ref=e99]:
+        - generic "Filter calendar" [ref=e100]:
+          - button "All claims" [pressed] [ref=e101] [cursor=pointer]
+          - button "Top 10" [ref=e102] [cursor=pointer]
+          - button "Future dates" [ref=e103] [cursor=pointer]
+        - generic [ref=e104]:
+          - text: Month
+          - combobox "Month" [ref=e105]:
+            - option "All months" [selected]
+            - option "OCTOBER"
+      - generic "Calendar perspective" [ref=e106]:
+        - button "Isometric" [ref=e107] [cursor=pointer]
+        - button "Front tilt" [pressed] [ref=e108] [cursor=pointer]
+        - button "Flat board" [ref=e109] [cursor=pointer]
+      - article [ref=e111]:
+        - generic [ref=e112]:
+          - generic [ref=e113]: "Rank #01"
+          - strong [ref=e114]: $10
+        - link "OCTOBER 2026 29 My birthday" [ref=e115] [cursor=pointer]:
+          - /url: /day/2026-10-29
+          - generic [ref=e116]: OCTOBER 2026
+          - strong [ref=e117]: "29"
+          - heading "My birthday" [level=3] [ref=e118]
+        - paragraph [ref=e119]: My bday.
+        - generic [ref=e120]:
+          - link "@anewbhev" [ref=e121] [cursor=pointer]:
+            - /url: https://x.com/anewbhev
+          - link "Make a claim ↗" [ref=e122] [cursor=pointer]:
+            - /url: /claim?date=2026-10-29
+      - region "Browse calendar dates" [ref=e123]:
+        - generic [ref=e124]:
+          - generic [ref=e125]:
+            - generic [ref=e126]: Find your moment
+            - heading "October 2026" [level=3] [ref=e127]
+          - generic [ref=e128]:
+            - button "Previous month" [ref=e129] [cursor=pointer]: ←
+            - generic [ref=e130]: Calendar year
+            - combobox "Calendar year" [ref=e131] [cursor=pointer]:
+              - option "1900"
+              - option "1901"
+              - option "1902"
+              - option "1903"
+              - option "1904"
+              - option "1905"
+              - option "1906"
+              - option "1907"
+              - option "1908"
+              - option "1909"
+              - option "1910"
+              - option "1911"
+              - option "1912"
+              - option "1913"
+              - option "1914"
+              - option "1915"
+              - option "1916"
+              - option "1917"
+              - option "1918"
+              - option "1919"
+              - option "1920"
+              - option "1921"
+              - option "1922"
+              - option "1923"
+              - option "1924"
+              - option "1925"
+              - option "1926"
+              - option "1927"
+              - option "1928"
+              - option "1929"
+              - option "1930"
+              - option "1931"
+              - option "1932"
+              - option "1933"
+              - option "1934"
+              - option "1935"
+              - option "1936"
+              - option "1937"
+              - option "1938"
+              - option "1939"
+              - option "1940"
+              - option "1941"
+              - option "1942"
+              - option "1943"
+              - option "1944"
+              - option "1945"
+              - option "1946"
+              - option "1947"
+              - option "1948"
+              - option "1949"
+              - option "1950"
+              - option "1951"
+              - option "1952"
+              - option "1953"
+              - option "1954"
+              - option "1955"
+              - option "1956"
+              - option "1957"
+              - option "1958"
+              - option "1959"
+              - option "1960"
+              - option "1961"
+              - option "1962"
+              - option "1963"
+              - option "1964"
+              - option "1965"
+              - option "1966"
+              - option "1967"
+              - option "1968"
+              - option "1969"
+              - option "1970"
+              - option "1971"
+              - option "1972"
+              - option "1973"
+              - option "1974"
+              - option "1975"
+              - option "1976"
+              - option "1977"
+              - option "1978"
+              - option "1979"
+              - option "1980"
+              - option "1981"
+              - option "1982"
+              - option "1983"
+              - option "1984"
+              - option "1985"
+              - option "1986"
+              - option "1987"
+              - option "1988"
+              - option "1989"
+              - option "1990"
+              - option "1991"
+              - option "1992"
+              - option "1993"
+              - option "1994"
+              - option "1995"
+              - option "1996"
+              - option "1997"
+              - option "1998"
+              - option "1999"
+              - option "2000"
+              - option "2001"
+              - option "2002"
+              - option "2003"
+              - option "2004"
+              - option "2005"
+              - option "2006"
+              - option "2007"
+              - option "2008"
+              - option "2009"
+              - option "2010"
+              - option "2011"
+              - option "2012"
+              - option "2013"
+              - option "2014"
+              - option "2015"
+              - option "2016"
+              - option "2017"
+              - option "2018"
+              - option "2019"
+              - option "2020"
+              - option "2021"
+              - option "2022"
+              - option "2023"
+              - option "2024"
+              - option "2025"
+              - option "2026" [selected]
+              - option "2027"
+              - option "2028"
+              - option "2029"
+              - option "2030"
+              - option "2031"
+              - option "2032"
+              - option "2033"
+              - option "2034"
+              - option "2035"
+              - option "2036"
+              - option "2037"
+              - option "2038"
+              - option "2039"
+              - option "2040"
+              - option "2041"
+              - option "2042"
+              - option "2043"
+              - option "2044"
+              - option "2045"
+              - option "2046"
+              - option "2047"
+              - option "2048"
+              - option "2049"
+              - option "2050"
+              - option "2051"
+              - option "2052"
+              - option "2053"
+              - option "2054"
+              - option "2055"
+              - option "2056"
+              - option "2057"
+              - option "2058"
+              - option "2059"
+              - option "2060"
+              - option "2061"
+              - option "2062"
+              - option "2063"
+              - option "2064"
+              - option "2065"
+              - option "2066"
+              - option "2067"
+              - option "2068"
+              - option "2069"
+              - option "2070"
+              - option "2071"
+              - option "2072"
+              - option "2073"
+              - option "2074"
+              - option "2075"
+              - option "2076"
+              - option "2077"
+              - option "2078"
+              - option "2079"
+              - option "2080"
+              - option "2081"
+              - option "2082"
+              - option "2083"
+              - option "2084"
+              - option "2085"
+              - option "2086"
+              - option "2087"
+              - option "2088"
+              - option "2089"
+              - option "2090"
+              - option "2091"
+              - option "2092"
+              - option "2093"
+              - option "2094"
+              - option "2095"
+              - option "2096"
+              - option "2097"
+              - option "2098"
+              - option "2099"
+              - option "2100"
+            - button "Next month" [ref=e132] [cursor=pointer]: →
+        - generic [ref=e133]:
+          - generic [ref=e134]: Mon
+          - generic [ref=e135]: Tue
+          - generic [ref=e136]: Wed
+          - generic [ref=e137]: Thu
+          - generic [ref=e138]: Fri
+          - generic [ref=e139]: Sat
+          - generic [ref=e140]: Sun
+          - 'link "October 1, 2026: check date" [ref=e144] [cursor=pointer]':
+            - /url: /claim?date=2026-10-01
+            - strong [ref=e145]: "1"
+            - generic [ref=e146]: Check date
+          - 'link "October 2, 2026: check date" [ref=e147] [cursor=pointer]':
+            - /url: /claim?date=2026-10-02
+            - strong [ref=e148]: "2"
+            - generic [ref=e149]: Check date
+          - 'link "October 3, 2026: check date" [ref=e150] [cursor=pointer]':
+            - /url: /claim?date=2026-10-03
+            - strong [ref=e151]: "3"
+            - generic [ref=e152]: Check date
+          - 'link "October 4, 2026: check date" [ref=e153] [cursor=pointer]':
+            - /url: /claim?date=2026-10-04
+            - strong [ref=e154]: "4"
+            - generic [ref=e155]: Check date
+          - 'link "October 5, 2026: check date" [ref=e156] [cursor=pointer]':
+            - /url: /claim?date=2026-10-05
+            - strong [ref=e157]: "5"
+            - generic [ref=e158]: Check date
+          - 'link "October 6, 2026: check date" [ref=e159] [cursor=pointer]':
+            - /url: /claim?date=2026-10-06
+            - strong [ref=e160]: "6"
+            - generic [ref=e161]: Check date
+          - 'link "October 7, 2026: check date" [ref=e162] [cursor=pointer]':
+            - /url: /claim?date=2026-10-07
+            - strong [ref=e163]: "7"
+            - generic [ref=e164]: Check date
+          - 'link "October 8, 2026: check date" [ref=e165] [cursor=pointer]':
+            - /url: /claim?date=2026-10-08
+            - strong [ref=e166]: "8"
+            - generic [ref=e167]: Check date
+          - 'link "October 9, 2026: check date" [ref=e168] [cursor=pointer]':
+            - /url: /claim?date=2026-10-09
+            - strong [ref=e169]: "9"
+            - generic [ref=e170]: Check date
+          - 'link "October 10, 2026: check date" [ref=e171] [cursor=pointer]':
+            - /url: /claim?date=2026-10-10
+            - strong [ref=e172]: "10"
+            - generic [ref=e173]: Check date
+          - 'link "October 11, 2026: check date" [ref=e174] [cursor=pointer]':
+            - /url: /claim?date=2026-10-11
+            - strong [ref=e175]: "11"
+            - generic [ref=e176]: Check date
+          - 'link "October 12, 2026: check date" [ref=e177] [cursor=pointer]':
+            - /url: /claim?date=2026-10-12
+            - strong [ref=e178]: "12"
+            - generic [ref=e179]: Check date
+          - 'link "October 13, 2026: check date" [ref=e180] [cursor=pointer]':
+            - /url: /claim?date=2026-10-13
+            - strong [ref=e181]: "13"
+            - generic [ref=e182]: Check date
+          - 'link "October 14, 2026: check date" [ref=e183] [cursor=pointer]':
+            - /url: /claim?date=2026-10-14
+            - strong [ref=e184]: "14"
+            - generic [ref=e185]: Check date
+          - 'link "October 15, 2026: check date" [ref=e186] [cursor=pointer]':
+            - /url: /claim?date=2026-10-15
+            - strong [ref=e187]: "15"
+            - generic [ref=e188]: Check date
+          - 'link "October 16, 2026: check date" [ref=e189] [cursor=pointer]':
+            - /url: /claim?date=2026-10-16
+            - strong [ref=e190]: "16"
+            - generic [ref=e191]: Check date
+          - 'link "October 17, 2026: check date" [ref=e192] [cursor=pointer]':
+            - /url: /claim?date=2026-10-17
+            - strong [ref=e193]: "17"
+            - generic [ref=e194]: Check date
+          - 'link "October 18, 2026: check date" [ref=e195] [cursor=pointer]':
+            - /url: /claim?date=2026-10-18
+            - strong [ref=e196]: "18"
+            - generic [ref=e197]: Check date
+          - 'link "October 19, 2026: check date" [ref=e198] [cursor=pointer]':
+            - /url: /claim?date=2026-10-19
+            - strong [ref=e199]: "19"
+            - generic [ref=e200]: Check date
+          - 'link "October 20, 2026: check date" [ref=e201] [cursor=pointer]':
+            - /url: /claim?date=2026-10-20
+            - strong [ref=e202]: "20"
+            - generic [ref=e203]: Check date
+          - 'link "October 21, 2026: check date" [ref=e204] [cursor=pointer]':
+            - /url: /claim?date=2026-10-21
+            - strong [ref=e205]: "21"
+            - generic [ref=e206]: Check date
+          - 'link "October 22, 2026: check date" [ref=e207] [cursor=pointer]':
+            - /url: /claim?date=2026-10-22
+            - strong [ref=e208]: "22"
+            - generic [ref=e209]: Check date
+          - 'link "October 23, 2026: check date" [ref=e210] [cursor=pointer]':
+            - /url: /claim?date=2026-10-23
+            - strong [ref=e211]: "23"
+            - generic [ref=e212]: Check date
+          - 'link "October 24, 2026: check date" [ref=e213] [cursor=pointer]':
+            - /url: /claim?date=2026-10-24
+            - strong [ref=e214]: "24"
+            - generic [ref=e215]: Check date
+          - 'link "October 25, 2026: check date" [ref=e216] [cursor=pointer]':
+            - /url: /claim?date=2026-10-25
+            - strong [ref=e217]: "25"
+            - generic [ref=e218]: Check date
+          - 'link "October 26, 2026: check date" [ref=e219] [cursor=pointer]':
+            - /url: /claim?date=2026-10-26
+            - strong [ref=e220]: "26"
+            - generic [ref=e221]: Check date
+          - 'link "October 27, 2026: check date" [ref=e222] [cursor=pointer]':
+            - /url: /claim?date=2026-10-27
+            - strong [ref=e223]: "27"
+            - generic [ref=e224]: Check date
+          - 'link "October 28, 2026: check date" [ref=e225] [cursor=pointer]':
+            - /url: /claim?date=2026-10-28
+            - strong [ref=e226]: "28"
+            - generic [ref=e227]: Check date
+          - 'link "October 29, 2026: My birthday" [ref=e228] [cursor=pointer]':
+            - /url: /day/2026-10-29
+            - strong [ref=e229]: "29"
+            - generic [ref=e230]: $10
+          - 'link "October 30, 2026: check date" [ref=e231] [cursor=pointer]':
+            - /url: /claim?date=2026-10-30
+            - strong [ref=e232]: "30"
+            - generic [ref=e233]: Check date
+          - 'link "October 31, 2026: check date" [ref=e234] [cursor=pointer]':
+            - /url: /claim?date=2026-10-31
+            - strong [ref=e235]: "31"
+            - generic [ref=e236]: Check date
+        - paragraph [ref=e237]: Highlighted dates appear in this showcase. Choose any other date to check its current claim.
+    - generic [ref=e238]:
+      - region [ref=e239]:
+        - generic [ref=e240]:
+          - generic [ref=e241]:
+            - generic [ref=e242]: Live calendar
+            - heading "Live right now" [level=2] [ref=e244]
+          - link "View every date ↗" [ref=e245] [cursor=pointer]:
+            - /url: /explore
+        - group "Filter live date auctions" [ref=e246]:
+          - button "All" [pressed] [ref=e247] [cursor=pointer]
+          - button "Ending soon" [ref=e248] [cursor=pointer]
+          - button "Most popular" [ref=e249] [cursor=pointer]
+          - button "New" [ref=e250] [cursor=pointer]
+        - link "View the auction for October 29, 2026" [ref=e252] [cursor=pointer]:
+          - generic [ref=e253]:
+            - generic [ref=e254]:
+              - strong [ref=e255]: "29"
+              - generic [ref=e256]: OCT · 2026
+            - generic [ref=e257]:
+              - generic [ref=e258]:
+                - paragraph [ref=e259]: October 29, 2026
+                - heading "My birthday" [level=3] [ref=e260]
+                - generic [ref=e261]: My bday.
+              - generic [ref=e262]:
+                - text: Held by
+                - link "@anewbhev" [ref=e263]:
+                  - /url: https://x.com/anewbhev
+            - generic [ref=e264]:
+              - generic [ref=e265]: Current claim
+              - strong [ref=e266]: $10
+            - link "View October 29, 2026" [ref=e267]:
+              - /url: /day/2026-10-29
+              - text: View →
+      - region [ref=e268]:
+        - generic [ref=e269]:
+          - generic [ref=e270]:
+            - generic [ref=e271]: The signal
+            - heading "Trending dates" [level=2] [ref=e272]
+          - link "See the momentum ↗" [ref=e273] [cursor=pointer]:
+            - /url: /trending
+        - link "01 October 29, 2026 My birthday $10 Current claim Open →" [ref=e275] [cursor=pointer]:
+          - /url: /day/2026-10-29
+          - generic [ref=e276]: "01"
+          - generic [ref=e277]:
+            - heading "October 29, 2026" [level=3] [ref=e278]
+            - paragraph [ref=e279]: My birthday
+          - strong [ref=e280]: $10
+          - generic [ref=e281]:
+            - generic [ref=e282]: Current claim
+            - generic [ref=e283]: Open →
+      - region [ref=e284]:
+        - generic [ref=e285]:
+          - generic [ref=e286]:
+            - generic [ref=e287]: Market leaders
+            - heading "The dates at the top" [level=2] [ref=e288]
+          - paragraph [ref=e289]: Ranked by the value of each current, verified claim.
+        - generic [ref=e290]:
+          - generic [ref=e291]:
+            - generic "Filter dates" [ref=e292]:
+              - button "All dates" [pressed] [ref=e293] [cursor=pointer]
+              - button "future" [ref=e294] [cursor=pointer]
+              - button "past" [ref=e295] [cursor=pointer]
+            - generic [ref=e296]: 1 claims
+          - generic [aria-hidden] [ref=e297]:
+            - generic [ref=e298]: Rank
+            - generic [ref=e299]: Date
+            - generic [ref=e300]: Current claim
+            - generic [ref=e301]: Why it matters
+            - generic [ref=e302]: Claimed by / link
+          - list [ref=e303]:
+            - listitem [ref=e304]:
+              - generic [ref=e305]:
+                - generic [ref=e306]: "01"
+                - link "OCT 29, 2026 future" [ref=e307] [cursor=pointer]:
+                  - /url: /day/2026-10-29
+                  - strong [ref=e308]: OCT 29, 2026
+                  - generic [ref=e309]: future
+                - strong [ref=e310]: $10
+                - generic [ref=e311]: My bday.
+                - generic [ref=e312]:
+                  - link "@anewbhev" [ref=e313] [cursor=pointer]:
+                    - /url: https://x.com/anewbhev
+                  - generic [ref=e314]: Keeping my birthday on the MYDAY record.
+                - link "View October 29, 2026" [ref=e315] [cursor=pointer]:
+                  - /url: /day/2026-10-29
+                  - text: ↗
+    - region [ref=e316]:
+      - generic [ref=e317]:
+        - generic [ref=e318]:
+          - generic [ref=e319]: Simple by design
+          - heading "A date becomes yours in three moves." [level=2] [ref=e320]
+          - paragraph [ref=e321]: No account. No resale market. Just a verified claim and the story behind it.
+        - list [ref=e322]:
+          - listitem [ref=e323]:
+            - generic [ref=e324]: "01"
+            - generic [ref=e325]:
+              - text: Find
+              - heading "Choose your date." [level=3] [ref=e326]
+              - paragraph [ref=e327]: Past, present, or future—discover the day that means something to you.
+            - generic [aria-hidden] [ref=e328]: ⌁
+          - listitem [ref=e329]:
+            - generic [ref=e330]: "02"
+            - generic [ref=e331]:
+              - text: Claim
+              - heading "Put meaning behind it." [level=3] [ref=e332]
+              - paragraph [ref=e333]: Set a valid claim, add your story and public handle, then pay securely.
+            - generic [aria-hidden] [ref=e334]: ↗
+          - listitem [ref=e335]:
+            - generic [ref=e336]: "03"
+            - generic [ref=e337]:
+              - text: Hold
+              - heading "Take your place." [level=3] [ref=e338]
+              - paragraph [ref=e339]: Your name becomes part of the record until a higher valid claim arrives.
+            - generic [aria-hidden] [ref=e340]: ✦
+    - generic [ref=e341]:
+      - generic [ref=e342]: Your moment is on the calendar
+      - heading "Something worth claiming is waiting." [level=2] [ref=e343]
+      - paragraph [ref=e344]: Find the date. Tell its story. Make it yours.
+      - link "Claim your date ↗" [ref=e345] [cursor=pointer]:
+        - /url: /claim
+        - text: Claim your date
+        - generic [ref=e346]: ↗
+  - contentinfo [ref=e347]:
+    - generic [ref=e348]:
+      - link "MYDAY" [ref=e349] [cursor=pointer]:
+        - /url: /
+      - paragraph [ref=e352]: A public market for the days people refuse to forget.
+    - navigation "Footer navigation" [ref=e354]:
+      - link "Explore" [ref=e355] [cursor=pointer]:
+        - /url: /explore
+      - link "Leaderboard" [ref=e356] [cursor=pointer]:
+        - /url: /leaderboard
+      - link "Trending" [ref=e357] [cursor=pointer]:
+        - /url: /trending
+      - link "Activity" [ref=e358] [cursor=pointer]:
+        - /url: /activity
+      - link "FAQ" [ref=e359] [cursor=pointer]:
+        - /url: /faq
+      - link "Support" [ref=e360] [cursor=pointer]:
+        - /url: /contact
+      - link "Delivery" [ref=e361] [cursor=pointer]:
+        - /url: /shipping
+      - link "Privacy" [ref=e362] [cursor=pointer]:
+        - /url: /privacy
+      - link "Terms" [ref=e363] [cursor=pointer]:
+        - /url: /terms
+      - link "Refunds" [ref=e364] [cursor=pointer]:
+        - /url: /refunds
+    - generic [ref=e365]:
+      - paragraph [ref=e366]: © 2026 MYDAY. Every date means something.
+      - generic [ref=e367]:
+        - link "MYDAY creator on X" [ref=e368] [cursor=pointer]:
+          - /url: https://x.com/anewbhev
+          - text: 𝕏
+        - link "Email MYDAY" [ref=e369] [cursor=pointer]:
+          - /url: mailto:anubhavpandey269@gmail.com
+          - text: "@"
+  - link "Contact MYDAY support" [ref=e370] [cursor=pointer]:
+    - /url: /contact
+    - text: Support
+  - button "Back to top": ↑
+  - button "Open Next.js Dev Tools" [ref=e376] [cursor=pointer]

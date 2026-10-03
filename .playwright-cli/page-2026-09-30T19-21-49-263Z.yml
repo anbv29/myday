@@ -1,0 +1,95 @@
+- generic [active] [ref=e1]:
+  - link "Skip to content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - status [ref=e3]:
+    - generic [ref=e4]: Development preview
+    - generic [ref=e5]: Sample records · connect Supabase for live data
+  - banner [ref=e6]:
+    - generic [ref=e7]:
+      - link "MYDAY home" [ref=e8] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e10]: MYDAY
+      - navigation "Primary navigation" [ref=e11]:
+        - link "Calendar" [ref=e12] [cursor=pointer]:
+          - /url: /
+        - link "Explore" [ref=e13] [cursor=pointer]:
+          - /url: /explore
+        - link "Leaderboard" [ref=e14] [cursor=pointer]:
+          - /url: /leaderboard
+        - link "Live feed" [ref=e15] [cursor=pointer]:
+          - /url: /activity
+        - link "How it works" [ref=e16] [cursor=pointer]:
+          - /url: /#how-it-works
+      - generic [ref=e17]:
+        - button "Search MYDAY" [ref=e18] [cursor=pointer]
+        - link "Claim a date ↗" [ref=e22] [cursor=pointer]:
+          - /url: /claim
+          - text: Claim a date
+          - generic [ref=e23]: ↗
+        - button "Switch to dark theme" [ref=e24] [cursor=pointer]
+  - main [ref=e27]:
+    - generic [ref=e28]:
+      - generic [ref=e29]:
+        - paragraph [ref=e30]: Explore the calendar
+        - heading "Days with a story." [level=1] [ref=e31]
+      - paragraph [ref=e32]: Browse the newest public claims across past milestones and future promises.
+    - link "View the auction for October 29, 2026" [ref=e34] [cursor=pointer]:
+      - generic [ref=e35]:
+        - generic [ref=e36]:
+          - strong [ref=e37]: "29"
+          - generic [ref=e38]: OCT · 2026
+        - generic [ref=e39]:
+          - generic [ref=e40]:
+            - paragraph [ref=e41]: October 29, 2026
+            - heading "My birthday" [level=3] [ref=e42]
+            - generic [ref=e43]: My bday.
+          - generic [ref=e44]:
+            - text: Held by
+            - link "@anewbhev" [ref=e45]:
+              - /url: https://x.com/anewbhev
+        - generic [ref=e46]:
+          - generic [ref=e47]: Current claim
+          - strong [ref=e48]: $10
+        - link "View October 29, 2026" [ref=e49]:
+          - /url: /day/2026-10-29
+          - text: View →
+  - contentinfo [ref=e50]:
+    - generic [ref=e51]:
+      - link "MYDAY" [ref=e52] [cursor=pointer]:
+        - /url: /
+      - paragraph [ref=e55]: A public market for the days people refuse to forget.
+    - navigation "Footer navigation" [ref=e57]:
+      - link "Explore" [ref=e58] [cursor=pointer]:
+        - /url: /explore
+      - link "Leaderboard" [ref=e59] [cursor=pointer]:
+        - /url: /leaderboard
+      - link "Trending" [ref=e60] [cursor=pointer]:
+        - /url: /trending
+      - link "Activity" [ref=e61] [cursor=pointer]:
+        - /url: /activity
+      - link "FAQ" [ref=e62] [cursor=pointer]:
+        - /url: /faq
+      - link "Support" [ref=e63] [cursor=pointer]:
+        - /url: /contact
+      - link "Delivery" [ref=e64] [cursor=pointer]:
+        - /url: /shipping
+      - link "Privacy" [ref=e65] [cursor=pointer]:
+        - /url: /privacy
+      - link "Terms" [ref=e66] [cursor=pointer]:
+        - /url: /terms
+      - link "Refunds" [ref=e67] [cursor=pointer]:
+        - /url: /refunds
+    - generic [ref=e68]:
+      - paragraph [ref=e69]: © 2026 MYDAY. Every date means something.
+      - generic [ref=e70]:
+        - link "MYDAY creator on X" [ref=e71] [cursor=pointer]:
+          - /url: https://x.com/anewbhev
+          - text: 𝕏
+        - link "Email MYDAY" [ref=e72] [cursor=pointer]:
+          - /url: mailto:anubhavpandey269@gmail.com
+          - text: "@"
+  - link "Contact MYDAY support" [ref=e73] [cursor=pointer]:
+    - /url: /contact
+    - text: Support
+  - button "Back to top"
+  - button "Open Next.js Dev Tools" [ref=e79] [cursor=pointer]

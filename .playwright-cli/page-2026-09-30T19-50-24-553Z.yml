@@ -1,0 +1,188 @@
+- generic [active] [ref=e1]:
+  - link "Skip to content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - status [ref=e3]:
+    - generic [ref=e4]: Development preview
+    - generic [ref=e5]: Sample records · connect Supabase for live data
+  - banner [ref=e6]:
+    - generic [ref=e7]:
+      - link "MYDAY home" [ref=e8] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e10]: MYDAY
+      - navigation "Primary navigation" [ref=e11]:
+        - link "Calendar" [ref=e12] [cursor=pointer]:
+          - /url: /
+        - link "Explore" [ref=e13] [cursor=pointer]:
+          - /url: /explore
+        - link "Leaderboard" [ref=e14] [cursor=pointer]:
+          - /url: /leaderboard
+        - link "Live feed" [ref=e15] [cursor=pointer]:
+          - /url: /activity
+        - link "How it works" [ref=e16] [cursor=pointer]:
+          - /url: /#how-it-works
+      - generic [ref=e17]:
+        - button "Search MYDAY" [ref=e18] [cursor=pointer]
+        - link "Claim a date ↗" [ref=e22] [cursor=pointer]:
+          - /url: /claim
+          - text: Claim a date
+          - generic [ref=e23]: ↗
+        - button "Switch to dark theme" [ref=e24] [cursor=pointer]
+  - main [ref=e27]:
+    - region [ref=e28]:
+      - generic [ref=e29]:
+        - heading "Every day has a story. Find yours." [level=1] [ref=e30]
+        - paragraph [ref=e31]: A collection of meaningful dates, ordered through time. Add yours for free, or make it a paid featured date.
+      - generic [ref=e32]:
+        - link "Feature a date" [ref=e33] [cursor=pointer]:
+          - /url: /claim
+        - link "Register for free" [ref=e34] [cursor=pointer]:
+          - /url: /register
+    - generic [ref=e35]:
+      - region "Registered dates collection" [ref=e36]:
+        - generic [ref=e37]:
+          - generic "Filter registered dates" [ref=e38]:
+            - button "All dates" [pressed] [ref=e39] [cursor=pointer]
+            - button "Paid featured" [ref=e40] [cursor=pointer]
+            - button "Free registrations" [ref=e41] [cursor=pointer]
+          - generic [ref=e42]:
+            - generic [ref=e43]:
+              - text: Year
+              - combobox "Year" [ref=e44]:
+                - option "All years" [selected]
+                - option "2026"
+            - generic [ref=e45]:
+              - text: Sort by
+              - combobox "Sort by" [ref=e46]:
+                - option "Date · earliest first" [selected]
+                - option "Highest paid first"
+        - paragraph [ref=e47]: 1 date shown. Only submitted dates appear here; paid claims take priority.
+        - article [ref=e49]:
+          - generic [ref=e50]:
+            - generic [ref=e51]: Paid featured
+            - strong [ref=e52]: $10
+          - time [ref=e53]:
+            - generic [ref=e54]: OCTOBER 2026
+            - strong [ref=e55]: "29"
+          - generic [ref=e56]:
+            - heading "My birthday" [level=2] [ref=e57]
+            - paragraph [ref=e58]: My bday.
+          - generic [ref=e59]:
+            - generic [ref=e60]: Claimed by
+            - link "@anewbhev" [ref=e61] [cursor=pointer]:
+              - /url: https://x.com/anewbhev
+          - link "View story & claim history" [ref=e62] [cursor=pointer]:
+            - /url: /day/2026-10-29
+        - paragraph [ref=e65]: Showing up to 300 paid and 300 eligible free records. A free registration is not exclusive ownership; a paid claim takes its place. Higher valid payments replace the current paid holder.
+      - generic [ref=e66]:
+        - generic [ref=e67]: No account required
+        - generic [ref=e68]: Verified payments via Razorpay
+        - link "Public claim history" [ref=e69] [cursor=pointer]:
+          - /url: /activity
+    - generic [ref=e70]:
+      - group [ref=e71]:
+        - generic "Explore featured stories 1 record +" [ref=e72] [cursor=pointer]:
+          - text: Explore featured stories
+          - generic [ref=e73]: 1 record
+          - text: +
+        - option "All months" [selected]
+        - option "OCTOBER"
+      - region [ref=e74]:
+        - generic [ref=e75]:
+          - heading "Dates that made their mark." [level=2] [ref=e77]
+          - paragraph [ref=e78]: Ranked by the value of each current, verified claim.
+        - generic [ref=e79]:
+          - generic [ref=e80]:
+            - generic "Filter dates" [ref=e81]:
+              - button "All dates" [pressed] [ref=e82] [cursor=pointer]
+              - button "future" [ref=e83] [cursor=pointer]
+              - button "past" [ref=e84] [cursor=pointer]
+            - generic [ref=e85]: 1 claims
+          - generic [aria-hidden] [ref=e86]:
+            - generic [ref=e87]: Rank
+            - generic [ref=e88]: Date
+            - generic [ref=e89]: Current claim
+            - generic [ref=e90]: Why it matters
+            - generic [ref=e91]: Claimed by / link
+          - list [ref=e92]:
+            - listitem [ref=e93]:
+              - generic [ref=e94]:
+                - generic [ref=e95]: "01"
+                - link "OCT 29, 2026 future" [ref=e96] [cursor=pointer]:
+                  - /url: /day/2026-10-29
+                  - strong [ref=e97]: OCT 29, 2026
+                  - generic [ref=e98]: future
+                - strong [ref=e99]: $10
+                - generic [ref=e100]: My bday.
+                - generic [ref=e101]:
+                  - link "@anewbhev" [ref=e102] [cursor=pointer]:
+                    - /url: https://x.com/anewbhev
+                  - generic [ref=e103]: Keeping my birthday on the MYDAY record.
+                - link "View October 29, 2026" [ref=e104] [cursor=pointer]:
+                  - /url: /day/2026-10-29
+                  - text: ↗
+    - region [ref=e105]:
+      - generic [ref=e106]:
+        - generic [ref=e107]:
+          - heading "Your date. Your story." [level=2] [ref=e108]
+          - paragraph [ref=e109]: Register a date for free or make a paid featured claim. Paid claims take priority over free registrations; a higher valid payment can replace the paid holder.
+        - list [ref=e110]:
+          - listitem [ref=e111]:
+            - generic [ref=e112]: "01"
+            - generic [ref=e113]:
+              - heading "Choose your date." [level=3] [ref=e114]
+              - paragraph [ref=e115]: A birthday, a milestone, a moment worth remembering. Every date includes its year.
+          - listitem [ref=e116]:
+            - generic [ref=e117]: "02"
+            - generic [ref=e118]:
+              - heading "Register or feature it." [level=3] [ref=e119]
+              - paragraph [ref=e120]: Add your story and public handle. Register for free if unclaimed, or pay the latest valid price to feature it.
+          - listitem [ref=e121]:
+            - generic [ref=e122]: "03"
+            - generic [ref=e123]:
+              - heading "See it in the collection." [level=3] [ref=e124]
+              - paragraph [ref=e125]: Dates appear chronologically. Paid claims replace free entries and join the payment-ranked leaderboard.
+    - generic [ref=e126]:
+      - heading "Which day means everything to you?" [level=2] [ref=e127]
+      - paragraph [ref=e128]: The first hello. The big leap. The day it all began.
+      - link "Find your date" [ref=e129] [cursor=pointer]:
+        - /url: "#matrix-view"
+  - contentinfo [ref=e130]:
+    - generic [ref=e131]:
+      - link "MYDAY" [ref=e132] [cursor=pointer]:
+        - /url: /
+      - paragraph [ref=e135]: A public market for the days people refuse to forget.
+    - navigation "Footer navigation" [ref=e137]:
+      - link "Explore" [ref=e138] [cursor=pointer]:
+        - /url: /explore
+      - link "Leaderboard" [ref=e139] [cursor=pointer]:
+        - /url: /leaderboard
+      - link "Trending" [ref=e140] [cursor=pointer]:
+        - /url: /trending
+      - link "Activity" [ref=e141] [cursor=pointer]:
+        - /url: /activity
+      - link "FAQ" [ref=e142] [cursor=pointer]:
+        - /url: /faq
+      - link "Support" [ref=e143] [cursor=pointer]:
+        - /url: /contact
+      - link "Delivery" [ref=e144] [cursor=pointer]:
+        - /url: /shipping
+      - link "Privacy" [ref=e145] [cursor=pointer]:
+        - /url: /privacy
+      - link "Terms" [ref=e146] [cursor=pointer]:
+        - /url: /terms
+      - link "Refunds" [ref=e147] [cursor=pointer]:
+        - /url: /refunds
+    - generic [ref=e148]:
+      - paragraph [ref=e149]: © 2026 MYDAY. Every date means something.
+      - generic [ref=e150]:
+        - link "MYDAY creator on X" [ref=e151] [cursor=pointer]:
+          - /url: https://x.com/anewbhev
+          - text: 𝕏
+        - link "Email MYDAY" [ref=e152] [cursor=pointer]:
+          - /url: mailto:anubhavpandey269@gmail.com
+          - text: "@"
+  - link "Contact MYDAY support" [ref=e153] [cursor=pointer]:
+    - /url: /contact
+    - text: Support
+  - button "Back to top"
+  - button "Open Next.js Dev Tools" [ref=e159] [cursor=pointer]

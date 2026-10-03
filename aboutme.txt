@@ -1,0 +1,293 @@
+MYDAY — COMPLETE PROJECT AND INTERVIEW HANDBOOK
+================================================
+Repository: C:\Users\anubh\Desktop\mydate
+Purpose: Explain the actual codebase clearly and honestly in an interview.
+Scope note: This describes what is implemented in the repository, not proof that a particular Vercel, Supabase, Upstash, or Razorpay dashboard is currently configured or that live payments have been approved. Never include real credentials in an interview or in this file.
+
+1. THE SHORT EXPLANATION
+------------------------
+30-second version:
+"MYDAY is a full-stack web application where someone can attach a story and public attribution to a calendar date by paying a platform fee. Each date has at most one current verified claim. Another person can replace it with a higher valid claim, while the old claim stays in the history. I built the interface in Next.js, React, and TypeScript; store authoritative state and transactional payment logic in Supabase PostgreSQL; use Razorpay for checkout; and use signed webhooks rather than browser redirects to finalize ownership. Vercel hosts the app and Upstash limits anonymous checkout abuse."
+
+Two-minute version:
+"The interesting engineering problem is that a payment, a date, and another concurrent buyer can all change independently. A user sees a quote, submits a story and amount, and the server creates an anonymous checkout intent in Postgres. Razorpay creates an order. The browser opens Standard Checkout and may verify the returned signature, but that is only a user-experience check. The authoritative change occurs after Razorpay sends a signed payment.captured webhook. A PostgreSQL function locks the intent and date, checks the captured amount, currency, expected date version, and latest minimum, then either writes exactly one current claim or starts the refund path if the buyer lost a race. Public discovery uses bounded queries and privacy-aware views. I intentionally distinguish public attribution from verified identity: no account is required and a submitted @handle is self-asserted."
+
+What the product is NOT: It is not ownership of a legal asset, an investment, a resale security, a wallet, a payout system, or a guaranteed financial return. "Own" in UI copy means holding the current featured claim in this platform's record, subject to replacement by a higher valid claim. The fee and refund terms are described in the site's policy pages.
+
+2. THE USER JOURNEY AND BUSINESS RULES
+--------------------------------------
+1) A visitor browses meaningful dates, the leaderboard, trends, recent activity, search, a date page, or a public attribution profile. Reading does not require login.
+2) The visitor chooses a valid date between 1900-01-01 and 2100-12-31 and requests a quote. The database, not the browser, computes the minimum valid USD-denominated amount.
+3) A first claim starts at USD 1.00 (100 USD cents). If there is a current claim, the next minimum is current amount + max(10% of that amount rounded up, USD 1.00). These defaults are in payment_configuration and can be changed there.
+4) The buyer submits a short title, story, @handle or HTTPS attribution link, visibility choice, USD benchmark amount, billing country, and a required platform-fee acknowledgement. The @handle/link is self-submitted, not verified as belonging to the buyer.
+5) India is charged in INR; supported non-India choices currently create USD orders. Razorpay is the only payment provider in the active code. International card acceptance still depends on Razorpay's account-level enablement.
+6) A successful captured payment can make the claim current. A valid later higher claim supersedes it; claim history remains. If the date changed between checkout and payment capture, the stale captured payment does not gain the date and is routed for refund.
+7) Visibility matters: public claims appear in discovery; unlisted claims can be seen at the exact date URL but are excluded from broad discovery; private claim details and attribution are withheld from public visitors.
+
+3. STACK: LANGUAGE, FRAMEWORK, SERVICE, AND WHY
+------------------------------------------------
+TypeScript: Main application language. It types server/client contracts, public data, payment-provider interfaces, and validation results. TypeScript helps catch interface mistakes at build time; it does not replace runtime validation.
+TSX/React 19: UI components and client-side interactions. Server components render data-dependent pages; client components handle forms, filters, countdowns, mobile navigation, theme, animations, and payment-status polling.
+Next.js 16 App Router: File-based pages and API route handlers, server rendering, metadata, loading/error/not-found pages, and proxy.ts response controls. This project uses the installed Next.js 16 conventions, including asynchronous route/search params where required.
+HTML and custom CSS: Semantic forms, landmarks, labels, buttons, accessible messages, responsive layouts, dark/light theming, typography, and visuals. The active styling is mostly app/globals.css and app/future.css. Tailwind/PostCSS packages are installed, but do not claim the entire UI is built with Tailwind utilities.
+Framer Motion: Selected card/collection transitions and hover animation, not the application state or payment logic.
+Zod: Runtime shape, length, format, and strict-field validation for untrusted checkout and payment-verification JSON.
+PostgreSQL/SQL: Supabase-hosted source of truth. Tables, constraints, indexes, row-level security, SQL views, and PL/pgSQL functions implement pricing and atomic claim transitions. This is where concurrency correctness lives.
+Supabase JS: HTTP client for public database reads/RPCs and server-only privileged mutation RPCs. Supabase Auth is not the current login mechanism because the product intentionally permits anonymous purchase.
+Razorpay Standard Checkout + HTTP API: Order creation, browser payment modal, signed payment events, and refunds. The server uses direct HTTP calls via server/payments/http.ts and server/payments/razorpay.ts; there is no need to claim that the separate razorpay npm SDK is installed.
+Upstash Redis + @upstash/ratelimit: Distributed anonymous checkout throttling across serverless instances. Redis also stores a best-effort public cache-version counter after successful claims.
+Frankfurter/ECB daily reference: Server fetches a recent USD/INR reference for Indian pricing. This is a daily reference, NOT a live tick-by-tick market or guaranteed card-network settlement rate.
+Vercel: Intended Next.js hosting, serverless route execution, HTTPS/CDN, and deployment environment variables. The code is Vercel-compatible, but actual dashboard settings and live-domain readiness must be checked separately.
+Vitest + ESLint + TypeScript compiler + GitHub Actions: Unit tests, linting, type checking, dependency audit, build checks, and CI.
+Node.js/npm: Runtime and package management. package.json requires Node >=22.13.0 and <23, and package-lock.json pins the dependency tree for npm ci.
+
+Not active production integrations: The README discusses optional PostHog, Sentry, and Pinecone plans. Environment placeholders are present, but this repository does not wire these into the core request path. Cloudflare is not the active application backend, Clerk-related SQL names are legacy schema, and Stripe is not the active payment provider. Do not present those as running features.
+
+4. ARCHITECTURE AND TRUST BOUNDARIES
+-----------------------------------
+Browser
+  -> Vercel/Next.js page or API route
+  -> public Supabase read using a publishable key, OR
+  -> server-only checkout orchestration using the Supabase service-role key
+  -> Upstash rate limit and Razorpay order API
+  -> Razorpay Standard Checkout modal in browser
+Razorpay payment.captured event
+  -> signed webhook route
+  -> server HMAC verification
+  -> PostgreSQL finalize_verified_claim transaction
+  -> current claim or refund_pending/refunded
+  -> public pages/status API reflect committed database state
+
+The trust boundary is crucial: a buyer controls browser JavaScript and submitted JSON, so neither can directly award a date. Public keys may reach the browser; SUPABASE_SERVICE_ROLE_KEY, RAZORPAY_KEY_SECRET, RAZORPAY_WEBHOOK_SECRET, and Upstash token remain server-side. The server's result is still not the final authority by itself: Postgres validates and commits the transition. The payment provider confirms capture via a signed event. An unsigned redirect, a client callback, or a status page never writes a claim.
+
+5. SOURCE MAP: WHERE TO POINT AN INTERVIEWER
+--------------------------------------------
+package.json                         Stack versions, Node requirement, scripts.
+next.config.ts                      Minimal Next.js configuration.
+tsconfig.json, vitest.config.ts      TypeScript path/build settings and test setup.
+app/layout.tsx                      Root HTML, metadata, global CSS, early saved-theme script, shared utilities.
+app/page.tsx                        Home hero, featured claim, live/trending collections, leaderboard, how-it-works, CTA.
+app/globals.css, app/future.css      Global/responsive visual system and latest editorial styling.
+app/claim/page.tsx                  Server-rendered date quote and purchase page.
+components/claims/claim-form.tsx     Three-step client form, Razorpay script/modal, browser signature-check call, errors.
+components/payments/payment-status.tsx  Polling and honest pending/success/refund/failed states.
+components/site-header.tsx           Header navigation, search, mobile controls, theme switch.
+components/site-footer.tsx           Footer and policy/support navigation.
+components/site-utilities.tsx        Scroll indicator, support shortcut, back-to-top, storage notice.
+components/auctions/*                Featured/date cards, collections/filters, countdown visual behavior.
+components/leaderboard.tsx           Ranked claim presentation.
+components/public/*                  Shared public-page shell, claim grid, empty/error states, attribution rendering.
+components/info/info-page.tsx        Shared informational-page presentation.
+lib/public/types.ts                  Shapes used by public pages.
+lib/public/format.ts                 Date/money/username formatting and date validation helpers.
+lib/public/attribution.ts            Normalizes allowed public attribution.
+lib/validation/*                     Input validation for claims, attribution, username.
+lib/auction-display.ts               UI-specific claim display mapping.
+lib/preview-data.ts                  ONE development preview example: 2026-10-29, @anewbhev, USD 10. Not a paid production record.
+lib/env.ts                           Required environment checks, app origin, safe defaults.
+server/public-data/index.ts          Shared public read repository; mapping, bounded queries, preview/unavailable states.
+server/claims/quotes.ts              Fetches authoritative quote via Supabase RPC; optional INR display reference.
+server/supabase/admin.ts             Server-only service-role Supabase client.
+server/http/security.ts              Same-origin check and request-body size limit.
+server/rate-limit/checkout.ts         Upstash sliding-window checkout limit.
+server/payments/index.ts             Selects Razorpay for all billing-country choices.
+server/payments/types.ts             Provider and checkout/event contracts.
+server/payments/razorpay.ts          Create/resume order, browser signature, raw webhook HMAC, refund.
+server/payments/http.ts              Payment HTTP fetch wrapper, timeout/error normalization.
+server/payments/crypto.ts            Hash/HMAC helpers and comparison.
+server/payments/fx.ts                Bounded/staleness-checked USD/INR daily reference with in-memory cache.
+server/payments/webhook.ts           Raw signed event processing and refund orchestration.
+server/cache/invalidation.ts         Best-effort Redis cache-generation increment.
+proxy.ts                             Response security headers, request IDs, cache-control choices.
+app/api/claims/checkout/route.ts     Anonymous checkout POST and server orchestration.
+app/api/payments/verify/route.ts     Browser-return signature-check POST; cannot grant claim.
+app/api/payments/intents/[intent]/route.ts  Restricted status GET with intent/access key.
+app/api/webhooks/razorpay/route.ts   Razorpay webhook POST entry point.
+app/health/route.ts                  Liveness JSON endpoint.
+app/ready/route.ts                   Configuration readiness JSON endpoint.
+supabase/migrations/*.sql            Actual schema, RLS, pricing, and payment transactions.
+supabase/seed.sql                    Deliberately empty; sample data is NOT inserted into production.
+tests/unit/*.test.ts                 Focused automated unit tests.
+load/public-smoke.mjs               Read-only bounded public-route load smoke test.
+.github/workflows/ci.yml             CI checks on pushes to main and pull requests.
+docs/*.md                           Detailed architecture, security, discovery, payment, and operations notes.
+.env.example                         Variable names and safe placeholders, NOT real credentials.
+
+6. PAGE AND ROUTE TOUR
+----------------------
+/                    Landing page; server reads leaderboard and trends concurrently with Promise.all, then renders featured/live/trending/leaderboard sections and editorial explanation.
+/explore             Browse current public claims and date-oriented discovery.
+/leaderboard         Ranked current verified public claims, with time/date filtering.
+/trending            Trending public claims.
+/activity            Recent public claim events.
+/search              Text search backed by a bounded PostgreSQL RPC.
+/day/[date]          Current date monument plus allowed history; private information is redacted.
+/[handle]            Public attribution/profile route (such as /@handle).
+/claim              Chosen-date quote and anonymous checkout form.
+/payment/status     Restricted status page after checkout; browser polls the server until terminal state or timeout.
+/faq, /terms, /privacy, /refunds, /shipping, /contact  Product, legal, and support content.
+/maintenance, /not-found, /error, /loading  Degraded/error/skeleton experiences.
+/sitemap             Search-engine route; visibility must be respected.
+/health              Returns {status:"ok"}; proves the route can respond, not that providers are healthy.
+/ready               Returns 200 or 503 based on presence of required configuration; it does NOT make live network probes of every dependency.
+
+The home page uses a server component for its initial data and delegates interactions to client components. This limits the amount of client-side code needed for static/editorial pieces. It uses shared page/header/footer components rather than repeating markup. The header also indicates the active section, offers mobile navigation/search, and stores a light/dark preference locally. The root layout sets metadata/Open Graph/Twitter cards and applies a saved theme before paint to reduce theme flash. CSS includes responsive layout and attention to focus/spacing; actual accessibility still needs hands-on verification.
+
+7. DATA MODEL AND MIGRATIONS
+----------------------------
+Run the six SQL migrations in filename order. These are not decorative scripts: deployed database behavior depends on applying them to the correct Supabase project.
+
+202608250001_core_identity.sql: app_users, user_profiles, user_settings, reserved_usernames, identity_webhook_events, audit_events, normalized username functions, timestamps, grants, and forced RLS. Some names such as clerk_user_id reflect a former authenticated design. In today's no-login path, anonymous subjects are represented as anon:<SHA-256 digest> internally. Avoid saying Clerk authentication is currently required.
+
+202608250002_public_claims.sql: calendar_dates (one row per date, current_claim_id, version); claims (story, attribution, visibility, canonical USD amount, charged/display amount and FX snapshot, status, timestamps); claim_events (history/activity). A partial unique index on claims permits only one status='current' claim per date. Additional indexes support rank/history/profile/search. Search uses a generated text-search vector and GIN index. Public views and RPCs shape safe discovery/date/history results, with RLS and grants.
+
+202608250003_claim_checkout.sql: singleton payment_configuration; claim_checkout_intents; payment_records; payment_provider_events. It defines minimum_claim_amount, get_claim_quote, create/attach/fail intent operations, finalize_verified_claim, and mark_claim_payment_refunded. Default configuration includes USD 1 opening, 10% increment with USD 1 floor, amount ceiling, and 15-minute quote lifetime. Postgres constraints and RPC logic validate amounts and state transitions.
+
+202608250004_account_surfaces.sql: historical account-oriented functions/surfaces. They remain in migration history for compatibility; they do not mean the current frontend requires sign-in.
+
+202608260005_anonymous_checkout.sql: adds service-role-only anonymous wrappers around the existing checkout functions and anonymous status retrieval; revokes old authenticated checkout execution grants. ensure_anonymous_buyer deterministically maps normalized self-submitted attribution to an internal app-user row for existing foreign keys. It is not proof of identity or a real account login.
+
+202609040006_fix_anonymous_digest_schema.sql: corrects the digest function's schema qualification for the anonymous identity function and reloads the API schema. This matters if a database reports a missing digest function in a restricted search_path.
+
+The development preview row for October 29, 2026 lives in lib/preview-data.ts, not seed.sql. Production does not inject a fake purchase when Supabase is unavailable. If someone asks whether the sample proves Razorpay was charged, the answer is no.
+
+8. PUBLIC DATA FLOW AND PRIVACY
+-------------------------------
+server/public-data/index.ts centralizes Supabase public reads. It supplies leaderboard, trending, activity, search, exact-date, and profile data to pages. Queries and result limits are bounded; search requires enough input and its RPC caps output. Page components receive formatted public model types rather than raw database rows everywhere.
+
+The source is represented as supabase, preview, or unavailable. In development with no configured Supabase, a single preview claim can demonstrate the UI. In production, missing/broken data becomes a safe unavailable/empty state rather than silently rendering fictional paid claims. Errors are logged server-side, while users see restrained messages.
+
+The database is authoritative for visibility. Public claims enter leaderboard/search/activity/profile discovery. Unlisted is addressable on its exact date route but not broadly listed. Private claims can contribute only an allowed stub/amount context; story and attribution must not leak. Direct public views/RPCs and RLS are part of this privacy boundary; the React UI alone is not sufficient protection. Public attribution is deliberately shown prominently in cards and claim details, but that prominence must not be mistaken for verified identity.
+
+9. QUOTE, PRICING, AND CURRENCY
+------------------------------
+get_claim_quote(date) asks PostgreSQL for the current claim, date version, and minimum next USD amount. The opening/step rule is in minimum_claim_amount and payment_configuration, not a hardcoded browser truth. The form can display a quote but the server rechecks on checkout and finalization; a price can change while the form is open.
+
+The canonical claim amount is integer USD minor units. Using integers avoids decimal floating-point as the source of financial truth. The browser's major-unit input is rounded to minor units, validated, and then re-evaluated in SQL. For an Indian buyer, server/payments/fx.ts obtains an ECB daily USD/INR reference through Frankfurter; it rejects malformed, implausible, or older-than-7-day data, has a 3-second network timeout, and caches a successful reference in process memory for one hour. Checkout updates the database FX snapshot before creating the intent, so the amount/currency sent to Razorpay are server-calculated. The UI's INR estimate is informational; the final order amount comes from the server/database. If recent FX cannot be verified, Indian checkout returns a 503 rather than inventing a rate. Non-India country choices create USD Razorpay orders. A daily ECB rate is not identical to an instantaneous market rate or the payer's bank conversion rate.
+
+10. CHECKOUT: STEP BY STEP
+-------------------------
+A) Browser sends POST /api/claims/checkout with date, title, story, attribution, visibility, USD minor amount, billing country, and a random idempotency key. It does not get to choose the payment provider or set the final INR charge directly.
+B) The route checks Origin against NEXT_PUBLIC_APP_URL / detected app origin, applies a hashed IP+user-agent sliding-window rate limit, reads at most 8 KiB, parses strict Zod input, and confirms Razorpay configuration. The limit is 5 checkout attempts per 10 minutes per fingerprint. In production, absent/unavailable Redis makes checkout fail closed.
+C) For India, the server fetches/validates the daily FX reference and updates payment_configuration. A privileged Supabase RPC creates the anonymous buyer record and checkout intent, validates the date/minimum/country/visibility/idempotency, snapshots expected date version/current claim, and returns server-selected amount and currency.
+D) If the same idempotency key is retried with identical intent details, the code can resume an existing created checkout instead of making a second order. Reusing a key with different details is rejected by database logic. This reduces duplicate orders from retries, though it is not a substitute for provider and database reconciliation.
+E) server/payments/razorpay.ts calls Razorpay POST /v1/orders with Basic authentication on the server. It supplies integer amount, currency, receipt=intent ID, and notes. It requires at least 100 currency subunits. The server attaches the provider order ID to the intent and returns only checkout-safe fields (including public key ID, order ID, amount, currency, and status URL) to the browser. Razorpay's KEY_SECRET never goes into client code.
+F) components/claims/claim-form.tsx loads checkout.js on demand, opens the modal, handles payment.failed and modal dismissal, and reports user-facing errors. On success it sends payment ID, order ID, and signature plus intent/access key to POST /api/payments/verify. It then navigates to the status URL if this verification succeeds.
+G) /api/payments/verify checks a bounded strict body, looks up the matching stored order by intent and access key, compares order IDs, then validates HMAC-SHA256(order_id + "|" + payment_id) using RAZORPAY_KEY_SECRET. A 400 signature mismatch never marks a claim paid. This is an early acknowledgement, not authoritative capture or a claim grant.
+H) The payment-status page polls GET /api/payments/intents/[intent]?access=... about every 2.5 seconds, for up to 48 attempts, until completed, refunded, failed, or expired. It can show pending/refund_pending distinctly. It reads a restricted status via the unguessable access key; payment detail is not a public cacheable page.
+
+Important honesty about speed: The current browser loads Razorpay's script after the server creates an order, so those operations are sequential in the active code. The FX call and Supabase/Razorpay calls also add network latency. Do not claim checkout is fully preloaded or benchmarked. If discussing a next optimization, propose measured p95 timings, script preconnect/preload at appropriate time, and avoiding redundant work without weakening the price/webhook checks.
+
+11. WEBHOOK, CONCURRENCY, AND REFUNDS
+------------------------------------
+The Razorpay route accepts a raw body of at most 1 MiB. The provider adapter validates x-razorpay-signature with RAZORPAY_WEBHOOK_SECRET and requires an event ID. Only payment.captured is handled as a claim-finalizing event; unrelated signed events are acknowledged and ignored. HMAC verification is over raw bytes/text, so JSON parsing/re-serialization must not happen first. RAZORPAY_KEY_SECRET (browser response validation/API authentication) and RAZORPAY_WEBHOOK_SECRET (webhook validation) are different configuration values.
+
+The server passes the verified event to finalize_verified_claim in PostgreSQL. The function takes an advisory transaction lock on provider+event ID to make duplicate webhook delivery safe, checks its event ledger, locks the checkout intent and date row, and verifies order/payment/provider, captured amount/currency, expiry, expected date version/current-claim ID, and current minimum. It also writes a payment record/event ledger and audit entries. If valid, it changes the previous current claim to superseded, inserts a new current claim, updates calendar_dates.current_claim_id and version, writes a claim event, and marks the intent completed in one database transaction. The partial unique index is an additional invariant preventing two current claims for one date.
+
+If another buyer completed first, or a capture is stale/invalid for the expected date state, the payment is recorded as refund_pending rather than granting a claim. The webhook handler asks Razorpay for a refund and calls mark_claim_payment_refunded. If refund processing fails, it returns 503 so the provider can retry; operations still need to monitor/reconcile stuck refunds. If the same event arrives again, the event/payment records make handling idempotent. This is why "payment succeeded in a modal" and "date was granted" are different states.
+
+Some common state names: creating_checkout, checkout_created, payment_verified, completed, conflict, refund_pending, refunded, failed, expired. The client status UI does not invent completed; it waits for database state.
+
+12. SECURITY DESIGN
+-------------------
+- Least privilege: public Supabase publishable key is used for privacy-filtered reads; service-role key is server-only for privileged mutations. RLS is enabled/forced on core tables; grants are explicit. Anonymous checkout wrapper RPCs are granted to service_role, not anon users.
+- Runtime validation: Zod checks shape, date, story length, visibility, billing country, amount, attribution, and idempotency key; SQL checks invariants again. TypeScript cannot validate an attacker-controlled JSON request.
+- Origin/CSRF-style protection: state-changing browser endpoints compare Origin to app origin in production. Missing Origin is rejected there. Webhooks authenticate by provider HMAC instead of browser Origin.
+- Abuse/DoS bounds: checkout 8 KiB, verify 4 KiB, webhook 1 MiB; request throttling via Upstash; bounded public queries; payment/FX timeouts. Checkout fails closed when Redis is unavailable in production.
+- Payment integrity: HMAC signatures, matching stored Razorpay order ID, captured-webhook-only finalization, database amount/currency/version checks, unique event/payment records, row/advisory locks, idempotency, and refund path.
+- Headers: proxy.ts sets no-sniff, frame denial, referrer policy, restricted browser permissions, request ID, a popup-compatible COOP value, and production HSTS/CSP allowing required Razorpay resources. These should be verified in the deployed browser because provider-hosted resources can change.
+- Caching: /api, /claim, /payment, and /ready are private/no-store. Selected anonymous public GET paths can use s-maxage=60, stale-while-revalidate=300. Caching must never decide payment state.
+- Confidentiality: payment/status requires intent UUID plus access key; public views redact private records. Never log provider secrets or expose service role in NEXT_PUBLIC_ variables.
+- Operational boundary: .env.local and hosted secret stores contain credentials; .env.example contains only placeholders. Rotate any credential that has ever been pasted into chat, committed, or exposed in a screenshot/log.
+
+13. PERFORMANCE, CACHING, AND RELIABILITY: WHAT IS REAL TODAY
+-------------------------------------------------------------
+Implemented: server-rendered initial pages; concurrent home leaderboard/trending fetch; bounded query results; PostgreSQL indexes (including text-search GIN and partial uniqueness); short shared caching for selected anonymous public pages; no-store for payment paths; process-local one-hour FX cache; lazy-loaded Razorpay script; Upstash distributed checkout throttling; loading and unavailable UI states. This is an architecture for reasonable performance, not a measured visitor-capacity guarantee.
+
+Important nuance: server/cache/invalidation.ts increments a Redis key after a completed claim, but the public read path does not currently consume that key to version cache keys or explicitly purge Vercel's CDN. Therefore the current public CDN freshness is governed primarily by the 60-second shared cache and 300-second stale-while-revalidate header. Do NOT claim immediate globally coherent cache invalidation. The database and private status API remain authoritative.
+
+Other limits: A serverless process's in-memory FX cache is per instance, not globally shared. Upstash rate limiting adds a network dependency. Checkout latency depends on FX, Supabase, Razorpay, and script loading. The repository does not prove a specific throughput, p95/p99 latency, or live international-payment success rate. To improve speed safely, instrument timings, measure real bottlenecks, optimize read caches/queries, and avoid removing server verification for a faster-looking modal.
+
+Failure modes are deliberate: Supabase read failure shows unavailable, not fake data; unavailable Redis blocks production checkout; missing Razorpay config disables checkout; FX failure blocks INR checkout; invalid webhook signature is rejected; provider order failure marks the intent failed; a stale capture goes to refund_pending. /health only confirms a running route and /ready only checks configuration presence—neither is a complete external dependency health probe.
+
+14. TESTS, CI, AND WHAT IS NOT YET PROVEN
+----------------------------------------
+Run locally from the repository:
+  npm ci
+  npm run typecheck
+  npm run lint
+  npm test
+  npm run build
+  npm run dev
+
+Vitest tests in tests/unit cover checkout input/attribution validation, environment placeholder safety, USD/INR response validation, payment provider routing and signature/webhook checks, public formatting, mutation-origin/body protections, and username logic. Read the tests before stating an exact coverage percentage; none is established here. GitHub Actions CI runs npm ci, production dependency audit at high severity, typecheck, lint, tests, and build on pull requests and main pushes with read-only permissions/pinned action revisions.
+
+npm run load:public is a bounded read-only public smoke check; by default it targets localhost for 20 seconds at concurrency 10 and refuses non-local targets unless explicitly opted in. It does not create claims or simulate payment races. A production launch should additionally verify (in a dedicated test/staging stack) migration application, RLS as anon/service role, real Razorpay test-mode order/webhook delivery, duplicate/reordered event handling, same-date races, stale-capture refunds, private/unlisted visibility, mobile/keyboard/accessibility, and Vercel deployment environment. Do not say these external dashboard tests ran merely because npm test passed.
+
+15. DEPLOYMENT AND OPERATIONS STORY
+-----------------------------------
+The intended platform is GitHub -> Vercel for Next.js, Supabase for PostgreSQL, Upstash for Redis, Razorpay for checkout/webhooks, and Frankfurter/ECB for INR reference. Read .env.example for exact names. Public: NEXT_PUBLIC_APP_URL, NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY. Server-only: SUPABASE_SERVICE_ROLE_KEY, UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET, RAZORPAY_WEBHOOK_SECRET. SUPABASE_DB_URL is for migration tooling only and should not be a normal runtime variable. MYDAY_ENABLE_PREVIEW_DATA is development-only and preview records are disabled in production.
+
+Safe deployment sequence: (1) create/verify the target Supabase project and apply all migrations in order; (2) configure Upstash and Razorpay test-mode keys, automatic capture, and a webhook for /api/webhooks/razorpay with payment.captured; (3) add environment variables to the correct Vercel Production/Preview environments, with NEXT_PUBLIC_APP_URL matching the actual canonical origin; (4) deploy and check /health, /ready, public reads, checkout, signed webhook completion, duplicate event behavior, refunds, and browser console/CSP; (5) only then switch to live Razorpay keys and the corresponding live webhook secret, after KYC/international acceptance is actually enabled by Razorpay. Test and live credentials must not be mixed. Changes to Vercel env values require a deployment/redeployment that uses those values.
+
+Operations: monitor checkout error rate, webhook 4xx/5xx, stuck intents/refunds, provider-vs-database reconciliation, database connection/lock waits, FX failures, and page latency. Keep backups/PITR and restoration drills appropriate to the business, and rotate secrets on exposure. docs/operations.md and docs/security-review.md are runbooks/checklists; their existence does not prove every alert, backup, WAF rule, or manual dashboard setting is enabled. SQL migrations are forward changes, so code rollback must be compatible with the migrated schema.
+
+16. DESIGN PRINCIPLES AND TRADEOFFS TO DISCUSS
+---------------------------------------------
+Source of truth: Postgres owns business state; the browser only proposes a purchase and shows the result. This prevents a spoofed success callback from assigning a date.
+Defense in depth: client validation improves UX, server validation blocks malformed requests, SQL functions/constraints protect the core invariant, and HMAC verifies provider statements.
+Transactional consistency: finalizing a claim updates claim row, date pointer/version, payment status, event, and audit together. Locks and unique indexes address concurrent buyers.
+Idempotency: browser request key prevents duplicate order creation on retries; provider event ID/ledger prevents duplicate webhook transitions.
+Privacy by design: public/unlisted/private are data-layer rules, not just hidden CSS. Public handles are self-attested, so identity claims must be worded carefully.
+Fail closed for money: no trustworthy DB, Redis limit, FX rate, provider auth, or signature means no new claim. An empty/error state is preferable to a false ownership message.
+Service boundaries: Next.js orchestrates UI/API, Razorpay handles collection, Supabase handles state, Upstash handles abuse limits; no service alone proves a completed claim.
+Simplicity versus scalability: This is a modular monolith deployed on Vercel, not a microservice fleet. It is easier to reason about and deploy; measure load before adding queues/services.
+Price display versus charge: USD benchmark makes claims comparable; INR is derived server-side for India from a daily reference. The estimate cannot be the authority.
+Avoid overclaiming: international payments depend on Razorpay approval, production infrastructure on dashboard setup, and performance on measurement. Saying what is not yet proven is a strength in an interview.
+
+17. INTERVIEW QUESTIONS (40) WITH ANSWER CUES
+----------------------------------------------
+01. What problem does MYDAY solve? — A public, story-backed record for meaningful dates, with one current verified claim and permanent history.
+02. Is a claim an investment or legal ownership? — No; it is a platform feature/fee, replaceable by a higher valid claim, without payout/resale rights.
+03. Walk through the full stack. — Next/React/TS UI/API, Supabase Postgres, Razorpay, Upstash, Vercel, daily ECB reference, tests/CI.
+04. Why choose Next.js App Router? — Co-located pages/API, server rendering, metadata, loading/error handling, one deployable app.
+05. Where do server and client components differ? — Server fetches initial page/quote; client handles interactive filters, form, modal, theme, polling.
+06. Why TypeScript AND Zod? — TypeScript checks trusted code at compile time; Zod validates runtime user JSON.
+07. How is a date represented? — calendar_dates unique date row, current_claim_id pointer, version; claims hold historical records.
+08. How do you guarantee only one current claim per date? — Transactional row locks/version checks plus partial unique index on status=current.
+09. What is the minimum price formula? — First USD 1; otherwise current + max(ceil(10%), USD 1), from payment_configuration/SQL.
+10. Why store monetary values in minor units? — Integer arithmetic avoids fractional currency ambiguity in persistent state.
+11. Why keep a canonical USD amount if an Indian buyer pays INR? — Comparable claim ladder; provider display charge stored separately with FX snapshot.
+12. Where does the USD/INR rate come from, and is it real-time? — ECB daily reference via Frankfurter; validated/cached, not live spot or card-bank settlement.
+13. What happens if the rate API fails? — Indian checkout stops; it does not use an unverified fallback rate.
+14. How do you create a Razorpay order? — Server POST /v1/orders with Basic auth, DB-derived integer amount/currency, receipt=intent ID.
+15. Which Razorpay value may be sent to the browser? — Public key ID and order details; never KEY_SECRET or webhook secret.
+16. Does the browser success callback grant a claim? — No; it only triggers signature check/status navigation. Signed captured webhook + DB transaction grant it.
+17. Explain the two Razorpay HMAC checks. — Checkout response HMAC over order|payment with KEY_SECRET; webhook raw-body HMAC with WEBHOOK_SECRET.
+18. Why verify the stored order ID, not just the response signature? — Bind payment callback to the exact authorized intent/order and access key.
+19. Why process raw webhook bytes before JSON parsing? — HMAC is over the original body; re-serialization changes signed bytes.
+20. How do duplicate webhooks behave? — Event ID advisory lock + event ledger/unique records make replay idempotent.
+21. What if two buyers pay for the same date? — Finalization locks the date, checks expected version/current claim/minimum; winner commits, stale capture goes refund_pending.
+22. Why have a partial unique index if you already lock rows? — Independent database invariant/defense in depth against code errors or unexpected paths.
+23. What does an idempotency key protect? — Repeated checkout submissions can resume; changed payload under same key is rejected.
+24. How is a refund initiated? — Signed captured event fails date-state checks; DB records refund_pending, handler calls Razorpay refund and marks refunded.
+25. What if refund API fails? — Webhook returns retryable 503; status remains pending and needs monitoring/reconciliation.
+26. How can users buy without accounts? — Service-only RPC maps normalized self-submitted attribution to deterministic internal buyer row; no login required.
+27. Is @handle identity verified? — No. It is self-attested public attribution; UI should not imply social ownership verification.
+28. What are public, unlisted, and private semantics? — Public in discovery; unlisted exact-date only; private details/attribution redacted.
+29. Why use RLS/views as well as hiding fields in React? — Database/API access must enforce privacy even if a frontend component is bypassed.
+30. What is the service-role key used for? — Server-only mutation RPCs/intent lookup; never exposed as NEXT_PUBLIC_ or bundled client code.
+31. How is anonymous checkout abuse controlled? — Hashed IP+UA fingerprint, Upstash sliding window 5/10min, production fail-closed.
+32. How are mutation requests protected? — Origin check, bounded bodies, strict validation, rate limits, and provider HMAC for webhooks.
+33. What do /health and /ready prove? — Liveness route response versus presence of essential env config; neither deeply probes external services.
+34. How do public pages behave during a Supabase outage? — Unavailable state, not fictional paid claims; production preview fallback is disabled.
+35. Is public cache invalidation immediate? — No. Redis version increments, but read path does not consume it; 60s shared cache/stale window remains.
+36. What are the main checkout latency sources? — FX fetch/DB update for India, Supabase RPC, Razorpay order API, and script load after order.
+37. How would you make payments faster safely? — Measure p95 stages, warm/check script loading, optimize safe calls; never skip amount/webhook/DB checks.
+38. What automated checks exist? — Vitest units, typecheck, ESLint, build, npm audit in CI, and bounded read-only load smoke.
+39. What production checks still require human/external verification? — Migrations/RLS, Vercel env/origin, live Razorpay/KYC/international cards, webhooks, races/refunds, CSP, alerts/backups.
+40. What would you improve next and why? — Instrument latency/reconciliation, verify staging race/refund tests, make cache-version consumption explicit, improve accessibility and provider UX based on measured data.
+
+FINAL INTERVIEW REMINDER
+------------------------
+When explaining a file, follow one real request through it: /claim -> checkout route -> Supabase intent -> Razorpay order -> browser modal -> verify route -> signed webhook -> SQL finalization/refund -> status/public page. Point out the data and trust boundary at every step. If asked whether the live site is fully operational, answer from observed deployment evidence, not merely from what the repository intends to do.
