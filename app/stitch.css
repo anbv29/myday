@@ -1,23 +1,25 @@
-/* Shared warm-white and peach visual tokens. */
+/* Shared cool-silver, graphite and electric-teal visual tokens. */
 :root, :root[data-theme='light'] {
-  --paper: #fcfaf7;
+  --paper: #f3f7f5;
   --paper-raised: #ffffff;
-  --ink: #28262a;
-  --muted: #6b6260;
-  --line: #e7e0dc;
-  --line-strong: #aba09a;
-  --accent: #93452d;
-  --accent-hover: #743322;
+  --ink: #142927;
+  --muted: #516965;
+  --line: #d7e3df;
+  --line-strong: #78978e;
+  --accent: #086d5d;
+  --accent-hover: #065647;
   --accent-ink: #ffffff;
-  --selection: #ffd6c3;
-  --gold: #93452d;
-  --gold-bg: #fff0e8;
-  --gold-line: #e8bda9;
-  --violet-bg: #fff0e8;
-  --peach: #ffceb7;
-  --peach-ink: #512f24;
+  --selection: #b7f5dd;
+  --gold: #086d5d;
+  --gold-bg: #e0f6ed;
+  --gold-line: #95cbb7;
+  --violet-bg: #e0f6ed;
+  --action: #a9f2d1;
+  --action-ink: #113f31;
+  --peach: var(--action);
+  --peach-ink: var(--action-ink);
   --radius: 12px;
-  --shadow: 0 12px 32px rgb(25 32 20 / 8%);
+  --shadow: 0 12px 32px rgb(8 34 30 / 10%);
   --font-display: var(--stitch-display), 'Segoe UI', sans-serif;
   --font-copy: var(--stitch-display), 'Segoe UI', Arial, sans-serif;
   --font-secondary: var(--font-copy);
@@ -42,6 +44,10 @@
   --shadow: 0 8px 30px rgb(0 0 0 / 16%);
 }
 body { letter-spacing: 0; line-height: 1.6; }
+html { scrollbar-color: var(--line-strong) var(--paper); }
+input, textarea { caret-color: var(--accent); }
+a { text-underline-offset: 4px; }
+.preview-ribbon { background: var(--ink); color: var(--paper); }
 .shell { width: min(calc(100% - 64px), 1240px); }
 .eyebrow, .future-kicker { font-size: 12px; letter-spacing: .08em; }
 .button, .future-button, .future-header-claim { border-radius: 11px; min-height: 46px; font-size: 14px; }
