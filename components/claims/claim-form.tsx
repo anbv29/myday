@@ -103,11 +103,13 @@ export function ClaimForm({
         </div>
         <div className="checkout-summary">
           <p><span>Minimum valid claim</span><strong>{quote.minimumAmount}</strong></p>
-          <p><span>Checkout amount</span><strong>${numericAmountMajor.toFixed(2)} USD</strong></p>
-          <p><span>Secure checkout</span><strong>Dodo Payments · USD</strong></p>
+          <p><span>Claim value</span><strong>${numericAmountMajor.toFixed(2)} USD</strong></p>
+          <p><span>Payment currency</span><strong>{billingCountry === 'IN' ? 'Indian rupees (INR)' : 'US dollars (USD)'}</strong></p>
           <p><span>Ownership rule</span><strong>Verified webhook only</strong></p>
         </div>
-        <p className="checkout-fineprint">Choose your payment above the date’s minimum. Payments are charged in USD; your bank may apply currency conversion fees.</p>
+        <p className="checkout-fineprint">{billingCountry === 'IN'
+          ? 'Your claim value is set in USD to keep rankings fair. You’ll pay its INR equivalent; Dodo shows the exact rupee total, including conversion fees, before you pay.'
+          : 'Choose your payment above the date’s minimum. You’ll pay in USD; your bank may apply currency conversion fees.'}</p>
         <label className="claim-consent"><input type="checkbox" required /><span>I understand this is a platform fee for a featured claim—not an investment, resale right, wallet balance, or promise of financial return.</span></label>
         {error ? <div className="form-error" role="alert"><p>{error}</p></div> : null}
         {!paymentConfigured ? <p className="provider-notice" role="status">Dodo Payments is not connected in this environment, so checkout is disabled.</p> : null}

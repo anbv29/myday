@@ -34,6 +34,21 @@ describe('Dodo webhook claim boundary', () => {
     expect(refund).toHaveBeenCalledWith('pay_test', 100, 'intent_test');
     expect(rpc).toHaveBeenCalledTimes(1); expect(invalidate).not.toHaveBeenCalled();
   });
+  it('binds the INR receipt to its canonical USD intent atomically', async () => {
+    verify.mockResolvedValue({ ...event, currency: 'INR', amountMinor: 9500,
+      adaptivePrice: { intentId: 'intent_test', amountMinor: 100 } });
+    expect((await handlePaymentWebhook(request(), provider)).status).toBe(200);
+    expect(rpc).toHaveBeenCalledWith('finalize_adaptive_dodo_claim', expect.objectContaining({
+      bound_intent_id: 'intent_test', base_amount_minor: 100, paid_amount_minor: 9500, paid_currency: 'INR',
+    }));
+  });
+  it('refunds the actual INR receipt rather than the USD ranking amount', async () => {
+    verify.mockResolvedValue({ ...event, currency: 'INR', amountMinor: 9500,
+      adaptivePrice: { intentId: 'intent_test', amountMinor: 100 } });
+    rpc.mockResolvedValue({ data: [{ transition_outcome: 'refund_required', intent_status: 'refund_pending', checkout_intent_id: 'intent_test', refund_amount_minor: 9500 }], error: null });
+    await handlePaymentWebhook(request(), provider);
+    expect(refund).toHaveBeenCalledWith('pay_test', 9500, 'intent_test');
+  });
   it('requests retries on database outages', async () => {
     rpc.mockResolvedValue({ data: null, error: { message: 'unavailable' } });
     expect((await handlePaymentWebhook(request(), provider)).status).toBe(503);

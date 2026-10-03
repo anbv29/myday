@@ -11,6 +11,7 @@ const client = { products: { retrieve: retrieveProduct }, checkoutSessions: { cr
 beforeEach(() => {
   vi.stubEnv('DODO_PAYMENTS_PRODUCT_ID_USD', 'pdt_usd');
   vi.stubEnv('DODO_PAYMENTS_ENVIRONMENT', 'test_mode');
+  vi.stubEnv('DODO_PAYMENTS_WEBHOOK_KEY', 'test-only-price-binding-key');
   retrieveProduct.mockReset().mockResolvedValue({ price });
   createSession.mockReset().mockResolvedValue({ session_id: 'cks_test', checkout_url: 'https://test.checkout.dodopayments.com/session/cks_test' });
   retrieveSession.mockReset().mockResolvedValue({ id: 'cks_test', created_at: new Date().toISOString(), payment_status: null });
@@ -35,6 +36,14 @@ describe('price-locked Dodo checkout', () => {
   it.each([0, 99, 100.5, NaN])('rejects invalid amount %s without an API request', async (amountMinor) => {
     await expect(createDodoCheckout(client, { ...input, amountMinor })).rejects.toThrow('invalid_payment_amount');
     expect(retrieveProduct).not.toHaveBeenCalled();
+  });
+  it('charges India in INR while locking the cart price in USD', async () => {
+    await createDodoCheckout(client, { ...input, billingCountry: 'IN' });
+    expect(createSession).toHaveBeenCalledWith(expect.objectContaining({
+      billing_currency: 'INR', billing_address: { country: 'IN' },
+      product_cart: [{ product_id: 'pdt_usd', quantity: 1, amount: 100 }],
+      metadata: expect.objectContaining({ base_amount_minor: '100', billing_currency: 'INR', price_binding: expect.stringMatching(/^[a-f0-9]{64}$/) }),
+    }));
   });
   it.each([{ tax_inclusive: false }, { pay_what_you_want: false }, { currency: 'EUR' }, { purchasing_power_parity: true }, { discount_bps: 100 }, { price: 200 }])('rejects unsafe product pricing %j', async (change) => {
     retrieveProduct.mockResolvedValue({ price: { ...price, ...change } });
