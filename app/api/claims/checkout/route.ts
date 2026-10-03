@@ -3,7 +3,6 @@ import { getAppOrigin } from '@/lib/env';
 import { hasTrustedMutationOrigin, readBoundedBody } from '@/server/http/security';
 import { selectPaymentProvider } from '@/server/payments';
 import { sha256Hex } from '@/server/payments/crypto';
-import { getUsdInrReferenceRate } from '@/server/payments/fx';
 import { checkCheckoutRateLimit } from '@/server/rate-limit/checkout';
 import { createAdminSupabaseClient } from '@/server/supabase/admin';
 
@@ -48,24 +47,6 @@ export async function POST(request: Request) {
   }
 
   const supabase = createAdminSupabaseClient();
-  if (parsed.data.billingCountry === 'IN') {
-    try {
-      const reference = await getUsdInrReferenceRate();
-      const { error: rateError } = await supabase
-        .from('payment_configuration')
-        .update({
-          usd_to_inr_rate: reference.rate,
-          usd_to_inr_rate_date: reference.date,
-          usd_to_inr_rate_observed_at: new Date().toISOString(),
-          usd_to_inr_rate_source: reference.source,
-        })
-        .eq('singleton', true);
-      if (rateError) throw rateError;
-    } catch (rateError) {
-      console.error('Unable to refresh the USD/INR checkout rate', rateError);
-      return Response.json({ error: 'The current INR exchange rate could not be verified. Try again shortly.' }, { status: 503 });
-    }
-  }
 
   const { data, error } = await supabase.rpc('create_anonymous_claim_checkout_intent', {
     target_date: parsed.data.date,
