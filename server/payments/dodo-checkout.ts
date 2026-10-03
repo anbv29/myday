@@ -5,9 +5,9 @@ import type { CheckoutCreation, ClientCheckout } from '@/server/payments/types';
 
 export async function createDodoCheckout(client: DodoPayments, input: CheckoutCreation): Promise<ClientCheckout> {
   if (!Number.isSafeInteger(input.amountMinor) || input.amountMinor < 100) throw new Error('invalid_payment_amount');
-  if (input.currency !== 'USD' && input.currency !== 'INR') throw new Error('invalid_payment_currency');
+  if (input.currency !== 'USD') throw new Error('invalid_payment_currency');
   if (!input.returnUrl || new URL(input.returnUrl).origin !== new URL(input.appUrl).origin) throw new Error('invalid_return_url');
-  const productId = requireServerEnv(`DODO_PAYMENTS_PRODUCT_ID_${input.currency}`);
+  const productId = requireServerEnv('DODO_PAYMENTS_PRODUCT_ID_USD');
   const product = await client.products.retrieve(productId);
   const price = product.price;
   // The database verifies the exact gross amount; tax/FX/discount changes must not change it.

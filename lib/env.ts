@@ -38,7 +38,7 @@ export function isProductionConfigurationComplete() {
 
 export function isDodoConfigured() {
   return ['test_mode', 'live_mode'].includes(process.env.DODO_PAYMENTS_ENVIRONMENT ?? '')
-    && ['DODO_PAYMENTS_API_KEY', 'DODO_PAYMENTS_WEBHOOK_KEY', 'DODO_PAYMENTS_PRODUCT_ID_USD', 'DODO_PAYMENTS_PRODUCT_ID_INR']
+    && ['DODO_PAYMENTS_API_KEY', 'DODO_PAYMENTS_WEBHOOK_KEY', 'DODO_PAYMENTS_PRODUCT_ID_USD']
       .every((name) => isEnvValuePresent(process.env[name]));
 }
 

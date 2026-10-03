@@ -9,7 +9,7 @@ const price = { type: 'one_time_price', currency: 'USD', price: 100, pay_what_yo
 const retrieveProduct = vi.fn(); const createSession = vi.fn(); const retrieveSession = vi.fn();
 const client = { products: { retrieve: retrieveProduct }, checkoutSessions: { create: createSession, retrieve: retrieveSession } } as unknown as DodoPayments;
 beforeEach(() => {
-  vi.stubEnv('DODO_PAYMENTS_PRODUCT_ID_USD', 'pdt_usd'); vi.stubEnv('DODO_PAYMENTS_PRODUCT_ID_INR', 'pdt_inr');
+  vi.stubEnv('DODO_PAYMENTS_PRODUCT_ID_USD', 'pdt_usd');
   vi.stubEnv('DODO_PAYMENTS_ENVIRONMENT', 'test_mode');
   retrieveProduct.mockReset().mockResolvedValue({ price });
   createSession.mockReset().mockResolvedValue({ session_id: 'cks_test', checkout_url: 'https://test.checkout.dodopayments.com/session/cks_test' });
@@ -17,7 +17,7 @@ beforeEach(() => {
 });
 afterEach(() => vi.unstubAllEnvs());
 describe('price-locked Dodo checkout', () => {
-  it.each(['USD', 'INR'])('sends the authoritative %s price with no browser discounts or currency changes', async (currency) => {
+  it.each(['USD'])('sends the authoritative %s price with no browser discounts or currency changes', async (currency) => {
     retrieveProduct.mockResolvedValue({ price: { ...price, currency } });
     const result = await createDodoCheckout(client, { ...input, currency });
     expect(result).toMatchObject({ provider: 'dodo', amountMinor: 100, currency });
@@ -27,6 +27,10 @@ describe('price-locked Dodo checkout', () => {
       product_cart: [{ product_id: `pdt_${currency.toLowerCase()}`, quantity: 1, amount: 100 }],
       feature_flags: { allow_currency_selection: false, allow_discount_code: false, redirect_immediately: true },
     }));
+  });
+  it('rejects unsupported INR pricing before contacting Dodo', async () => {
+    await expect(createDodoCheckout(client, { ...input, currency: 'INR' })).rejects.toThrow('invalid_payment_currency');
+    expect(retrieveProduct).not.toHaveBeenCalled();
   });
   it.each([0, 99, 100.5, NaN])('rejects invalid amount %s without an API request', async (amountMinor) => {
     await expect(createDodoCheckout(client, { ...input, amountMinor })).rejects.toThrow('invalid_payment_amount');

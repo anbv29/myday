@@ -23,7 +23,6 @@ describe('environment safety', () => {
       DODO_PAYMENTS_API_KEY: 'dodo-key-test',
       DODO_PAYMENTS_WEBHOOK_KEY: 'whsec_test',
       DODO_PAYMENTS_PRODUCT_ID_USD: 'pdt_usd',
-      DODO_PAYMENTS_PRODUCT_ID_INR: 'pdt_inr',
     };
     Object.entries(required).forEach(([name, value]) => vi.stubEnv(name, value));
     expect(isProductionConfigurationComplete()).toBe(true);
