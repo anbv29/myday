@@ -373,11 +373,11 @@ a { text-underline-offset: .22em; }
 .calendar-intro:has(.collection-intro-actions) > div:first-child { flex: 1; min-width: min(100%, 420px); }
 .calendar-intro:has(.collection-intro-actions) p { max-width: 66ch; }
 .date-collection { scroll-margin-top: 100px; }
-.collection-toolbar { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 20px; padding: 20px 0; border-block: 1px solid var(--line); }
+.collection-toolbar { display: flex; justify-content: center; align-items: flex-end; flex-wrap: wrap; gap: 20px; padding: 20px 0; border-block: 1px solid var(--line); }
 .collection-toolbar .stitch-tabs { justify-content: center; }
-.collection-selects { display: flex; gap: 16px; }
+.collection-selects { display: flex; align-items: flex-end; gap: 16px; }
 .collection-selects label { display: grid; gap: 6px; color: var(--muted); font-size: 12px; }
-.collection-selects select { min-height: 44px; border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; background: var(--paper-raised); color: var(--ink); font: 450 14px var(--font-copy); }
+.collection-selects select { height: 56px; min-height: 56px; border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; background: var(--paper-raised); color: var(--ink); font: 450 14px var(--font-copy); }
 .collection-caption, .collection-footnote { color: var(--muted); font-size: 13px; line-height: 1.7; }
 .collection-caption { margin-block: 20px; }
 .collection-footnote { max-width: 80ch; margin: 24px 0 0; }
