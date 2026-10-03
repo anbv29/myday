@@ -1,5 +1,6 @@
 import type DodoPayments from 'dodopayments';
 import type { VerifiedFailureEvent, VerifiedPaymentEvent, VerifiedRefundEvent } from '@/server/payments/types';
+import { verifyDodoPriceBinding } from '@/server/payments/dodo-price-binding';
 
 export function verifyDodoEvent(client: DodoPayments, rawBody: string, headers: Headers): VerifiedPaymentEvent | VerifiedRefundEvent | VerifiedFailureEvent | null {
   const eventId = headers.get('webhook-id');
@@ -26,6 +27,9 @@ export function verifyDodoEvent(client: DodoPayments, rawBody: string, headers: 
   const payment = event.data;
   if (payment.status !== 'succeeded' || !payment.checkout_session_id || !payment.payment_id
     || !Number.isSafeInteger(payment.total_amount) || payment.total_amount < 1 || !payment.currency) throw new Error('invalid_dodo_payment');
+  const adaptivePrice = payment.metadata?.price_binding ? verifyDodoPriceBinding(payment.metadata) : undefined;
+  if (adaptivePrice && (payment.currency !== 'INR' || payment.total_amount < 500)) throw new Error('invalid_dodo_adaptive_payment');
   return { provider: 'dodo', eventId, checkoutReference: payment.checkout_session_id,
-    paymentReference: payment.payment_id, amountMinor: payment.total_amount, currency: payment.currency };
+    paymentReference: payment.payment_id, amountMinor: payment.total_amount, currency: payment.currency,
+    ...(adaptivePrice ? { adaptivePrice } : {}) };
 }

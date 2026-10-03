@@ -31,8 +31,9 @@ export async function handlePaymentWebhook(request: Request, provider: PaymentPr
       return Response.json({ received: true });
     }
     const payloadDigest = await sha256Hex(rawBody);
-    const { data, error } = await admin.rpc('finalize_verified_claim', {
-      payment_provider: event.provider,
+    const adaptive = event.provider === 'dodo' ? event.adaptivePrice : undefined;
+    const { data, error } = await admin.rpc(adaptive ? 'finalize_adaptive_dodo_claim' : 'finalize_verified_claim', {
+      ...(adaptive ? { bound_intent_id: adaptive.intentId, base_amount_minor: adaptive.amountMinor } : { payment_provider: event.provider }),
       provider_event_reference: event.eventId,
       provider_checkout_reference: event.checkoutReference,
       provider_payment_reference: event.paymentReference,
